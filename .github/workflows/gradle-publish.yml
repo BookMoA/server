@@ -1,8 +1,13 @@
 name: server CI (Github Actions)
 
 on:
+  push:
+    branches:
+      - main
+      - develop
   pull_request:
     branches:
+      - main
       - develop
 
 jobs:
@@ -19,8 +24,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: ✔️ Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+    - name: ✔️ Gradle 명령 실행 권한 설정
+      run: chmod +x gradlew
 
     - name: ✔️ Gradle build
       run: ./gradlew build
