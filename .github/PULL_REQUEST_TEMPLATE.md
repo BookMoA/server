@@ -1,6 +1,7 @@
--- 제목: [feature/reafactor/fix] 한 일(기능명)
-  ex) [feature] 로그인 구현( 확인 후 지워주세요)
+✔️ 제목: [feature/reafactor/fix] 한 일(기능명)
+✔️ please merge in Squash & Merge!
 
+<br/>
 
 ## ⭐Related Issues
 - closes # 
@@ -23,4 +24,4 @@
 
 <br/>
 
-#### ✔️ please merge in Squash & Merge!
+
