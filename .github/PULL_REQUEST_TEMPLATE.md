@@ -1,8 +1,5 @@
-## ⭐요약
-#### Related Issues
-closes # 
-
-#### PR Summary
+## ⭐Related Issues
+- closes # 
 
 
 ## 📝작업 내용
@@ -10,6 +7,4 @@ closes #
 
 
 ## 참고사항 & 기타
-
-
-#### ✔️ please merge in Squash & Merge!
+- ✔️ please merge in Squash & Merge!
