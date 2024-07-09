@@ -20,6 +20,6 @@
 
 
 <br/>
-<hr/>
+
 - [ ] checked assignees
 - [ ] checked labels
