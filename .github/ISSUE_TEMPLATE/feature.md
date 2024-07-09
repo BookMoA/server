@@ -1,8 +1,8 @@
 ---
-name: Issue template
-about: Basic Issue Template
-title: ''
-labels: ''
+name: feature
+about: add new feature
+title: feat:
+labels: feature
 assignees: ''
 
 ---
@@ -11,6 +11,8 @@ assignees: ''
 작업할 기능을 설명해주세요:)
 
 ## To Do
+- [ ] checked assignees
+- [ ] checked labels
 - [ ] to do
 - [ ] to do
 
