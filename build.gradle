@@ -63,7 +63,7 @@ tasks.register('installLocalGitHook', Copy) {
 	}
 }
 
-tasks.named('build') {
+tasks.named('compileJava') {
 	dependsOn 'installLocalGitHook'
 }
 
