@@ -1,4 +1,4 @@
-name: server CI (Github Actions)
+name: server build test (Github Actions)
 
 on:
   pull_request:
@@ -19,6 +19,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        
+    - name: ✔️ Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |  
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+           ${{ runner.os }}-gradle-
 
     - name: ✔️ Gradle 명령 실행 권한 설정
       run: chmod +x gradlew
