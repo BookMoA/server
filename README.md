@@ -16,6 +16,9 @@
 * ```mysql -u root -p```
 * ```CREATE DATABASE book_moa;```
 
+<br>
+<br>
+
 ## 자주 나타나는 에러
 
 ### 1. commit 입력시
