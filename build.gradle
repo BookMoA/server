@@ -50,7 +50,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.register("installLocalGitHook", Copy) {
+tasks.register('installLocalGitHook', Copy) {
 	from("${rootProject.rootDir}/.github/hooks")
 	into("${rootProject.rootDir}/.git/hooks")
 
@@ -59,12 +59,12 @@ tasks.register("installLocalGitHook", Copy) {
 	}
 
 	doLast {
-		println("pre-commit 훅이 성공적으로 설치되었습니다.")
+		println 'pre-commit 훅이 성공적으로 설치되었습니다.'
 	}
 }
 
-tasks.build {
-	dependsOn(installLocalGitHook)
+tasks.named('build') {
+	dependsOn 'installLocalGitHook'
 }
 
 spotless {
