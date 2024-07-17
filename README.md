@@ -23,7 +23,7 @@
 
 ### 1. commit 입력시
 
-    커밋 템플릿이 구성되어 있지 않습니다. 커밋 템플릿 설정을 해주세요. 
-    git config --local commit.template .github/commit_template.txt
+	커밋 템플릿이 구성되어 있지 않습니다. 커밋 템플릿 설정을 해주세요.
+	git config --local commit.template .github/commit_template.txt
 
 - 위와 같은 에러가 난다면 메세지가 뜨면 터미널에 ```git config --local commit.template .github/commit_template.txt```을 입력해주세요!
