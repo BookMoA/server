@@ -1,4 +1,4 @@
-name: server build test (Github Actions)
+name: server CI (Github Actions)
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ✔️ 해당 브랜치 소스 코드 가져오기
+    - name: ✔️ 리포지토리 가져오기
       uses: actions/checkout@v4
         
     - name: ✔️ JDK 17 설치
@@ -23,16 +23,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
-    - name: ✔️ Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |  
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-           ${{ runner.os }}-gradle-
 
     - name: ✔️ Gradle 명령 실행 권한 설정
       run: chmod +x gradlew
