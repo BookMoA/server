@@ -2,14 +2,18 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'com.diffplug.spotless' version '6.23.3'
 }
 
 group = 'com.umc'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
+
 
 configurations {
     compileOnly {
@@ -42,10 +46,44 @@ dependencies {
     // testImplementation 'org.springframework.security:spring-security-test'
 }
 
-tasks.named('bootBuildImage') {
-    builder = 'paketobuildpacks/builder-jammy-base:latest'
-}
-
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.register("installLocalGitHook", Copy) {
+    from("${rootProject.rootDir}/.github/hooks")
+    into("${rootProject.rootDir}/.git/hooks")
+
+    eachFile {
+        mode = "755".toInt(radix = 8)
+    }
+
+    doLast {
+        println("pre-commit 훅이 성공적으로 설치되었습니다.")
+    }
+}
+
+tasks.build {
+    dependsOn(installLocalGitHook)
+}
+
+spotless {
+    java {
+        // Google Java 포맷 적용
+        googleJavaFormat().aosp()
+        // 아래 순서로 import문 정렬
+        importOrder('java', 'javax', 'jakarta', 'org', 'com')
+        // 사용하지 않는 import 제거
+        removeUnusedImports()
+        // 각 라인 끝에 있는 공백을 제거
+        trimTrailingWhitespace()
+        // 파일 끝에 새로운 라인 추가
+        endWithNewline()
+    }
+    format 'misc', {
+        target "*.gradle", "*.md", ".gitignore"
+        trimTrailingWhitespace()
+        indentWithTabs()
+        endWithNewline()
+    }
 }

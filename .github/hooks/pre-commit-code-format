@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Spotless를 사용하여 코드를 자동 포맷팅합니다"
+
+./gradlew spotlessApply
+
+if [ $? -eq 0 ]; then
+    echo "Spotless 자동 포맷팅이 성공했습니다"
+else
+    echo "Spotless 자동 포맷팅에 실패했습니다" >&2
+    exit 1
+fi
