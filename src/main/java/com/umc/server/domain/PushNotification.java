@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,8 +20,16 @@ public class PushNotification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @ColumnDefault("true")
     private Boolean likePushEnabled;
+
+    @Column(nullable = false)
+    @ColumnDefault("true")
     private Boolean commentPushEnabled;
+
+    @Column(nullable = false)
+    @ColumnDefault("true")
     private Boolean nightPushEnabled;
 
     @OneToOne()
