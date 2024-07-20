@@ -1,12 +1,14 @@
 #!/bin/sh
 
-echo "커밋 메세지 형식 확인 중입니다"
+echo "커밋 메세지 형식 확인 hook이 실행 중입니다"
 
-commit_template_file=$(git config commit.template)
+default_commit_template=".github/commit_template.txt"
+
+commit_template_file=$(git config --local --get commit.template)
 
 if [ -z "$commit_template_file" ]; then
-  echo "커밋 템플릿이 구성되어 있지 않습니다. 커밋 템플릿 설정을 해주세요. git config --local commit.template .github/commit_template.txt"
-  exit 1
+  echo "로컬로 설정된 커밋 템플릿이 없습니다. 기본 커밋 템플릿을 설정합니다."
+  git config --local commit.template "$default_commit_template"
 fi
 
 commit_msg_file="$1"
@@ -28,3 +30,5 @@ if ! echo "$commit_msg" | grep -Eq "$commit_msg_regex"; then
   echo
   exit 1
 fi
+
+echo "커밋 메시지 형식이 유효합니다."
