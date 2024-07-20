@@ -10,8 +10,11 @@
 # Type can be
 #   feature  : new feature
 #   fix      : bug fix
+#   !hotfix  : Urgently fix critical bugs
 #   refactor : refactoring production code
-#   style    : formatting, missing semi colons, etc; no code change
-#   docs     : changes to documentation; no code change
-#   test     : adding or refactoring tests; no production code change
 #   chore    : updating grunt tasks, etc; no production code change
+#   style    : formatting, missing semi colons, etc; no code change
+#   comment  : Add or change necessary comments; no code change
+#   docs     : changes to documentation; no code change
+#   rename   : rename or move files or folders; no code change
+#   remove   : delete files or folders; no code change
