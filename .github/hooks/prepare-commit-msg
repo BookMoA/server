@@ -1,29 +1,37 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "커밋 메세지 형식 확인 hook이 실행 중입니다"
+echo "커밋 메시지 형식 확인 hook이 실행 중입니다"
 
+# 기본 커밋 템플릿 파일 경로
 default_commit_template=".github/commit_template.txt"
 
+# 로컬로 설정된 커밋 템플릿 파일 경로 가져오기
 commit_template_file=$(git config --local --get commit.template)
 
+# 로컬에 설정된 커밋 템플릿이 없는 경우 기본 템플릿 설정
 if [ -z "$commit_template_file" ]; then
   echo "로컬로 설정된 커밋 템플릿이 없습니다. 기본 커밋 템플릿을 설정합니다."
   git config --local commit.template "$default_commit_template"
   commit_template_file="$default_commit_template"
 fi
 
+# 커밋 메시지 파일, 유형 및 메시지
 commit_msg_file="$1"
 commit_msg_type="$2"
 commit_msg="$3"
 
-if [ "$commit_msg_type" = "-m" ]; then
+# 커밋 메시지 유형이 -m일 경우 파일에 메시지 작성
+if [ "$commit_msg_type" = "-m" ] && [ -n "$commit_msg" ]; then
   echo "$commit_msg" > "$commit_msg_file"
 fi
 
+# 커밋 메시지 파일 내용 읽기
 commit_msg=$(cat "$commit_msg_file")
 
+# 커밋 메시지 형식 확인을 위한 정규 표현식 읽기
 commit_msg_regex=$(cat "$(dirname "$0")/../../.github/commit_regular.txt")
 
+# 커밋 메시지가 정규 표현식에 맞지 않는 경우
 if ! echo "$commit_msg" | grep -Eq "$commit_msg_regex"; then
   echo "유효하지 않은 커밋 메시지 형식입니다."
   echo
@@ -32,4 +40,4 @@ if ! echo "$commit_msg" | grep -Eq "$commit_msg_regex"; then
   exit 1
 fi
 
-echo "커밋 메시지 형식이 유효합니다."
+echo "커밋 메시지 형식이 유효합니다." >&2
