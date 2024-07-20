@@ -9,6 +9,7 @@ commit_template_file=$(git config --local --get commit.template)
 if [ -z "$commit_template_file" ]; then
   echo "로컬로 설정된 커밋 템플릿이 없습니다. 기본 커밋 템플릿을 설정합니다."
   git config --local commit.template "$default_commit_template"
+  commit_template_file="$default_commit_template"
 fi
 
 commit_msg_file="$1"
