@@ -11,7 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
 @DynamicUpdate
 @DynamicInsert
 public class AdminMember extends BaseEntity {

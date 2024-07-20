@@ -3,6 +3,7 @@ package com.umc.server.domain;
 import com.umc.server.domain.common.BaseEntity;
 import com.umc.server.domain.enums.SignUpType;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,9 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
 @DynamicUpdate
 @DynamicInsert
 public class Member extends BaseEntity {
