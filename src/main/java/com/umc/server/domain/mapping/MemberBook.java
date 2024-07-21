@@ -40,7 +40,7 @@ public class MemberBook extends BaseEntity {
     private List<BookMemo> bookMemoList = new ArrayList<>();
 
     // mapping
-    //    @ManyToOne(fetch = FetchType.정LAZY)
+    //    @ManyToOne(fetch = FetchType.LAZY)
     //    @JoinColumn(name = "member_id")
     //    private Member member;
 
