@@ -36,5 +36,4 @@ public class Book extends BaseEntity {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String coverImage;
-
 }

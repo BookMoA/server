@@ -29,7 +29,7 @@ public class BookMemo extends BaseEntity {
     @JoinColumn(name = "member_book_id")
     private MemberBook memberBook;
 
-    public void setMemberBook(MemberBook memberBook){
+    public void setMemberBook(MemberBook memberBook) {
         this.memberBook = memberBook;
     }
 }

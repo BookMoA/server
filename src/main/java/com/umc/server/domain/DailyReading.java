@@ -22,7 +22,7 @@ public class DailyReading extends BaseEntity {
 
     private Long dailyRead;
 
-    //mapping
+    // mapping
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_book_id")
     private MemberBook memberBook;
@@ -30,5 +30,4 @@ public class DailyReading extends BaseEntity {
     public void setMemberBook(MemberBook memberBook) {
         this.memberBook = memberBook;
     }
-
 }

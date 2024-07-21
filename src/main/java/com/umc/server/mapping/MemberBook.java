@@ -6,14 +6,13 @@ import com.umc.server.domain.BookMemo;
 import com.umc.server.domain.DailyReading;
 import com.umc.server.enums.MemberBookStatus;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,21 +43,19 @@ public class MemberBook extends BaseEntity {
     private List<BookMemo> bookMemoList = new ArrayList<>();
 
     // mapping
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member member;
+    //    @ManyToOne(fetch = FetchType.LAZY)
+    //    @JoinColumn(name = "member_id")
+    //    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
-//    public void setMember(Member member) {
-//        this.member = member;
-//    }
+    //    public void setMember(Member member) {
+    //        this.member = member;
+    //    }
 
     public void setBook(Book book) {
         this.book = book;
     }
-
 }
-
