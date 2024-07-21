@@ -10,7 +10,7 @@
         <module name="com.umc.server.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17">
       <module name="server" target="17" />
       <module name="server.main" target="17" />
       <module name="server.test" target="17" />

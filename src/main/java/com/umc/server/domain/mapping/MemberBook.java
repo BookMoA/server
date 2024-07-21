@@ -33,14 +33,14 @@ public class MemberBook extends BaseEntity {
 
     private Integer score;
 
-    @OneToMany(mappedBy = "dailyReading", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "memberBook", cascade = CascadeType.ALL)
     private List<DailyReading> dailyReadingList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bookMemo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "memberBook", cascade = CascadeType.ALL)
     private List<BookMemo> bookMemoList = new ArrayList<>();
 
     // mapping
-    //    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.정LAZY)
     //    @JoinColumn(name = "member_id")
     //    private Member member;
 
