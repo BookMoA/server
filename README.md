@@ -3,14 +3,14 @@
 ## 목차
 
 1. [기본 세팅](#기본-세팅)
-    1. [gradle build 진행하기](#gradle-build-진행하기)
-    2. [로컬 MySQL 데이터베이스 설정](#로컬-mysql-데이터베이스-설정)
+	1. [gradle build 진행하기](#gradle-build-진행하기)
+	2. [로컬 MySQL 데이터베이스 설정](#로컬-mysql-데이터베이스-설정)
 
 2. [현재 적용된 CI 설명](#현재-적용된-ci-설명)
 
 3. [자주 나타나는 에러](#자주-나타나는-에러)
-    1. [pull request 등록 후 CI ❌ 표시가 날 경우](#pull-request-등록-후-ci--표시가-날-경우)
-    2. [gradle build시](#gradle-build시)
+	1. [pull request 등록 후 CI ❌ 표시가 날 경우](#pull-request-등록-후-ci--표시가-날-경우)
+	2. [gradle build시](#gradle-build시)
 
 ## 기본 세팅
 ### 1. gradle build 진행하기
@@ -52,7 +52,7 @@
 
 	> Task :spotlessJavaCheck FAILED
 	FAILURE: Build failed with an exception.
- 
+
 - develop을 pull 받고, ***한 번 gradle을 build한 후***에 작업하시면 됩니다!
 
 ### 2. gradle build시
