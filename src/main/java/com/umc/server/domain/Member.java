@@ -2,10 +2,7 @@ package com.umc.server.domain;
 
 import com.umc.server.domain.common.BaseEntity;
 import com.umc.server.domain.enums.SignUpType;
-import com.umc.server.domain.mapping.ClubMember;
-import com.umc.server.domain.mapping.ClubPostComment;
-import com.umc.server.domain.mapping.ClubPostLike;
-import com.umc.server.domain.mapping.MemberBook;
+import com.umc.server.domain.mapping.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -76,4 +73,10 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberBook> memberBookList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<BookList> bookList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberBookList> memberBookListList = new ArrayList<>();
 }
