@@ -2,13 +2,18 @@ spring:
   profiles:
     active: test
 
-  config:
-    import:
-      - optional:file:env/local-db.env[.properties]  # .env.properties 로 해석하여 가져오겠다
-
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: test
+    password:
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
