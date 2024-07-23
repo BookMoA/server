@@ -1,6 +1,7 @@
 package com.umc.server.domain.mapping;
 
 import com.umc.server.domain.Club;
+import com.umc.server.domain.Member;
 import com.umc.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +26,7 @@ public class ClubMember extends BaseEntity {
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
-    //    @JoinColumn(name = "member_id", nullable = false)
-    //    private Member member;
+    @OneToOne()
+    @JoinColumn(name = "member_id")
+    private Member member;
 }
