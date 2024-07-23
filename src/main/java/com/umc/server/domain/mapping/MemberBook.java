@@ -11,10 +11,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
+@DynamicInsert
 @Builder
 public class MemberBook extends BaseEntity {
 
@@ -35,9 +40,11 @@ public class MemberBook extends BaseEntity {
     private Integer score;
 
     @OneToMany(mappedBy = "memberBook", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<DailyReading> dailyReadingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "memberBook", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<BookMemo> bookMemoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -4,10 +4,15 @@ import com.umc.server.domain.common.BaseEntity;
 import com.umc.server.domain.mapping.MemberBook;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
+@DynamicInsert
 @Builder
 public class DailyReading extends BaseEntity {
 
@@ -19,7 +24,6 @@ public class DailyReading extends BaseEntity {
 
     private Long dailyRead;
 
-    // mapping
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_book_id")
     private MemberBook memberBook;

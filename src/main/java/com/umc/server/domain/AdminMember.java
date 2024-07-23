@@ -3,17 +3,17 @@ package com.umc.server.domain;
 import com.umc.server.domain.common.BaseEntity;
 import com.umc.server.domain.enums.AdminRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @DynamicInsert
+@Builder
 public class AdminMember extends BaseEntity {
 
     @Id
@@ -30,9 +30,13 @@ public class AdminMember extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String githubId;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 100)
     private String emailAddress;
 
+    @Column(length = 20)
     private String snsAddress;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String profileUrl;
 }
