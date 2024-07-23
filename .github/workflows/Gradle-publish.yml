@@ -51,11 +51,3 @@ jobs:
       - name: ✔️ Gradle test
         run: ./gradlew --info test -Dspring.profiles.active=test
 
-      - name: ✔ CI 결과 PR에 코멘트 작성
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: always()
-        with:
-          message: |
-            ## CI 결과
-            - 빌드 상태: ${{ steps.build.outcome }}
-            - 테스트 상태: ${{ steps.test.outcome }}
