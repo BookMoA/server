@@ -20,10 +20,10 @@ public class MemberBookList {
     private Long id;
 
     @Column(nullable = false)
-    private int isLiked;
+    private Boolean isLiked;
 
     @Column(nullable = false)
-    private int isStored;
+    private Boolean isStored;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
