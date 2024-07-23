@@ -67,6 +67,10 @@ tasks.named('compileJava') {
 	dependsOn 'installLocalGitHook'
 }
 
+tasks.named('build') {
+	dependsOn 'spotlessApply'
+}
+
 spotless {
 	java {
 		// Google Java 포맷 적용
