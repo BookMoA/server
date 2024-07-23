@@ -7,17 +7,17 @@ import com.umc.server.domain.mapping.MemberBookList;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @DynamicInsert
+@Builder
 public class BookList extends BaseEntity {
 
     @Id
@@ -47,8 +47,10 @@ public class BookList extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "bookList", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<MemberBookList> memberBookList = new ArrayList<>();
 
     @OneToMany(mappedBy = "bookList", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<BookListEntry> bookListEntry = new ArrayList<>();
 }
