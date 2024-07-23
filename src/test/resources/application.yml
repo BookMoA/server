@@ -1,3 +1,14 @@
 spring:
   profiles:
     active: test
+
+  config:
+    import:
+      - optional:file:env/local-db.env[.properties]  # .env.properties 로 해석하여 가져오겠다
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
