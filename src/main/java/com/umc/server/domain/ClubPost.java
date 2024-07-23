@@ -40,7 +40,7 @@ public class ClubPost extends BaseEntity {
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
-    //    @JoinColumn(name = "member_id", nullable = false)
-    //    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }
