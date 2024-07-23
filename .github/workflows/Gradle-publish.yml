@@ -23,18 +23,18 @@ jobs:
         uses: samin/mysql-action@v1
         with:
           character set server: 'utf8'
-          mysql database: ${{ secrets.MYSQL_DB }}
-          mysql user: ${{ secrets.MYSQL_USER }}
-          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+          mysql database: ${{ env.MYSQL_DB }}
+          mysql user: ${{ env.MYSQL_USER }}
+          mysql password: ${{ env.MYSQL_PASSWORD }}
 
       - name: Wait for MySQL
         run: |
-          while ! mysqladmin ping --host=127.0.0.1 --password=$DB_PASSWORD --silent; do
+          while ! mysqladmin ping --host=127.0.0.1 --user=$MYSQL_USERNAME --password=$MYSQL_PASSWORD --silent; do
             sleep 1
           done
 
       - name: Verify MySQL is running
-        run: sudo netstat -tlnp | grep 3306
+        run: netstat -tlnp | grep 3306
 
       - name: ✔️ JDK 17 설치
         uses: actions/setup-java@v4
