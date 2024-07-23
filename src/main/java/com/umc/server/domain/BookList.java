@@ -3,7 +3,7 @@ package com.umc.server.domain;
 import com.umc.server.domain.common.BaseEntity;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
-import com.umc.server.domain.mapping.BookListLikes;
+import com.umc.server.domain.mapping.MemberBookList;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class BookList extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "bookList", cascade = CascadeType.ALL)
-    private List<BookListLikes> bookListLikes = new ArrayList<>();
+    private List<MemberBookList> memberBookList = new ArrayList<>();
 
     @OneToMany(mappedBy = "bookList", cascade = CascadeType.ALL)
     private List<BookListEntry> bookListEntry = new ArrayList<>();
