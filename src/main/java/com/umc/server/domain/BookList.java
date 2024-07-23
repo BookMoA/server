@@ -34,7 +34,7 @@ public class BookList extends BaseEntity {
     @Column(nullable = false, length = 300)
     private String spec;
 
-    private Integer like;
+    private Integer likeCnt;
 
     private Integer bookCnt;
 
