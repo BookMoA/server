@@ -26,6 +26,7 @@ public class ClubMember extends BaseEntity {
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
-    @OneToOne(mappedBy = "club", cascade = CascadeType.ALL)
+    @OneToOne()
+    @JoinColumn(name = "member_id")
     private Member member;
 }
