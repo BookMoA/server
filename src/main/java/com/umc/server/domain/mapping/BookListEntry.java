@@ -20,7 +20,7 @@ public class BookListEntry {
     private Long id;
 
     @Column(nullable = false)
-    private int number;
+    private Integer number;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)

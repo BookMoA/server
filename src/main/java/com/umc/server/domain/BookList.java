@@ -34,9 +34,9 @@ public class BookList extends BaseEntity {
     @Column(nullable = false, length = 300)
     private String spec;
 
-    private int like;
+    private Integer like;
 
-    private int bookCnt;
+    private Integer bookCnt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
