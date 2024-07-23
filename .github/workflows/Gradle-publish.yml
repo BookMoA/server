@@ -11,28 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ✔️ 리포지토리 가져오기
-      uses: actions/checkout@v4
-        
-    - name: ✔️ JDK 17 설치
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        
-    - name: ✔️ Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches/modules-2
-          ~/.gradle/caches/jars-3
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+      - name: ✔️ 리포지토리 가져오기
+        uses: actions/checkout@v4
 
-    - name: ✔️ Gradle 명령 실행 권한 설정
-      run: chmod +x gradlew
+      - name: ✔️ JDK 17 설치
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: ✔️ Gradle build
-      run: ./gradlew build
+      - name: ✔ Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: ${{ secrets.MYSQL_DB }}
+          mysql user: ${{ secrets.MYSQL_USER }}
+          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+
+      - name: ✔️ Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches/modules-2
+            ~/.gradle/caches/jars-3
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: ✔️ Gradle 명령 실행 권한 설정
+        run: chmod +x gradlew
+
+      - name: ✔️ Gradle build
+        run: ./gradlew build
