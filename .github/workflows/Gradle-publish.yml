@@ -6,6 +6,12 @@ on:
       - main
       - develop
 
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,7 +56,6 @@ jobs:
         if: always()
         with:
           files: '**/build/test-results/**/*.xml'
-          github_token: ${{ secrets.PAT }}
 
       - name: ✔ Publish Test Report
         uses: mikepenz/action-junit-report@v3
