@@ -7,18 +7,18 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자를 생성하지만 접근 수준을 protected로 제한
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @DynamicInsert
+@Builder
 public class Member extends BaseEntity {
 
     @Id
@@ -48,6 +48,8 @@ public class Member extends BaseEntity {
 
     private String accessToken;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String profileURL;
 
     @ColumnDefault("false")
@@ -63,20 +65,26 @@ public class Member extends BaseEntity {
     private ClubMember clubMember;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ClubPost> clubPostList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ClubPostComment> clubPostCommentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ClubPostLike> clubPostLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<MemberBook> memberBookList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<BookList> bookList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<MemberBookList> memberBookListList = new ArrayList<>();
 }
