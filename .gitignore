@@ -270,5 +270,3 @@ gradle-app.setting
 
 env/
 # End of https://www.toptal.com/developers/gitignore/api/git,maven,intellij,gradle,netbeans,java,macos,windows
-
-*.yml
