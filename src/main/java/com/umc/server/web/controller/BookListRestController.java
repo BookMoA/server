@@ -8,7 +8,9 @@ import com.umc.server.service.BookListService.BookListQueryService;
 import com.umc.server.web.dto.BookListRequestDTO;
 import com.umc.server.web.dto.BookListResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +30,14 @@ public class BookListRestController {
             @RequestBody @Valid BookListRequestDTO.AddBookListDTO request) {
         BookList bookList = bookListCommandService.addBookList(request);
         return ApiResponse.onSuccess(BookListConverter.toAddBookListResultDTO(bookList));
+    }
+
+    @Operation(summary = "특정 책리스트 조회 API", description = "특정 책리스트의 정보를 조회하는 API입니다.")
+    @GetMapping("/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListResponseDTO.BookListPreviewDTO> getBookList(
+            @PathVariable(name = "bookListId") Long bookListId) {
+        Optional<BookList> bookList = bookListQueryService.getBookList(bookListId);
+        return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList));
     }
 }
