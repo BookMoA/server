@@ -90,4 +90,13 @@ public class BookListConverter {
                 .books(getBookDTOList)
                 .build();
     }
+
+    public static BookListRequestDTO.UpdateBookListDTO toUpdateBookListDTO(BookList bookList) {
+        return BookListRequestDTO.UpdateBookListDTO.builder()
+                .title(bookList.getTitle())
+                .spec(bookList.getSpec())
+                .img(bookList.getImg())
+                .status(bookList.getListStatus().name())
+                .build();
+    }
 }
