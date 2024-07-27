@@ -1,5 +1,7 @@
 package com.umc.server.converter;
 
+import com.umc.server.apiPayload.code.status.ErrorStatus;
+import com.umc.server.apiPayload.exception.GeneralException;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
@@ -49,7 +51,7 @@ public class BookListConverter {
             case "PRIVATE":
                 return ListStatus.PRIVATE;
             default:
-                throw new IllegalArgumentException("Invalid status value: " + status);
+                throw new GeneralException(ErrorStatus.BOOKLIST_INVALID_STATUS);
         }
     }
 
