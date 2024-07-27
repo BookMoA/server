@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -34,8 +35,10 @@ public class BookList extends BaseEntity {
     @Column(nullable = false, length = 300)
     private String spec;
 
+    @ColumnDefault("0")
     private Integer likeCnt;
 
+    @ColumnDefault("0")
     private Integer bookCnt;
 
     @Enumerated(EnumType.STRING)
