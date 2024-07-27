@@ -10,7 +10,6 @@ import com.umc.server.domain.mapping.BookListEntry;
 import com.umc.server.web.dto.BookListRequestDTO;
 import com.umc.server.web.dto.BookListResponseDTO;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,6 +54,7 @@ public class BookListConverter {
         }
     }
 
+    // 책 조회
     public static BookListResponseDTO.BookDTO getBookDTO(BookListEntry bookListEntry) {
         Book book = bookListEntry.getBook();
         return BookListResponseDTO.BookDTO.builder()
@@ -66,11 +66,12 @@ public class BookListConverter {
                 .build();
     }
 
+    // 책 + 책리스트 조회
     public static BookListResponseDTO.BookListPreviewDTO toBookListPreviewDTO(
             Optional<BookList> optionalBookList) {
         if (optionalBookList.isEmpty()) {
             // Optional이 비어있는 경우에 대한 처리를 여기에 작성합니다.
-            throw new NoSuchElementException("BookList not found");
+            throw new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND);
         }
 
         BookList bookList = optionalBookList.get();
@@ -93,6 +94,7 @@ public class BookListConverter {
                 .build();
     }
 
+    // 책리스트 수정
     public static BookListRequestDTO.UpdateBookListDTO toUpdateBookListDTO(BookList bookList) {
         return BookListRequestDTO.UpdateBookListDTO.builder()
                 .title(bookList.getTitle())

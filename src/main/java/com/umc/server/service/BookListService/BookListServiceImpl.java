@@ -21,6 +21,7 @@ public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
     private final MemberRepository memberRepository;
 
+    // 책리스트 추가
     @Override
     @Transactional
     public BookList addBookList(BookListRequestDTO.AddBookListDTO request) {
@@ -37,6 +38,7 @@ public class BookListServiceImpl implements BookListService {
         return bookListRepository.save(bookList);
     }
 
+    // 책리스트 수정
     @Override
     public BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request) {
         BookList bookList =
@@ -56,6 +58,7 @@ public class BookListServiceImpl implements BookListService {
         return bookList;
     }
 
+    // 책리스트 조회
     @Override
     public Optional<BookList> getBookList(Long id) {
         Optional<BookList> bookList =
@@ -69,6 +72,7 @@ public class BookListServiceImpl implements BookListService {
         return bookList;
     }
 
+    // 책리스트 삭제
     @Override
     public void deleteBookList(Long bookListId) {
         BookList bookList =

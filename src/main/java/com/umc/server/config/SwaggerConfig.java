@@ -15,8 +15,8 @@ public class SwaggerConfig {
     public OpenAPI BookMoaAPI() {
         Info info =
                 new Info()
-                        .title("BookMoa Server API")
-                        .description("BookMoa Server API 명세서")
+                        .title("책모아 Server API")
+                        .description("책모아 Server API 명세서")
                         .version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";
