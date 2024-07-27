@@ -1,10 +1,16 @@
 package com.umc.server.converter;
 
+import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
+import com.umc.server.domain.mapping.BookListEntry;
 import com.umc.server.web.dto.BookListRequestDTO;
 import com.umc.server.web.dto.BookListResponseDTO;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BookListConverter {
 
@@ -45,5 +51,43 @@ public class BookListConverter {
             default:
                 throw new IllegalArgumentException("Invalid status value: " + status);
         }
+    }
+
+    public static BookListResponseDTO.BookDTO getBookDTO(BookListEntry bookListEntry) {
+        Book book = bookListEntry.getBook();
+        return BookListResponseDTO.BookDTO.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .coverImg(book.getCoverImage())
+                .writer(book.getWriter())
+                .number(bookListEntry.getNumber()) // 책리스트에서의 순서 가져오기
+                .build();
+    }
+
+    public static BookListResponseDTO.BookListPreviewDTO toBookListPreviewDTO(
+            Optional<BookList> optionalBookList) {
+        if (optionalBookList.isEmpty()) {
+            // Optional이 비어있는 경우에 대한 처리를 여기에 작성합니다.
+            throw new NoSuchElementException("BookList not found");
+        }
+
+        BookList bookList = optionalBookList.get();
+
+        List<BookListResponseDTO.BookDTO> getBookDTOList =
+                bookList.getBookListEntry().stream()
+                        .map(BookListConverter::getBookDTO)
+                        .collect(Collectors.toList());
+
+        return BookListResponseDTO.BookListPreviewDTO.builder()
+                .id(bookList.getId())
+                .title(bookList.getTitle())
+                .img(bookList.getImg())
+                .spec(bookList.getSpec())
+                .like(bookList.getLikeCnt())
+                .bookCnt(bookList.getBookCnt())
+                .listStatus(bookList.getListStatus().name())
+                .nickname(bookList.getMember().getNickname())
+                .books(getBookDTOList)
+                .build();
     }
 }
