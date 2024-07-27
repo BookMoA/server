@@ -72,7 +72,7 @@ public class BookListServiceImpl implements BookListService {
         return bookList;
     }
 
-    // 책리스트 삭제
+    // 책리스트 삭제 d
     @Override
     public void deleteBookList(Long bookListId) {
         BookList bookList =
