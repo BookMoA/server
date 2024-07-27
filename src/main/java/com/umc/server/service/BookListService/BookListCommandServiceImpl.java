@@ -3,6 +3,7 @@ package com.umc.server.service.BookListService;
 import com.umc.server.converter.BookListConverter;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
+import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.repository.BookListRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.web.dto.BookListRequestDTO;
@@ -32,5 +33,19 @@ public class BookListCommandServiceImpl implements BookListCommandService {
 
         // BookList 엔티티 저장
         return bookListRepository.save(bookList);
+    }
+
+    @Override
+    public BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request) {
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new RuntimeException("BookList not found"));
+        bookList.update(
+                request.getTitle(),
+                request.getSpec(),
+                request.getImg(),
+                ListStatus.valueOf(request.getStatus()));
+        return bookList;
     }
 }

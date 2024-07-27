@@ -5,4 +5,6 @@ import com.umc.server.web.dto.BookListRequestDTO;
 
 public interface BookListCommandService {
     BookList addBookList(BookListRequestDTO.AddBookListDTO request);
+
+    BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request);
 }
