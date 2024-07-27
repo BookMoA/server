@@ -40,4 +40,14 @@ public class BookListRestController {
         Optional<BookList> bookList = bookListQueryService.getBookList(bookListId);
         return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList));
     }
+
+    @Operation(summary = "특정 책리스트 수정 API", description = "특정 책리스트의 정보를 수정하는 API입니다.")
+    @PatchMapping("/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListRequestDTO.UpdateBookListDTO> updateBookList(
+            @PathVariable(name = "bookListId") Long bookListId,
+            @RequestBody @Valid BookListRequestDTO.UpdateBookListDTO request) {
+        BookList bookList = bookListCommandService.updateBookList(bookListId, request);
+        return ApiResponse.onSuccess(BookListConverter.toUpdateBookListDTO(bookList));
+    }
 }
