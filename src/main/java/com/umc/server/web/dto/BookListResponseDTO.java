@@ -1,6 +1,7 @@
 package com.umc.server.web.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +18,34 @@ public class BookListResponseDTO {
         Long bookListId;
         String title;
         LocalDateTime createdAt;
+    }
+
+    // 책리스트값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookListPreviewDTO {
+        private Long id;
+        private String title;
+        private String img;
+        private String spec;
+        private int like;
+        private int bookCnt;
+        private String listStatus;
+        private String nickname;
+        private List<BookDTO> books;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookDTO {
+        private Long id;
+        private String title;
+        private String coverImg;
+        private String writer;
+        private int number;
     }
 }
