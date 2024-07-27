@@ -56,4 +56,11 @@ public class BookList extends BaseEntity {
     @OneToMany(mappedBy = "bookList", cascade = CascadeType.ALL)
     @Builder.Default
     private List<BookListEntry> bookListEntry = new ArrayList<>();
+
+    public void update(String title, String spec, String img, ListStatus listStatus) {
+        this.title = title;
+        this.spec = spec;
+        this.img = img;
+        this.listStatus = listStatus;
+    }
 }
