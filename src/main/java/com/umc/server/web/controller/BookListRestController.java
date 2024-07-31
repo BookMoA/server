@@ -9,6 +9,7 @@ import com.umc.server.web.dto.BookListResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,16 @@ public class BookListRestController {
     public ApiResponse<?> deleteBookList(@PathVariable(name = "bookListId") Long bookListId) {
         bookListService.deleteBookList(bookListId);
         return ApiResponse.onSuccess("삭제에 성공하였습니다!");
+    }
+
+    @Operation(
+            summary = "보관함 책리스트 조회 API",
+            description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
+    @GetMapping("")
+    public ApiResponse<List<BookListResponseDTO.LibraryBookListDTO>> getLibraryBookList(
+            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+        List<BookListResponseDTO.LibraryBookListDTO> bookListDTOs =
+                bookListService.getLibraryBookList(page);
+        return ApiResponse.onSuccess(bookListDTOs);
     }
 }

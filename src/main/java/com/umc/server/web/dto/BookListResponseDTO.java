@@ -20,7 +20,7 @@ public class BookListResponseDTO {
         LocalDateTime createdAt;
     }
 
-    // 책리스트값 읽기
+    // 책리스트 상세 값 읽기
     @Builder
     @Getter
     @NoArgsConstructor
@@ -47,5 +47,17 @@ public class BookListResponseDTO {
         private String coverImg;
         private String writer;
         private int number;
+    }
+
+    // 보관함 책리스트 값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LibraryBookListDTO {
+        private Long id;
+        private String title;
+        private String img;
+        private int like;
     }
 }

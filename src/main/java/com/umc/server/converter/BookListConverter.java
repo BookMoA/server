@@ -103,4 +103,13 @@ public class BookListConverter {
                 .status(bookList.getListStatus().name())
                 .build();
     }
+
+    public static BookListResponseDTO.LibraryBookListDTO toLibraryBookListDTO(BookList bookList) {
+        return BookListResponseDTO.LibraryBookListDTO.builder()
+                .id(bookList.getId())
+                .title(bookList.getTitle())
+                .img(bookList.getImg())
+                .like(bookList.getLikeCnt())
+                .build();
+    }
 }
