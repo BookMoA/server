@@ -9,9 +9,14 @@ import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.repository.BookListRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.web.dto.BookListRequestDTO;
+import com.umc.server.web.dto.BookListResponseDTO;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -80,5 +85,17 @@ public class BookListServiceImpl implements BookListService {
                         .findById(bookListId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
         bookListRepository.delete(bookList);
+    }
+
+    @Override
+    public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page) {
+        // PageRequest를 생성하여 페이지네이션 적용
+        Page<BookList> bookLists =
+                bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page, 10));
+
+        // Page<BookList>에서 content만 추출하여 변환
+        return bookLists.getContent().stream()
+                .map(BookListConverter::toLibraryBookListDTO)
+                .collect(Collectors.toList());
     }
 }
