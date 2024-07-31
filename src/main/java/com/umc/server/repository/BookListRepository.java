@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BookListRepository extends JpaRepository<BookList, Long> {
-    // 멤버 ID와 저장된 책 리스트를 페이지네이션과 함께 조회
+    // 멤버 ID와 저장된 책 리스트를 페이지네이션과 함께 조회 -> 보관함
     @Query(
             "SELECT bl FROM BookList bl WHERE bl.member.id = :memberId "
                     + "OR EXISTS (SELECT 1 FROM MemberBookList mbl WHERE mbl.bookList.id = bl.id AND mbl.isStored = true)")
