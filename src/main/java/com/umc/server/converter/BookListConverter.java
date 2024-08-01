@@ -109,7 +109,8 @@ public class BookListConverter {
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
-                .like(bookList.getLikeCnt())
+                .bookCnt(bookList.getBookCnt())
+                .listStatus(bookList.getListStatus().name())
                 .build();
     }
 }

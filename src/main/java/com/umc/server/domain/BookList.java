@@ -32,7 +32,7 @@ public class BookList extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String img;
 
-    @Column(nullable = false, length = 300)
+    @Column(nullable = false, length = 63)
     private String spec;
 
     @ColumnDefault("0")

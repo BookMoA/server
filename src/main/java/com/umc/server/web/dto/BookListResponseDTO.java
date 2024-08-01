@@ -58,6 +58,7 @@ public class BookListResponseDTO {
         private Long id;
         private String title;
         private String img;
-        private int like;
+        private int bookCnt;
+        private String listStatus;
     }
 }
