@@ -3,14 +3,19 @@ package com.umc.server.service.BookListService;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.GeneralException;
 import com.umc.server.converter.BookListConverter;
+import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
+import com.umc.server.domain.mapping.BookListEntry;
+import com.umc.server.repository.BookEntryRepository;
+import com.umc.server.repository.BookListEntryRepository;
 import com.umc.server.repository.BookListRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.web.dto.BookListRequestDTO;
 import com.umc.server.web.dto.BookListResponseDTO;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +30,8 @@ import org.springframework.stereotype.Service;
 public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
     private final MemberRepository memberRepository;
+    private final BookEntryRepository bookRepository;
+    private final BookListEntryRepository bookListEntryRepository;
 
     // 책리스트 추가
     @Override
@@ -97,5 +104,69 @@ public class BookListServiceImpl implements BookListService {
         return bookLists.getContent().stream()
                 .map(BookListConverter::toLibraryBookListDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Long> addBookInBookList(
+            Long bookListId, BookListRequestDTO.AddBookInBookListDTO request) {
+        // 책 리스트 찾기
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        // 책 리스트에서 책 찾기
+        List<Book> books = bookRepository.findAllById(request.getBooksId());
+
+        if (books.size() != request.getBooksId().size()) {
+            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+        }
+
+        // 기존에 추가된 책을 확인
+        List<Long> existingBookIds =
+                bookList.getBookListEntry().stream()
+                        .map(entry -> entry.getBook().getId())
+                        .collect(Collectors.toList());
+
+        // 새로 추가할 책 리스트에서 기존에 추가된 책이 있는지 확인
+        List<Long> duplicateBookIds =
+                request.getBooksId().stream()
+                        .filter(existingBookIds::contains)
+                        .collect(Collectors.toList());
+
+        if (!duplicateBookIds.isEmpty()) {
+            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_ALREADY_EXISTS);
+        }
+
+        // 새로 추가할 책 리스트에서 기존에 추가되지 않은 책만 선택
+        List<Book> newBooks =
+                books.stream()
+                        .filter(book -> !existingBookIds.contains(book.getId()))
+                        .collect(Collectors.toList());
+
+        // 새로 추가할 BookListEntry 생성
+        List<BookListEntry> entries = new ArrayList<>();
+        // 기존에 추가된 책의 개수 확인
+        int currentBookCount = bookList.getBookListEntry().size();
+
+        // BookListEntry객체 생성
+        for (Book book : newBooks) {
+            BookListEntry entry =
+                    BookListEntry.builder()
+                            .book(book)
+                            .bookList(bookList)
+                            .number(++currentBookCount) // 현재 개수에 순차적으로 증가시키는 값
+                            .build();
+            entries.add(bookListEntryRepository.save(entry));
+        }
+
+        // BookList에 BookListEntry 추가
+        bookList.getBookListEntry().addAll(entries);
+        bookList.setBookCnt(currentBookCount); // 책개수 추가
+
+        // BookList 업데이트
+        bookListRepository.save(bookList);
+
+        return request.getBooksId();
     }
 }

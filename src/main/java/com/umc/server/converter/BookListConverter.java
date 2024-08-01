@@ -109,7 +109,15 @@ public class BookListConverter {
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
-                .like(bookList.getLikeCnt())
+                .bookCnt(bookList.getBookCnt())
+                .listStatus(bookList.getListStatus().name())
+                .build();
+    }
+
+    public static BookListResponseDTO.AddBookInBookListResultDTO addBookInBookListResultDTO(
+            List<Long> addBookIds) {
+        return BookListResponseDTO.AddBookInBookListResultDTO.builder()
+                .addedBookIds(addBookIds)
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.umc.server.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +27,13 @@ public class BookListRequestDTO {
         @NotNull String spec;
         @NotBlank String img;
         @NotBlank String status;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddBookInBookListDTO {
+        @NotBlank private List<Long> booksId;
     }
 }

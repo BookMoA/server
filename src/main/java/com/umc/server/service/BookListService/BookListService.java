@@ -17,4 +17,6 @@ public interface BookListService {
     void deleteBookList(Long bookListId);
 
     List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page);
+
+    List<Long> addBookInBookList(Long bookListId, BookListRequestDTO.AddBookInBookListDTO request);
 }
