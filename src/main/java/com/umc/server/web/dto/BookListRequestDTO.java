@@ -16,6 +16,7 @@ public class BookListRequestDTO {
         @NotNull String spec;
         @NotBlank String img;
         @NotBlank String status;
+        private List<Long> booksId;
     }
 
     @Getter
