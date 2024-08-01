@@ -67,4 +67,15 @@ public class BookListRestController {
                 bookListService.getLibraryBookList(page);
         return ApiResponse.onSuccess(bookListDTOs);
     }
+
+    @Operation(summary = "책리스트의 책 추가 API", description = "책리스트에서 책을 추가하는 API입니다.")
+    @PostMapping("/book/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListResponseDTO.AddBookInBookListResultDTO> addBookInBookList(
+            @PathVariable(name = "bookListId") Long bookListId,
+            @RequestBody @Valid BookListRequestDTO.AddBookInBookListDTO request) {
+        // 책리스트에 책을 추가
+        List<Long> addBookIds = bookListService.addBookInBookList(bookListId, request);
+        return ApiResponse.onSuccess(BookListConverter.addBookInBookListResultDTO(addBookIds));
+    }
 }
