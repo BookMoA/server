@@ -61,4 +61,12 @@ public class BookListResponseDTO {
         private int bookCnt;
         private String listStatus;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddBookInBookListResultDTO {
+        private List<Long> addedBookIds;
+    }
 }
