@@ -113,4 +113,11 @@ public class BookListConverter {
                 .listStatus(bookList.getListStatus().name())
                 .build();
     }
+
+    public static BookListResponseDTO.AddBookInBookListResultDTO addBookInBookListResultDTO(
+            List<Long> addBookIds) {
+        return BookListResponseDTO.AddBookInBookListResultDTO.builder()
+                .addedBookIds(addBookIds)
+                .build();
+    }
 }
