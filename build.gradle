@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id 'com.diffplug.spotless' version '6.23.3'
+	id 'com.google.cloud.tools.jib' version '3.4.0'
 }
 
 group = 'com.umc'
@@ -90,5 +91,20 @@ spotless {
 		trimTrailingWhitespace()
 		indentWithTabs()
 		endWithNewline()
+	}
+}
+
+jib {
+	from {
+		image = 'openjdk:17-alpine'
+	}
+	to {
+		image = '339713156055.dkr.ecr.ap-northeast-2.amazonaws.com/bookmoa-server'
+		credHelper = 'ecr-login'
+		tags = ['latest']
+	}
+	container {
+		jvmFlags = ['-Xms512m']
+		format = 'OCI'
 	}
 }
