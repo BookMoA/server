@@ -21,8 +21,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST4001", false, "책리스트가 없습니다."),
     BOOKLIST_INVALID_STATUS(HttpStatus.BAD_REQUEST, "BOOKLIST4002", false, "STATUS형식이 올바르지 않습니다."),
+    BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4003", false, "이미 추가된 책입니다."),
 
-    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE_4001", false, "잘못된 페이지입니다.");
+    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
+
+    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
