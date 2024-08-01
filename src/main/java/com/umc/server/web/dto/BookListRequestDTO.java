@@ -36,4 +36,12 @@ public class BookListRequestDTO {
     public static class AddBookInBookListDTO {
         @NotBlank private List<Long> booksId;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteBookInBookListDTO {
+        @NotBlank private List<Long> booksId;
+    }
 }
