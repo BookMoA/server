@@ -63,4 +63,8 @@ public class BookList extends BaseEntity {
         this.img = img;
         this.listStatus = listStatus;
     }
+
+    public void setBookCnt(int i) {
+        this.bookCnt = i;
+    }
 }
