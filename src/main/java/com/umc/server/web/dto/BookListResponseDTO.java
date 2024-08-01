@@ -62,6 +62,7 @@ public class BookListResponseDTO {
         private String listStatus;
     }
 
+    //
     @Builder
     @Getter
     @NoArgsConstructor
