@@ -1,7 +1,10 @@
 package com.umc.server.domain;
 
 import com.umc.server.domain.common.BaseEntity;
+import com.umc.server.domain.mapping.BookListEntry;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -40,4 +43,8 @@ public class Book extends BaseEntity {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String coverImage;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<BookListEntry> bookListEntry = new ArrayList<>();
 }
