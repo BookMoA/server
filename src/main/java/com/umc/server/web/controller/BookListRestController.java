@@ -78,4 +78,14 @@ public class BookListRestController {
         List<Long> addBookIds = bookListService.addBookInBookList(bookListId, request);
         return ApiResponse.onSuccess(BookListConverter.addBookInBookListResultDTO(addBookIds));
     }
+
+    @Operation(summary = "책리스트의 책 삭제 API", description = "책리스트에서 책을 삭제하는 API입니다.")
+    @DeleteMapping("book/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<?> deleteBookInBookList(
+            @PathVariable(name = "bookListId") Long bookListId,
+            @RequestBody @Valid BookListRequestDTO.DeleteBookInBookListDTO request) {
+        bookListService.deleteBookInBookList(bookListId, request);
+        return ApiResponse.onSuccess("책 리스트의 책을 삭제에 성공하였습니다!");
+    }
 }
