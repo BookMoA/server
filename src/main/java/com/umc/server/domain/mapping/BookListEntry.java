@@ -29,4 +29,8 @@ public class BookListEntry {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_list_id", nullable = false)
     private BookList bookList;
+
+    public void setNumber(int i) {
+        this.number = i;
+    }
 }
