@@ -5,4 +5,6 @@ import com.umc.server.web.dto.BookRequestDTO;
 
 public interface BookService {
     Book createBook(BookRequestDTO.CreateBookDTO createBookDTO);
+
+    Book readBook(Long bookId);
 }

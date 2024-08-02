@@ -20,4 +20,17 @@ public class BookConverter {
     public static BookResponseDTO.CreateBookResultDTO toCreateBookResultDTO(Book book) {
         return BookResponseDTO.CreateBookResultDTO.builder().bookId(book.getId()).build();
     }
+
+    public static BookResponseDTO.BookPreviewDTO toBookPreviewDTO(Book book) {
+        return BookResponseDTO.BookPreviewDTO.builder()
+                .bookId(book.getId())
+                .title(book.getTitle())
+                .writer(book.getWriter())
+                .description(book.getDescription())
+                .publisher(book.getPublisher())
+                .isbn(book.getIsbn())
+                .page(book.getPage())
+                .coverImage(book.getCoverImage())
+                .build();
+    }
 }
