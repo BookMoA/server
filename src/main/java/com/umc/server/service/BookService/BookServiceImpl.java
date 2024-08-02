@@ -26,13 +26,11 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public Book readBook(Long bookId) {
-        Book book =
-                bookRepository
-                        .findById(bookId)
-                        .orElseThrow(
-                                () -> {
-                                    throw new BookHandler(ErrorStatus.BOOK_NOT_FOUND);
-                                });
-        return book;
+        return bookRepository
+                .findById(bookId)
+                .orElseThrow(
+                        () -> {
+                            throw new BookHandler(ErrorStatus.BOOK_NOT_FOUND);
+                        });
     }
 }
