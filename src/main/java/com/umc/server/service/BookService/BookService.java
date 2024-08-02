@@ -7,4 +7,6 @@ public interface BookService {
     Book createBook(BookRequestDTO.CreateBookDTO createBookDTO);
 
     Book readBook(Long bookId);
+
+    Book updateBook(Long bookId, BookRequestDTO.UpdateBookDTO updateBookDTO);
 }

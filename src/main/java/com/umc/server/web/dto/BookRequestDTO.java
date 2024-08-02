@@ -19,4 +19,21 @@ public class BookRequestDTO {
 
         private String coverImage;
     }
+
+    @Getter
+    public static class UpdateBookDTO {
+        @NotNull private String title;
+
+        @NotNull private String writer;
+
+        private String description;
+
+        @NotNull private String publisher;
+
+        @NotNull private String isbn;
+
+        @NotNull private Long page;
+
+        private String coverImage;
+    }
 }

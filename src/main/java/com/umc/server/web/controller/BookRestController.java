@@ -55,4 +55,23 @@ public class BookRestController {
         Book book = bookService.readBook(bookId);
         return ApiResponse.onSuccess(BookConverter.toBookPreviewDTO(book));
     }
+
+    @Operation(summary = "특정 책 수정 API", description = "특정 책을 수정하는 API입니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON200",
+                description = "OK, 책 수정 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "BOOK4001",
+                description = "책을 찾을 수 없습니다.",
+                content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameter(name = "bookId", description = "책의 아이디, path variable 입니다.")
+    @PatchMapping("books/{bookId}")
+    public ApiResponse<BookResponseDTO.BookPreviewDTO> updateBook(
+            @PathVariable(name = "bookId") Long bookId,
+            @RequestBody BookRequestDTO.UpdateBookDTO updateBookDTO) {
+        Book book = bookService.updateBook(bookId, updateBookDTO);
+        return ApiResponse.onSuccess(BookConverter.toBookPreviewDTO(book));
+    }
 }

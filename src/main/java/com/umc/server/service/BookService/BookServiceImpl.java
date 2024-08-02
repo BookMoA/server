@@ -33,4 +33,23 @@ public class BookServiceImpl implements BookService {
                             throw new BookHandler(ErrorStatus.BOOK_NOT_FOUND);
                         });
     }
+
+    @Override
+    public Book updateBook(Long bookId, BookRequestDTO.UpdateBookDTO updateBookDTO) {
+        Book book =
+                bookRepository
+                        .findById(bookId)
+                        .orElseThrow(
+                                () -> {
+                                    throw new BookHandler(ErrorStatus.BOOK_NOT_FOUND);
+                                });
+        book.setTitle(updateBookDTO.getTitle());
+        book.setWriter(updateBookDTO.getWriter());
+        book.setDescription(updateBookDTO.getDescription());
+        book.setPublisher(updateBookDTO.getPublisher());
+        book.setIsbn(updateBookDTO.getIsbn());
+        book.setPage(updateBookDTO.getPage());
+        book.setCoverImage(updateBookDTO.getCoverImage());
+        return book;
+    }
 }
