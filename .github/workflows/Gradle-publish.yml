@@ -3,18 +3,16 @@ name: server build test (Github Actions)
 on:
   pull_request:
     branches:
-      - main
       - develop
-
-permissions:
-  contents: read
-  issues: read
-  checks: write
-  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
 
     steps:
       - name: ✔️ 리포지토리 가져오기
