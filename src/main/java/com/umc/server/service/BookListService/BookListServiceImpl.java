@@ -12,8 +12,8 @@ import com.umc.server.repository.BookEntryRepository;
 import com.umc.server.repository.BookListEntryRepository;
 import com.umc.server.repository.BookListRepository;
 import com.umc.server.repository.MemberRepository;
-import com.umc.server.web.dto.BookListRequestDTO;
-import com.umc.server.web.dto.BookListResponseDTO;
+import com.umc.server.web.dto.request.BookListRequestDTO;
+import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -261,4 +261,61 @@ public class BookListServiceImpl implements BookListService {
         // BookList 업데이트
         bookListRepository.save(bookList);
     }
+
+    //    @Override
+    //    @Transactional
+    //    public void deleteBookInBookList(
+    //            Long bookListId, BookListRequestDTO.DeleteBookInBookListDTO request) {
+    //        // 책 리스트 찾기
+    //        BookList bookList =
+    //                bookListRepository
+    //                        .findById(bookListId)
+    //                        .orElseThrow(() -> new
+    // GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+    //
+    //        // 책 리스트에서 책 찾기
+    //        List<Book> books = bookRepository.findAllById(request.getBooksId());
+    //
+    //        if (books.size() != request.getBooksId().size()) {
+    //            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+    //        }
+    //
+    //        // 기존에 존재하는 책을 확인
+    //        List<Long> existingBookIds =
+    //                bookList.getBookListEntry().stream()
+    //                        .map(entry -> entry.getBook().getId())
+    //                        .collect(Collectors.toList());
+    //
+    //        // 해당책 리스트에서 삭제하려는 아이디의 책이 있는지 확인
+    //        List<Long> duplicateBookIds =
+    //                request.getBooksId().stream()
+    //                        .filter(existingBookIds::contains)
+    //                        .collect(Collectors.toList());
+    //
+    //        if (duplicateBookIds.isEmpty()) {
+    //            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_NO_EXISTS);
+    //        }
+    //
+    //        // 삭제할 책 엔티티를 BookListEntry에서 제거
+    //        List<BookListEntry> entriesToRemove =
+    //                bookList.getBookListEntry().stream()
+    //                        .filter(entry -> duplicateBookIds.contains(entry.getBook().getId()))
+    //                        .collect(Collectors.toList());
+    //
+    //        // BookListEntry 삭제
+    //        bookList.getBookListEntry().removeAll(entriesToRemove);
+    //        entriesToRemove.forEach(entry -> bookListEntryRepository.delete(entry));
+    //
+    //        // 남은 책들의 number를 1부터 순서대로 재정렬
+    //        List<BookListEntry> remainingEntries = bookList.getBookListEntry();
+    //        for (int i = 0; i < remainingEntries.size(); i++) {
+    //            remainingEntries.get(i).setNumber(i + 1);
+    //        }
+    //
+    //        // BookList의 bookCnt 값 업데이트
+    //        bookList.setBookCnt(remainingEntries.size());
+    //
+    //        // BookList 업데이트
+    //        bookListRepository.save(bookList);
+    //    }
 }
