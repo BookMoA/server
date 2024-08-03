@@ -5,7 +5,7 @@ import lombok.*;
 
 public class SearchResponseDTO {
 
-    // 보관함 책리스트 값 읽기
+    // 보관함 책리스트 값 읽기!
     @Builder
     @Getter
     @NoArgsConstructor
