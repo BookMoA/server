@@ -10,6 +10,7 @@ import com.umc.server.repository.MemberRepository;
 import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class KaKaoServiceImpl implements KakaoService {
 
