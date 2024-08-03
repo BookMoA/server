@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id 'com.diffplug.spotless' version '6.23.3'
+	id 'com.google.cloud.tools.jib' version '3.4.0'
 }
 
 group = 'com.umc'
@@ -42,9 +43,11 @@ dependencies {
 	testImplementation 'io.rest-assured:rest-assured:5.3.1'
 	testRuntimeOnly 'com.h2database:h2'
 
-	// 스프링 시큐리티 사용시 주석 해제
-	// implementation 'org.springframework.boot:spring-boot-starter-security'
-	// testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 tasks.named('test') {
@@ -90,5 +93,20 @@ spotless {
 		trimTrailingWhitespace()
 		indentWithTabs()
 		endWithNewline()
+	}
+}
+
+jib {
+	from {
+		image = 'openjdk:17-alpine'
+	}
+	to {
+		image = '339713156055.dkr.ecr.ap-northeast-2.amazonaws.com/bookmoa-server'
+		credHelper = 'ecr-login'
+		tags = ['latest']
+	}
+	container {
+		jvmFlags = ['-Xms512m']
+		format = 'OCI'
 	}
 }

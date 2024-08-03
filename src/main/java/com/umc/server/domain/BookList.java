@@ -25,14 +25,14 @@ public class BookList extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 12)
     private String title;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String img;
 
-    @Column(nullable = false, length = 300)
+    @Column(nullable = false, length = 52)
     private String spec;
 
     @ColumnDefault("0")
@@ -62,5 +62,9 @@ public class BookList extends BaseEntity {
         this.spec = spec;
         this.img = img;
         this.listStatus = listStatus;
+    }
+
+    public void setBookCnt(int i) {
+        this.bookCnt = i;
     }
 }

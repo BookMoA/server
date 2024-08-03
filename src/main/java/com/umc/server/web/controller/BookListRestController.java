@@ -4,11 +4,12 @@ import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.BookListConverter;
 import com.umc.server.domain.BookList;
 import com.umc.server.service.BookListService.BookListService;
-import com.umc.server.web.dto.BookListRequestDTO;
-import com.umc.server.web.dto.BookListResponseDTO;
+import com.umc.server.web.dto.request.BookListRequestDTO;
+import com.umc.server.web.dto.response.BookListResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,9 @@ public class BookListRestController {
         return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList));
     }
 
-    @Operation(summary = "특정 책리스트 수정 API", description = "특정 책리스트의 정보를 수정하는 API입니다.")
+    @Operation(
+            summary = "특정 책리스트 수정 API",
+            description = "특정 책리스트의 정보를 수정하는 API입니다. 책리스트의 책값을 모두 적어줘야 수정이 반영됩니다.")
     @PatchMapping("/{bookListId}")
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<BookListRequestDTO.UpdateBookListDTO> updateBookList(
@@ -54,5 +57,37 @@ public class BookListRestController {
     public ApiResponse<?> deleteBookList(@PathVariable(name = "bookListId") Long bookListId) {
         bookListService.deleteBookList(bookListId);
         return ApiResponse.onSuccess("삭제에 성공하였습니다!");
+    }
+
+    @Operation(
+            summary = "보관함 책리스트 조회 API",
+            description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
+    @GetMapping("")
+    public ApiResponse<List<BookListResponseDTO.LibraryBookListDTO>> getLibraryBookList(
+            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+        List<BookListResponseDTO.LibraryBookListDTO> bookListDTOs =
+                bookListService.getLibraryBookList(page);
+        return ApiResponse.onSuccess(bookListDTOs);
+    }
+
+    @Operation(summary = "책리스트의 책 추가 API", description = "책리스트에서 책을 추가하는 API입니다.")
+    @PostMapping("/book/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListResponseDTO.AddBookInBookListResultDTO> addBookInBookList(
+            @PathVariable(name = "bookListId") Long bookListId,
+            @RequestBody @Valid BookListRequestDTO.AddBookInBookListDTO request) {
+        // 책리스트에 책을 추가
+        List<Long> addBookIds = bookListService.addBookInBookList(bookListId, request);
+        return ApiResponse.onSuccess(BookListConverter.addBookInBookListResultDTO(addBookIds));
+    }
+
+    @Operation(summary = "책리스트의 책 삭제 API", description = "책리스트에서 책을 삭제하는 API입니다.")
+    @DeleteMapping("book/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<?> deleteBookInBookList(
+            @PathVariable(name = "bookListId") Long bookListId,
+            @RequestBody @Valid BookListRequestDTO.DeleteBookInBookListDTO request) {
+        bookListService.deleteBookInBookList(bookListId, request);
+        return ApiResponse.onSuccess("책 리스트의 책을 삭제에 성공하였습니다!");
     }
 }

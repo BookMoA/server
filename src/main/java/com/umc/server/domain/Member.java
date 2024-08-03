@@ -1,16 +1,21 @@
 package com.umc.server.domain;
 
 import com.umc.server.domain.common.BaseEntity;
+import com.umc.server.domain.enums.Role;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.mapping.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
@@ -19,13 +24,13 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Builder
-public class Member extends BaseEntity {
+public class Member extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Column(nullable = false)
@@ -35,28 +40,32 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @ColumnDefault("false")
-    @Column(nullable = false)
     private Boolean inFocusMode;
 
     @ColumnDefault("0")
-    @Column(nullable = false)
     private Long totalPages;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SignUpType signUpType;
 
-    private String accessToken;
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Setter
+    private String refreshToken;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String profileURL;
 
     @ColumnDefault("false")
-    @Column(nullable = false)
     private Boolean isDeleted;
 
-    private LocalDate inActiveDate;
+    @Setter private LocalDate inActiveDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private PushNotification pushNotification;
@@ -87,4 +96,17 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @Builder.Default
     private List<MemberBookList> memberBookListList = new ArrayList<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> roles = new ArrayList<>();
+        String authority = this.role.getAuthority();
+        roles.add(new SimpleGrantedAuthority(authority));
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.nickname;
+    }
 }

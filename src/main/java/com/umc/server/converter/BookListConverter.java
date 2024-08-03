@@ -7,8 +7,8 @@ import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
-import com.umc.server.web.dto.BookListRequestDTO;
-import com.umc.server.web.dto.BookListResponseDTO;
+import com.umc.server.web.dto.request.BookListRequestDTO;
+import com.umc.server.web.dto.response.BookListResponseDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,6 +101,23 @@ public class BookListConverter {
                 .spec(bookList.getSpec())
                 .img(bookList.getImg())
                 .status(bookList.getListStatus().name())
+                .build();
+    }
+
+    public static BookListResponseDTO.LibraryBookListDTO toLibraryBookListDTO(BookList bookList) {
+        return BookListResponseDTO.LibraryBookListDTO.builder()
+                .id(bookList.getId())
+                .title(bookList.getTitle())
+                .img(bookList.getImg())
+                .bookCnt(bookList.getBookCnt())
+                .listStatus(bookList.getListStatus().name())
+                .build();
+    }
+
+    public static BookListResponseDTO.AddBookInBookListResultDTO addBookInBookListResultDTO(
+            List<Long> addBookIds) {
+        return BookListResponseDTO.AddBookInBookListResultDTO.builder()
+                .addedBookIds(addBookIds)
                 .build();
     }
 }

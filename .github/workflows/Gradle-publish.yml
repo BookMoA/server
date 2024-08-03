@@ -3,14 +3,7 @@ name: server build test (Github Actions)
 on:
   pull_request:
     branches:
-      - main
       - develop
-
-permissions:
-  contents: read
-  issues: read
-  checks: write
-  pull-requests: write
 
 jobs:
   build:
@@ -20,6 +13,10 @@ jobs:
       DB_URL: ${{ secrets.DB_URL }}
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+      KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
 
     steps:
       - name: ✔️ 리포지토리 가져오기
@@ -50,4 +47,3 @@ jobs:
 
       - name: ✔️ Gradle test
         run: ./gradlew --info test -Dspring.profiles.active=test
-
