@@ -13,6 +13,7 @@ jobs:
       DB_URL: ${{ secrets.DB_URL }}
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
       - name: ✔️ 리포지토리 가져오기
