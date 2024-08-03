@@ -16,11 +16,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-
     steps:
       - name: ✔️ 리포지토리 가져오기
         uses: actions/checkout@v4
@@ -50,4 +45,3 @@ jobs:
 
       - name: ✔️ Gradle test
         run: ./gradlew --info test -Dspring.profiles.active=test
-
