@@ -1,6 +1,7 @@
 package com.umc.server.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class BookListRequestDTO {
         @NotNull String spec;
         @NotBlank String img;
         @NotBlank String status;
+        @NotEmpty private List<BookListEntryDTO> books;
     }
 
     @Getter
@@ -43,5 +45,14 @@ public class BookListRequestDTO {
     @AllArgsConstructor
     public static class DeleteBookInBookListDTO {
         @NotBlank private List<Long> booksId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookListEntryDTO {
+        private Long id; // Book의 ID
+        private Integer number; // 새로운 number 값
     }
 }

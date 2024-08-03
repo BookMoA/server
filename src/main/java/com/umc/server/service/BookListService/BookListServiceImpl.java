@@ -53,20 +53,53 @@ public class BookListServiceImpl implements BookListService {
     // 책리스트 수정
     @Override
     public BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request) {
+        // 1. 책 리스트 조회
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
 
+        // 2. 상태 값 변환
         ListStatus listStatus;
         try {
             listStatus = ListStatus.valueOf(request.getStatus());
         } catch (IllegalArgumentException e) {
-            throw new GeneralException(
-                    ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 PUBLIC이나 PRIVATE이 아니라면 ERRROR
+            throw new GeneralException(ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 올바르지 않으면 오류
         }
 
+        // 3. 책 리스트 정보 업데이트
         bookList.update(request.getTitle(), request.getSpec(), request.getImg(), listStatus);
+        // ------------------------------------------------------------------------------------------------------
+        // 4. 기존 BookListEntry 삭제
+        List<BookListEntry> existingEntries = bookList.getBookListEntry();
+        bookListEntryRepository.deleteAll(existingEntries); // 현재 리스트의 모든 BookListEntry 삭제
+        bookList.getBookListEntry().clear(); // 현재 리스트에서 모든 BookListEntry 제거
+
+        // 5. 새로 받은 BookListEntry 정보로 업데이트
+        List<BookListEntry> newEntries = new ArrayList<>();
+        for (BookListRequestDTO.BookListEntryDTO entryDTO : request.getBooks()) {
+            Book book =
+                    bookRepository
+                            .findById(entryDTO.getId())
+                            .orElseThrow(() -> new GeneralException(ErrorStatus.BOOK_NOT_FOUND));
+
+            BookListEntry newEntry =
+                    BookListEntry.builder()
+                            .book(book)
+                            .bookList(bookList)
+                            .number(entryDTO.getNumber())
+                            .build();
+
+            newEntries.add(newEntry);
+            bookList.getBookListEntry().add(newEntry); // 새로운 항목 추가
+        }
+
+        // 6. BookList의 bookCnt 업데이트
+        bookList.setBookCnt(bookList.getBookListEntry().size());
+
+        // 7. BookList 저장 (bookListEntry도 자동으로 저장됨)
+        bookListRepository.save(bookList);
+
         return bookList;
     }
 
@@ -121,6 +154,7 @@ public class BookListServiceImpl implements BookListService {
         return request.getBooksId();
     }
 
+    // 책 리스트의 책 삭제
     @Override
     @Transactional
     public void deleteBookInBookList(
@@ -177,7 +211,7 @@ public class BookListServiceImpl implements BookListService {
         bookListRepository.save(bookList);
     }
 
-    // 리스트에 책 추가
+    // 리스트에 책 추가 함수
     private void addBooksToBookList(BookList bookList, List<Long> bookIds) {
         // 책 리스트에서 책 찾기
         List<Book> books = bookRepository.findAllById(bookIds);
