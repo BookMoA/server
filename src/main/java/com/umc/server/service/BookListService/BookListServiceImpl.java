@@ -47,12 +47,7 @@ public class BookListServiceImpl implements BookListService {
         BookList bookList = BookListConverter.toBookList(request, member);
 
         // BookList 엔티티 저장
-        bookList = bookListRepository.save(bookList);
-
-        // 책 추가
-        addBooksToBookList(bookList, request.getBooksId());
-
-        return bookList;
+        return bookListRepository.save(bookList);
     }
 
     // 책리스트 수정
