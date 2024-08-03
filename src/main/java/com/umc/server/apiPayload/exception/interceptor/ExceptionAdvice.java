@@ -1,8 +1,9 @@
-package com.umc.server.apiPayload.exception;
+package com.umc.server.apiPayload.exception.interceptor;
 
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.apiPayload.code.ErrorReasonDTO;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
+import com.umc.server.apiPayload.exception.GeneralException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
