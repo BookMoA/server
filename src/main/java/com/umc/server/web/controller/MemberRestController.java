@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
+import com.umc.server.domain.Member;
 import com.umc.server.service.MemberService.KakaoService;
 import com.umc.server.service.MemberService.MemberService;
+import com.umc.server.service.MemberService.TokenBlacklistService;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -29,6 +32,7 @@ public class MemberRestController {
 
     private final MemberService memberService;
     private final KakaoService kakaoService;
+    private TokenBlacklistService blacklistService;
 
     // TODO: 회원가입
     @Operation(
@@ -84,7 +88,7 @@ public class MemberRestController {
         String accessToken = kakaoService.getAccessToken(code);
         KakaoRequestDTO.SignUpRequestDTO kakaoSignUp = kakaoService.getMemberInfo(accessToken);
 
-        return ApiResponse.onSuccess(kakaoService.signUp(kakaoSignUp));
+        return ApiResponse.onSuccess(kakaoService.signUp(kakaoSignUp, accessToken));
     }
 
     // TODO: 토큰 재발급 후 로그인
@@ -103,5 +107,24 @@ public class MemberRestController {
         String accessToken = authorizationHeader.substring(7);
         MemberResponseDTO.TokenInfo tokenInfo = memberService.renew(accessToken, refreshToken);
         return ApiResponse.onSuccess(tokenInfo);
+    }
+
+    // TODO: 로그아웃
+    @Operation(
+            summary = "모든 회원 대상 로그아웃 api",
+            description = "일반, 소셜 로그인 회원 모두가 이 api를 통해 로그아웃할 수 있습니다.")
+    @GetMapping("/sign-out")
+    public ApiResponse<String> signOut(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authorizationHeader,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new MemberHandler(ErrorStatus.valueOf("_BAD_REQUEST"));
+        }
+        String accessToken = authorizationHeader.substring(7);
+        memberService.signOut(signInmember);
+        blacklistService.addToBlacklist(accessToken);
+
+        return ApiResponse.onSuccess("로그아웃에 성공하였습니다.");
     }
 }

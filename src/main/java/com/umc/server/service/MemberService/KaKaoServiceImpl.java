@@ -120,7 +120,7 @@ public class KaKaoServiceImpl implements KakaoService {
 
     // TODO: 카카오 회원 회원가입 및 로그인
     public MemberResponseDTO.SignInResponseDTO signUp(
-            KakaoRequestDTO.SignUpRequestDTO signUpRequestDTO) {
+            KakaoRequestDTO.SignUpRequestDTO signUpRequestDTO, String kakaoAccessToken) {
 
         // return 할 Member
         Member signInMember = null;
@@ -147,6 +147,7 @@ public class KaKaoServiceImpl implements KakaoService {
         final String refreshToken = tokenInfo.getRefreshToken();
 
         signInMember.setRefreshToken(refreshToken);
+        signInMember.setKakaoAccessToken(kakaoAccessToken);
         signInMember.setInActiveDate(LocalDate.now());
         memberRepository.save(signInMember);
 

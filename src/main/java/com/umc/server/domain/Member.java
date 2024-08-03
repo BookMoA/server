@@ -52,6 +52,11 @@ public class Member extends BaseEntity implements UserDetails {
     @Lob
     @Column(columnDefinition = "TEXT")
     @Setter
+    private String kakaoAccessToken;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Setter
     private String refreshToken;
 
     @Lob

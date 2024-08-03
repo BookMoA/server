@@ -1,9 +1,13 @@
 package com.umc.server.service.MemberService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
+import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.enums.TokenStatus;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.util.JwtTokenUtil;
@@ -14,12 +18,18 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -134,5 +144,50 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberHandler(ErrorStatus.valueOf("INVALID_TOKEN_ERROR"));
         }
         return tokenInfo;
+    }
+
+    // TODO: 로그아웃
+    public void signOut(Member signInMember) {
+        if (signInMember.getSignUpType() == SignUpType.SOCIAL) {
+            final String accessToken = signInMember.getKakaoAccessToken();
+
+            if (accessToken != null && !accessToken.isEmpty()) {
+                try {
+                    String password = kakaoDisconnect(accessToken).toString();
+                    if (!passwordEncoder.matches(password, signInMember.getPassword())) {
+                        throw new MemberHandler(ErrorStatus._BAD_REQUEST);
+                    }
+                    signInMember.setKakaoAccessToken(null);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        signInMember.setRefreshToken(null);
+        memberRepository.save(signInMember);
+    }
+
+    private Long kakaoDisconnect(String accessToken) throws JsonProcessingException {
+        // header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // request
+        HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        "https://kapi.kakao.com/v1/user/logout",
+                        HttpMethod.POST,
+                        kakaoLogoutRequest,
+                        String.class);
+
+        // responseBody에 있는 정보를 꺼냄
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+        return jsonNode.get("id").asLong();
     }
 }
