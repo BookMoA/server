@@ -112,7 +112,6 @@ public class KaKaoServiceImpl implements KakaoService {
         return KakaoRequestDTO.SignUpRequestDTO.builder()
                 .id(id)
                 .nickname(nickname)
-                .accessToken(accessToken)
                 .profileURL(profileURL)
                 .build();
     }
