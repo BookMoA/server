@@ -34,6 +34,10 @@ public enum ErrorStatus implements BaseErrorCode {
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
     INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다."),
 
+    // 검색&조회
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", false, "유효하지 않은 분류입니다."),
+    PAGE_TOO_SMALL(HttpStatus.BAD_REQUEST, "PAGE4001", false, "유효하지 않은 페이지 번호입니다."),
+
     // 독서 모임
     CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUB4001", false, "독서 모임이 없습니다."),
     CLUB_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CLUB4002", false, "이미 존재하는 독서 모임 이름입니다."),
