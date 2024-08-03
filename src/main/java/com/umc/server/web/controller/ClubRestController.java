@@ -38,7 +38,7 @@ public class ClubRestController {
     }
 
     @Operation(summary = "Book Club read API", description = "특정 독서 모임의 상세 정보 조회 API")
-    @GetMapping("/detail")
+    @GetMapping("")
     @Parameter(name = "clubId", description = "조회할 독서 모임의 아이디")
     public ApiResponse<ClubResponseDTO.ClubDetailResponseDTO> clubDetailAPI(
             @RequestParam(name = "clubId", defaultValue = "") Long clubId) {

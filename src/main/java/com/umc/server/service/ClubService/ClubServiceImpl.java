@@ -125,6 +125,15 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public void deleteClub(Long clubId, Long memberId) {
         System.out.println("deleteClub");
+        if (memberId == null) {
+            System.out.println("memberId == null");
+            memberId = Long.valueOf("");
+        }
+        if (clubId == null) {
+            System.out.println("clubId == null");
+            clubId = Long.valueOf("");
+        }
+
         // 1. 모임 존재 판별
         Club club =
                 clubRepository
@@ -154,6 +163,10 @@ public class ClubServiceImpl implements ClubService {
         }
 
         // 3. 모임 삭제
+        // 자식 엔티티 삭제 (명시적)
+        club.getClubMemberList().clear(); // 모든 연관된 ClubMember 삭제
+        club.getClubPostList().clear(); // 모든 연관된 ClubPost 삭제
+
         System.out.println("clubRepository");
         clubRepository.delete(club);
     }
