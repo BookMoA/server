@@ -36,8 +36,6 @@ public class MemberServiceImpl implements MemberService {
 
         // 레포지토리에 저장
         memberRepository.save(newMember);
-
-        // 로그인 함수 불러옴
     }
 
     // TODO: 로그인

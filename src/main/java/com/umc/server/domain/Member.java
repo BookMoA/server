@@ -25,7 +25,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Column(nullable = false)
@@ -44,7 +44,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private SignUpType signUpType;
 
-    private String accessToken;
+    @Setter private String accessToken;
 
     @Lob
     @Column(columnDefinition = "TEXT")

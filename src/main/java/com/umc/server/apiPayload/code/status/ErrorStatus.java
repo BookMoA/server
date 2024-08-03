@@ -20,6 +20,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 멤버 관려 에러
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4002", false, "존재하지 않는 회원입니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER4001", false, "이미 존재하는 회원입니다."),
+    KAKAO_SIGN_IN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER5000", false, "카카오 로그인 에러 입니다."),
 
     BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST4001", false, "책리스트가 없습니다."),
     BOOKLIST_INVALID_STATUS(HttpStatus.BAD_REQUEST, "BOOKLIST4002", false, "STATUS형식이 올바르지 않습니다."),
