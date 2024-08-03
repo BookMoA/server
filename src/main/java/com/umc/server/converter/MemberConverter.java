@@ -1,6 +1,7 @@
 package com.umc.server.converter;
 
 import com.umc.server.domain.Member;
+import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 
 public class MemberConverter {
@@ -9,7 +10,9 @@ public class MemberConverter {
     public static Member toMember(MemberRequestDTO.SignUpRequestDTO signUpRequestDTO) {
         return Member.builder()
                 .email(signUpRequestDTO.getEmail())
+                .password(signUpRequestDTO.getPassword())
                 .nickname(signUpRequestDTO.getNickname())
+                .signUpType(SignUpType.GENERAL)
                 .build();
     }
 }

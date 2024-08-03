@@ -18,12 +18,12 @@ public class MemberServiceImpl implements MemberService {
     public void signUp(MemberRequestDTO.SignUpRequestDTO signUpRequestDTO) {
 
         // password 암호화 진행
-        String password = signUpRequestDTO.getPassword();
-        String encodedPassword = PasswordUtil.encryptPassword(password);
+        final String password = signUpRequestDTO.getPassword();
+        final String encodedPassword = PasswordUtil.encryptPassword(password);
         signUpRequestDTO.setPassword(encodedPassword);
 
         // converter를 이용하여 DTO를 Member로 변경
-        Member newMember = MemberConverter.toMember(signUpRequestDTO);
+        final Member newMember = MemberConverter.toMember(signUpRequestDTO);
 
         // 레포지토리에 저장
         memberRepository.save(newMember);

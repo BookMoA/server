@@ -25,12 +25,7 @@ public class MemberRestController {
     public ApiResponse<String> signUp(
             @RequestBody MemberRequestDTO.SignUpRequestDTO signUpRequestDTO) {
 
-        // 받아온 입력데이터 service에 보내서 저장하기
         memberService.signUp(signUpRequestDTO);
-
-        // 에러가 없이 성공했다면
         return ApiResponse.onSuccess("회원가입에 성공하였습니다.");
-
-        // 에러가 있다면 에러 코드
     }
 }
