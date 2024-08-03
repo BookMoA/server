@@ -13,4 +13,7 @@ public interface BookListRepository extends JpaRepository<BookList, Long> {
             "SELECT bl FROM BookList bl WHERE bl.member.id = :memberId "
                     + "OR EXISTS (SELECT 1 FROM MemberBookList mbl WHERE mbl.bookList.id = bl.id AND mbl.isStored = true)")
     Page<BookList> findStoredBooksByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Query("SELECT b FROM BookList b WHERE b.title LIKE %:title%")
+    Page<BookList> findByTitleContaining(@Param("title") String title, Pageable pageable);
 }
