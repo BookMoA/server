@@ -39,7 +39,9 @@ public class BookListRestController {
         return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList));
     }
 
-    @Operation(summary = "특정 책리스트 수정 API", description = "특정 책리스트의 정보를 수정하는 API입니다.")
+    @Operation(
+            summary = "특정 책리스트 수정 API",
+            description = "특정 책리스트의 정보를 수정하는 API입니다. 책리스트의 책값을 모두 적어줘야 수정이 반영됩니다.")
     @PatchMapping("/{bookListId}")
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<BookListRequestDTO.UpdateBookListDTO> updateBookList(

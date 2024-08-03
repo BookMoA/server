@@ -53,20 +53,53 @@ public class BookListServiceImpl implements BookListService {
     // 책리스트 수정
     @Override
     public BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request) {
+        // 1. 책 리스트 조회
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
 
+        // 2. 상태 값 변환
         ListStatus listStatus;
         try {
             listStatus = ListStatus.valueOf(request.getStatus());
         } catch (IllegalArgumentException e) {
-            throw new GeneralException(
-                    ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 PUBLIC이나 PRIVATE이 아니라면 ERRROR
+            throw new GeneralException(ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 올바르지 않으면 오류
         }
 
+        // 3. 책 리스트 정보 업데이트
         bookList.update(request.getTitle(), request.getSpec(), request.getImg(), listStatus);
+        // ------------------------------------------------------------------------------------------------------
+        // 4. 기존 BookListEntry 삭제
+        List<BookListEntry> existingEntries = bookList.getBookListEntry();
+        bookListEntryRepository.deleteAll(existingEntries); // 현재 리스트의 모든 BookListEntry 삭제
+        bookList.getBookListEntry().clear(); // 현재 리스트에서 모든 BookListEntry 제거
+
+        // 5. 새로 받은 BookListEntry 정보로 업데이트
+        List<BookListEntry> newEntries = new ArrayList<>();
+        for (BookListRequestDTO.BookListEntryDTO entryDTO : request.getBooks()) {
+            Book book =
+                    bookRepository
+                            .findById(entryDTO.getId())
+                            .orElseThrow(() -> new GeneralException(ErrorStatus.BOOK_NOT_FOUND));
+
+            BookListEntry newEntry =
+                    BookListEntry.builder()
+                            .book(book)
+                            .bookList(bookList)
+                            .number(entryDTO.getNumber())
+                            .build();
+
+            newEntries.add(newEntry);
+            bookList.getBookListEntry().add(newEntry); // 새로운 항목 추가
+        }
+
+        // 6. BookList의 bookCnt 업데이트
+        bookList.setBookCnt(bookList.getBookListEntry().size());
+
+        // 7. BookList 저장 (bookListEntry도 자동으로 저장됨)
+        bookListRepository.save(bookList);
+
         return bookList;
     }
 
@@ -115,61 +148,13 @@ public class BookListServiceImpl implements BookListService {
                         .findById(bookListId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
 
-        // 책 리스트에서 책 찾기
-        List<Book> books = bookRepository.findAllById(request.getBooksId());
-
-        if (books.size() != request.getBooksId().size()) {
-            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
-        }
-
-        // 기존에 추가된 책을 확인
-        List<Long> existingBookIds =
-                bookList.getBookListEntry().stream()
-                        .map(entry -> entry.getBook().getId())
-                        .collect(Collectors.toList());
-
-        // 새로 추가할 책 리스트에서 기존에 추가된 책이 있는지 확인
-        List<Long> duplicateBookIds =
-                request.getBooksId().stream()
-                        .filter(existingBookIds::contains)
-                        .collect(Collectors.toList());
-
-        if (!duplicateBookIds.isEmpty()) {
-            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_ALREADY_EXISTS);
-        }
-
-        // 새로 추가할 책 리스트에서 기존에 추가되지 않은 책만 선택
-        List<Book> newBooks =
-                books.stream()
-                        .filter(book -> !existingBookIds.contains(book.getId()))
-                        .collect(Collectors.toList());
-
-        // 새로 추가할 BookListEntry 생성
-        List<BookListEntry> entries = new ArrayList<>();
-        // 기존에 추가된 책의 개수 확인
-        int currentBookCount = bookList.getBookListEntry().size();
-
-        // BookListEntry객체 생성
-        for (Book book : newBooks) {
-            BookListEntry entry =
-                    BookListEntry.builder()
-                            .book(book)
-                            .bookList(bookList)
-                            .number(++currentBookCount) // 현재 개수에 순차적으로 증가시키는 값
-                            .build();
-            entries.add(bookListEntryRepository.save(entry));
-        }
-
-        // BookList에 BookListEntry 추가
-        bookList.getBookListEntry().addAll(entries);
-        bookList.setBookCnt(currentBookCount); // 책개수 추가
-
-        // BookList 업데이트
-        bookListRepository.save(bookList);
+        // 책 추가
+        addBooksToBookList(bookList, request.getBooksId());
 
         return request.getBooksId();
     }
 
+    // 책 리스트의 책 삭제
     @Override
     @Transactional
     public void deleteBookInBookList(
@@ -225,4 +210,112 @@ public class BookListServiceImpl implements BookListService {
         // BookList 업데이트
         bookListRepository.save(bookList);
     }
+
+    // 리스트에 책 추가 함수
+    private void addBooksToBookList(BookList bookList, List<Long> bookIds) {
+        // 책 리스트에서 책 찾기
+        List<Book> books = bookRepository.findAllById(bookIds);
+
+        if (books.size() != bookIds.size()) {
+            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+        }
+
+        // 기존에 추가된 책을 확인
+        List<Long> existingBookIds =
+                bookList.getBookListEntry().stream()
+                        .map(entry -> entry.getBook().getId())
+                        .collect(Collectors.toList());
+
+        // 새로 추가할 책 리스트에서 기존에 추가된 책이 있는지 확인
+        List<Long> duplicateBookIds =
+                bookIds.stream().filter(existingBookIds::contains).collect(Collectors.toList());
+
+        if (!duplicateBookIds.isEmpty()) {
+            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_ALREADY_EXISTS);
+        }
+
+        // 새로 추가할 책 리스트에서 기존에 추가되지 않은 책만 선택
+        List<Book> newBooks =
+                books.stream()
+                        .filter(book -> !existingBookIds.contains(book.getId()))
+                        .collect(Collectors.toList());
+
+        // 새로 추가할 BookListEntry 생성
+        List<BookListEntry> entries = new ArrayList<>();
+        int currentBookCount = bookList.getBookListEntry().size();
+
+        for (Book book : newBooks) {
+            BookListEntry entry =
+                    BookListEntry.builder()
+                            .book(book)
+                            .bookList(bookList)
+                            .number(++currentBookCount) // 현재 개수에 순차적으로 증가시키는 값
+                            .build();
+            entries.add(entry);
+        }
+
+        // BookList에 BookListEntry 추가
+        bookList.getBookListEntry().addAll(entries);
+        bookList.setBookCnt(currentBookCount); // 책 개수 업데이트
+
+        // BookList 업데이트
+        bookListRepository.save(bookList);
+    }
+
+    //    @Override
+    //    @Transactional
+    //    public void deleteBookInBookList(
+    //            Long bookListId, BookListRequestDTO.DeleteBookInBookListDTO request) {
+    //        // 책 리스트 찾기
+    //        BookList bookList =
+    //                bookListRepository
+    //                        .findById(bookListId)
+    //                        .orElseThrow(() -> new
+    // GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+    //
+    //        // 책 리스트에서 책 찾기
+    //        List<Book> books = bookRepository.findAllById(request.getBooksId());
+    //
+    //        if (books.size() != request.getBooksId().size()) {
+    //            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+    //        }
+    //
+    //        // 기존에 존재하는 책을 확인
+    //        List<Long> existingBookIds =
+    //                bookList.getBookListEntry().stream()
+    //                        .map(entry -> entry.getBook().getId())
+    //                        .collect(Collectors.toList());
+    //
+    //        // 해당책 리스트에서 삭제하려는 아이디의 책이 있는지 확인
+    //        List<Long> duplicateBookIds =
+    //                request.getBooksId().stream()
+    //                        .filter(existingBookIds::contains)
+    //                        .collect(Collectors.toList());
+    //
+    //        if (duplicateBookIds.isEmpty()) {
+    //            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_NO_EXISTS);
+    //        }
+    //
+    //        // 삭제할 책 엔티티를 BookListEntry에서 제거
+    //        List<BookListEntry> entriesToRemove =
+    //                bookList.getBookListEntry().stream()
+    //                        .filter(entry -> duplicateBookIds.contains(entry.getBook().getId()))
+    //                        .collect(Collectors.toList());
+    //
+    //        // BookListEntry 삭제
+    //        bookList.getBookListEntry().removeAll(entriesToRemove);
+    //        entriesToRemove.forEach(entry -> bookListEntryRepository.delete(entry));
+    //
+    //        // 남은 책들의 number를 1부터 순서대로 재정렬
+    //        List<BookListEntry> remainingEntries = bookList.getBookListEntry();
+    //        for (int i = 0; i < remainingEntries.size(); i++) {
+    //            remainingEntries.get(i).setNumber(i + 1);
+    //        }
+    //
+    //        // BookList의 bookCnt 값 업데이트
+    //        bookList.setBookCnt(remainingEntries.size());
+    //
+    //        // BookList 업데이트
+    //        bookListRepository.save(bookList);
+    //    }
 }
