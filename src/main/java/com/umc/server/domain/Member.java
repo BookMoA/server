@@ -35,11 +35,9 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @ColumnDefault("false")
-    @Column(nullable = false)
     private Boolean inFocusMode;
 
     @ColumnDefault("0")
-    @Column(nullable = false)
     private Long totalPages;
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +51,6 @@ public class Member extends BaseEntity {
     private String profileURL;
 
     @ColumnDefault("false")
-    @Column(nullable = false)
     private Boolean isDeleted;
 
     private LocalDate inActiveDate;

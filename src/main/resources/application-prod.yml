@@ -1,8 +1,4 @@
 spring:
-  config:
-    import:
-      - optional:file:env/local-db.env[.properties]  # .env.properties 로 해석하여 가져오겠다
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
@@ -11,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect

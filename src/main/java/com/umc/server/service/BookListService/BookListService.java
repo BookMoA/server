@@ -1,8 +1,8 @@
 package com.umc.server.service.BookListService;
 
 import com.umc.server.domain.BookList;
-import com.umc.server.web.dto.BookListRequestDTO;
-import com.umc.server.web.dto.BookListResponseDTO;
+import com.umc.server.web.dto.request.BookListRequestDTO;
+import com.umc.server.web.dto.response.BookListResponseDTO;
 import java.util.List;
 import java.util.Optional;
 
