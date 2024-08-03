@@ -30,4 +30,9 @@ public class MemberRequestDTO {
 
         @Setter @NotBlank String password;
     }
+
+    @Getter
+    public static class RequestTokenDTO {
+        String refreshToken;
+    }
 }

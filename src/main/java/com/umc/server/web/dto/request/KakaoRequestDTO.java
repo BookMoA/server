@@ -2,7 +2,7 @@ package com.umc.server.web.dto.request;
 
 import lombok.*;
 
-public class KakaoRequsetDTO {
+public class KakaoRequestDTO {
 
     @Getter
     @Builder
@@ -12,7 +12,7 @@ public class KakaoRequsetDTO {
         private String nickname;
         private String profileURL;
         private String accessToken;
-
+        @Setter private String refreshToken;
         @Setter private String password;
     }
 }

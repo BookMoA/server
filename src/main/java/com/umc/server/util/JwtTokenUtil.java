@@ -73,21 +73,6 @@ public class JwtTokenUtil {
         return MemberResponseDTO.TokenInfo.of(accessToken, refreshToken);
     }
 
-    // TODO: REFRESH 토근 생성
-    public MemberResponseDTO.TokenInfo generateRefreshToken(String accessToken) {
-
-        final LocalDateTime now = LocalDateTime.now();
-        final String refreshToken =
-                Jwts.builder()
-                        .setExpiration(
-                                Date.from(
-                                        now.plusDays(7).atZone(ZoneId.systemDefault()).toInstant()))
-                        .signWith(key, SignatureAlgorithm.HS256)
-                        .compact();
-
-        return MemberResponseDTO.TokenInfo.of(accessToken, refreshToken);
-    }
-
     // TODO: 토큰 유효 검증
     public TokenStatus validateToken(String token) {
         try {

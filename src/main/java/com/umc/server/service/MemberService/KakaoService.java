@@ -1,14 +1,14 @@
 package com.umc.server.service.MemberService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.umc.server.domain.Member;
-import com.umc.server.web.dto.request.KakaoRequsetDTO;
+import com.umc.server.web.dto.request.KakaoRequestDTO;
+import com.umc.server.web.dto.response.MemberResponseDTO;
 
 public interface KakaoService {
     String getAccessToken(String code) throws JsonProcessingException;
 
-    Member signUp(KakaoRequsetDTO.SignUpRequestDTO signUpRequestDTO);
+    MemberResponseDTO.SignInResponseDTO signUp(KakaoRequestDTO.SignUpRequestDTO signUpRequestDTO);
 
-    KakaoRequsetDTO.SignUpRequestDTO getMemberInfo(String accessToken)
+    KakaoRequestDTO.SignUpRequestDTO getMemberInfo(String accessToken)
             throws JsonProcessingException;
 }

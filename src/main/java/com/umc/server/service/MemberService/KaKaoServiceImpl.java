@@ -7,15 +7,22 @@ import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.repository.MemberRepository;
-import com.umc.server.util.PasswordUtil;
-import com.umc.server.web.dto.request.KakaoRequsetDTO;
+import com.umc.server.util.JwtTokenUtil;
+import com.umc.server.web.dto.request.KakaoRequestDTO;
+import com.umc.server.web.dto.response.MemberResponseDTO;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,6 +42,10 @@ public class KaKaoServiceImpl implements KakaoService {
     private String clientSecret;
 
     private final MemberRepository memberRepository;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    @Autowired PasswordEncoder passwordEncoder;
 
     // TODO: 토큰 받기
     public String getAccessToken(String code) throws JsonProcessingException {
@@ -69,7 +80,7 @@ public class KaKaoServiceImpl implements KakaoService {
         return jsonNode.get("access_token").asText();
     }
 
-    public KakaoRequsetDTO.SignUpRequestDTO getMemberInfo(String accessToken)
+    public KakaoRequestDTO.SignUpRequestDTO getMemberInfo(String accessToken)
             throws JsonProcessingException {
 
         // header
@@ -98,40 +109,62 @@ public class KaKaoServiceImpl implements KakaoService {
         String nickname = profileNode.path("nickname").asText();
         String profileURL = profileNode.path("profile_image_url").asText();
 
-        return KakaoRequsetDTO.SignUpRequestDTO.builder()
+        return KakaoRequestDTO.SignUpRequestDTO.builder()
                 .id(id)
                 .nickname(nickname)
-                .profileURL(profileURL)
                 .accessToken(accessToken)
+                .profileURL(profileURL)
                 .build();
     }
 
     // TODO: 카카오 회원 회원가입 및 로그인
-    public Member signUp(KakaoRequsetDTO.SignUpRequestDTO signUpRequestDTO) {
+    public MemberResponseDTO.SignInResponseDTO signUp(
+            KakaoRequestDTO.SignUpRequestDTO signUpRequestDTO) {
 
         // return 할 Member
         Member signInMember = null;
 
         // 존재하는 회원인지 확인
         final String password = signUpRequestDTO.getId().toString();
-        final String encodedPassword = PasswordUtil.encryptPassword(password);
+        final String encodedPassword = passwordEncoder.encode(password);
         Optional<Member> socialMember =
                 memberRepository.findByPasswordAndSignUpType(
                         encodedPassword, SignUpType.valueOf("SOCIAL"));
 
-        // 회원가입
         if (socialMember.isEmpty()) {
+            // 회원가입
             signUpRequestDTO.setPassword(encodedPassword);
-            final Member newMember = MemberConverter.toMember(signUpRequestDTO);
-            signInMember = memberRepository.save(newMember);
+            signInMember = memberRepository.save(MemberConverter.toMember(signUpRequestDTO));
         } else {
             // 이미 존재하는 회원의 액세스 토큰 업데이트
-            Member existingMember = socialMember.get();
-            existingMember.setAccessToken(signUpRequestDTO.getAccessToken());
-            signInMember = memberRepository.save(existingMember);
+            signInMember = socialMember.get();
         }
 
+        MemberResponseDTO.TokenInfo tokenInfo =
+                getTokenInfo(signUpRequestDTO.getNickname(), password);
+        final String accessToken = tokenInfo.getAccessToken();
+        final String refreshToken = tokenInfo.getRefreshToken();
+
+        signInMember.setRefreshToken(refreshToken);
+        signInMember.setInActiveDate(LocalDate.now());
+        memberRepository.save(signInMember);
+
         // 로그인 진행
-        return signInMember;
+        MemberResponseDTO.SignInResponseDTO signInMemberDTO =
+                MemberConverter.toSignInResponseDTO(signInMember);
+        signInMemberDTO.setAccessToken(accessToken);
+
+        return signInMemberDTO;
+    }
+
+    private MemberResponseDTO.TokenInfo getTokenInfo(String nickname, String password) {
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(nickname, password);
+
+        Authentication authentication =
+                authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        return jwtTokenUtil.generateToken(authentication, nickname);
     }
 }
