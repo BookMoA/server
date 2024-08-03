@@ -1,5 +1,7 @@
 package com.umc.server.service.MemberService;
 
+import com.umc.server.apiPayload.code.status.ErrorStatus;
+import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
 import com.umc.server.repository.MemberRepository;
@@ -29,5 +31,32 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(newMember);
 
         // 로그인 함수 불러옴
+    }
+
+    // TODO: 로그인
+    public Member signIn(MemberRequestDTO.SignInRequestDTO signInRequestDTO) {
+
+        // 이메일 확인
+        final String email = signInRequestDTO.getEmail();
+        Member signInmember =
+                memberRepository
+                        .findByEmail(email)
+                        .orElseThrow(
+                                () -> new MemberHandler(ErrorStatus.valueOf("MEMBER_NOT_FOUND")));
+
+        // 비밀번호 확인
+        final String password = signInRequestDTO.getPassword();
+        final String encodedPassword = PasswordUtil.encryptPassword(password);
+        if (!signInmember.getPassword().equals(encodedPassword)) {
+            throw new MemberHandler(ErrorStatus.valueOf("MEMBER_NOT_FOUND"));
+        }
+
+        // 비밀번호가 맞다면 access token 발급
+
+        // active data 업데이트
+
+        // repository에 저장
+
+        return signInmember;
     }
 }
