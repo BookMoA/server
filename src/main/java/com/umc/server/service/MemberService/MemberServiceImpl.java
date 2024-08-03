@@ -19,6 +19,13 @@ public class MemberServiceImpl implements MemberService {
     // TODO: 회원가입 기능
     public void signUp(MemberRequestDTO.SignUpRequestDTO signUpRequestDTO) {
 
+        // 존재하는 회원인지 확인
+        final String email = signUpRequestDTO.getEmail();
+        Boolean isExistingMember = memberRepository.existsByEmail(email);
+        if (isExistingMember) {
+            throw new MemberHandler(ErrorStatus.valueOf("MEMBER_ALREADY_EXISTS"));
+        }
+
         // password 암호화 진행
         final String password = signUpRequestDTO.getPassword();
         final String encodedPassword = PasswordUtil.encryptPassword(password);
