@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
-import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
@@ -112,7 +111,7 @@ public class KaKaoServiceImpl implements KakaoService {
         String profileURL = profileNode.path("profile_image_url").asText();
 
         return KakaoRequestDTO.SignUpRequestDTO.builder()
-                .id(id)
+                .kakaoId(id)
                 .nickname(nickname)
                 .profileURL(profileURL)
                 .build();
@@ -126,14 +125,12 @@ public class KaKaoServiceImpl implements KakaoService {
         Member signInMember = null;
 
         // 존재하는 회원인지 확인
-        final String password = signUpRequestDTO.getId().toString();
-        final String encodedPassword = passwordEncoder.encode(password);
-        Optional<Member> socialMember =
-                memberRepository.findByPasswordAndSignUpType(
-                        encodedPassword, SignUpType.valueOf("SOCIAL"));
+        final Long kakaoId = signUpRequestDTO.getKakaoId();
+        Optional<Member> socialMember = memberRepository.findByKakaoId(kakaoId);
 
         if (socialMember.isEmpty()) {
             // 회원가입
+            final String encodedPassword = passwordEncoder.encode(kakaoId.toString());
             signUpRequestDTO.setPassword(encodedPassword);
             signInMember = memberRepository.save(MemberConverter.toMember(signUpRequestDTO));
         } else {
@@ -142,7 +139,7 @@ public class KaKaoServiceImpl implements KakaoService {
         }
 
         MemberResponseDTO.TokenInfo tokenInfo =
-                getTokenInfo(signUpRequestDTO.getNickname(), password);
+                getTokenInfo(signUpRequestDTO.getNickname(), kakaoId.toString());
         final String accessToken = tokenInfo.getAccessToken();
         final String refreshToken = tokenInfo.getRefreshToken();
 

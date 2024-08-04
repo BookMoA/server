@@ -28,7 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private TokenBlacklistService blacklistService;
+    private final TokenBlacklistService blacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -103,7 +103,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // filter 에서 제외한 url 목록
-        String[] excludedPaths = {"/users/auth/", "/swagger-ui/"};
+        String[] excludedPaths = {"/users/auth/", "/swagger-ui/", "/v3/"};
+
+        if ("/".equals(path)) {
+            return true;
+        }
 
         for (String excludedPath : excludedPaths) {
             if (path.startsWith(excludedPath)) {

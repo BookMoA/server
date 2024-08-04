@@ -153,8 +153,8 @@ public class MemberServiceImpl implements MemberService {
 
             if (accessToken != null && !accessToken.isEmpty()) {
                 try {
-                    String password = kakaoDisconnect(accessToken).toString();
-                    if (!passwordEncoder.matches(password, signInMember.getPassword())) {
+                    Long kakaoId = kakaoDisconnect(accessToken);
+                    if (!kakaoId.equals(signInMember.getKakaoId())) {
                         throw new MemberHandler(ErrorStatus._BAD_REQUEST);
                     }
                     signInMember.setKakaoAccessToken(null);
@@ -174,13 +174,13 @@ public class MemberServiceImpl implements MemberService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // request
-        HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> kakaoSignOutRequest = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response =
                 restTemplate.exchange(
                         "https://kapi.kakao.com/v1/user/logout",
                         HttpMethod.POST,
-                        kakaoLogoutRequest,
+                        kakaoSignOutRequest,
                         String.class);
 
         // responseBody에 있는 정보를 꺼냄

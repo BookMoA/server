@@ -32,7 +32,7 @@ public class MemberRestController {
 
     private final MemberService memberService;
     private final KakaoService kakaoService;
-    private TokenBlacklistService blacklistService;
+    private final TokenBlacklistService blacklistService;
 
     // TODO: 회원가입
     @Operation(
