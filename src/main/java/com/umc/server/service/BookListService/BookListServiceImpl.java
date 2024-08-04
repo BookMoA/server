@@ -8,10 +8,7 @@ import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
-import com.umc.server.repository.BookEntryRepository;
-import com.umc.server.repository.BookListEntryRepository;
-import com.umc.server.repository.BookListRepository;
-import com.umc.server.repository.MemberRepository;
+import com.umc.server.repository.*;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
@@ -30,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
     private final MemberRepository memberRepository;
-    private final BookEntryRepository bookRepository;
+    private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
 
     // 책리스트 추가
@@ -117,7 +114,7 @@ public class BookListServiceImpl implements BookListService {
         return bookList;
     }
 
-    // 책리스트 삭제 d
+    // 책리스트 삭제
     @Override
     public void deleteBookList(Long bookListId) {
         BookList bookList =
