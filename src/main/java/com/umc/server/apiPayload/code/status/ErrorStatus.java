@@ -44,6 +44,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUB4001", false, "독서 모임이 없습니다."),
     CLUB_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CLUB4002", false, "이미 존재하는 독서 모임 이름입니다."),
     CLUB_MEMBER_FULLED(HttpStatus.BAD_REQUEST, "CLUB4003", false, "독서 모임원이 가득 차 가입할 수 없습니다."),
+    CLUB_INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "CLUB4004", false, "독서 모임의 비밀번호가 잘못되었습니다."),
 
     // 독서 모임원
     CLUB_NOT_JOINED(HttpStatus.BAD_REQUEST, "CLUBMEMBER4001", false, "가입된 독서 모임이 없는 사용자입니다."),

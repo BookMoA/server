@@ -11,6 +11,7 @@ import com.umc.server.repository.ClubRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.web.dto.request.ClubMemberRequestDTO;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +41,16 @@ public class ClubMemberServiceImpl implements ClubMemberService {
                             throw new GeneralException(ErrorStatus.CLUB_ALREADY_JOINED);
                         });
 
-        // 3. 모임 상태 판별 (존재, 모임원 수)
+        // 3. 모임 상태 판별 (존재, 비밀번호 동일, 모임원 수)
         Club club =
                 clubRepository
                         .findById(request.getClubId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_FOUND));
+
+        if (!Objects.equals(club.getPassword(), request.getPassword())) {
+            throw new GeneralException(ErrorStatus.CLUB_INCORRECT_PASSWORD);
+        }
+
         if (club.getClubMemberList().size() >= 20) {
             throw new GeneralException(ErrorStatus.CLUB_MEMBER_FULLED);
         }
@@ -69,7 +75,10 @@ public class ClubMemberServiceImpl implements ClubMemberService {
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_FOUND));
 
         // 3. 모임 동일 여부 판단
-        if (!club.equals(member.getClubMember().getClub())) {
+        if (member.getClubMember() == null) {
+            throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
+        }
+        if (!Objects.equals(club, member.getClubMember().getClub())) {
             throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
         }
 
