@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/clubs/members")
 @RequiredArgsConstructor
-public class ClubMemeberRestController {
+public class ClubMemberRestController {
     private final ClubMemberService clubMemberService;
 
     @Operation(summary = "독서 모임 멤버 생성 (가입) API", description = "독서 모임 멤버 생성 (가입) API")
