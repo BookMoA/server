@@ -32,8 +32,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 책 관련 에러
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
-  
-    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다."),
 
     // 멤버 책 관련 에러
     MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
@@ -52,7 +50,9 @@ public enum ErrorStatus implements BaseErrorCode {
             false,
             "권한이 불충분합니다. 독서 모임 리더의 권한이 필요한 동작입니다."),
     CLUB_MEMBER_REQUIRED(
-            HttpStatus.BAD_REQUEST, "CLUBMEMBER4004", false, "권한이 불충분합니다. 가입된 독서 모임이 아닙니다.");
+            HttpStatus.BAD_REQUEST, "CLUBMEMBER4004", false, "권한이 불충분합니다. 가입된 독서 모임이 아닙니다."),
+
+    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
