@@ -103,7 +103,7 @@ public class JwtTokenUtil {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
         if (claims.get("auth") == null) {
-            throw new MemberHandler(ErrorStatus.valueOf("_UNAUTHORIZED"));
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject());

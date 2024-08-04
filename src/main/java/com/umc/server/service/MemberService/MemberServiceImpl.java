@@ -50,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
         final String email = signUpRequestDTO.getEmail();
         final Boolean isExistingMember = memberRepository.existsByEmail(email);
         if (isExistingMember) {
-            throw new MemberHandler(ErrorStatus.valueOf("MEMBER_ALREADY_EXISTS"));
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
         // password 암호화 진행
@@ -74,14 +74,13 @@ public class MemberServiceImpl implements MemberService {
         Member signInMember =
                 memberRepository
                         .findByEmail(email)
-                        .orElseThrow(
-                                () -> new MemberHandler(ErrorStatus.valueOf("MEMBER_NOT_FOUND")));
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 비밀번호 확인
         final String password = signInRequestDTO.getPassword();
         final String encodedPassword = passwordEncoder.encode(password);
         if (passwordEncoder.matches(signInMember.getPassword(), encodedPassword)) {
-            throw new MemberHandler(ErrorStatus.valueOf("MEMBER_NOT_FOUND"));
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
         return getToken(password, signInMember);
@@ -112,7 +111,7 @@ public class MemberServiceImpl implements MemberService {
 
             return signInMemberDTO;
         } catch (AuthenticationException e) {
-            throw new MemberHandler(ErrorStatus.valueOf("_UNAUTHORIZED"));
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
         }
     }
 
@@ -127,10 +126,7 @@ public class MemberServiceImpl implements MemberService {
             final Member member =
                     memberRepository
                             .findByNickname(nickname)
-                            .orElseThrow(
-                                    () ->
-                                            new MemberHandler(
-                                                    ErrorStatus.valueOf("MEMBER_NOT_FOUND")));
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
             final String savedToken = member.getRefreshToken();
 
             if (savedToken.matches(refreshToken)) {
@@ -141,7 +137,7 @@ public class MemberServiceImpl implements MemberService {
                 memberRepository.save(member);
             }
         } else {
-            throw new MemberHandler(ErrorStatus.valueOf("INVALID_TOKEN_ERROR"));
+            throw new MemberHandler(ErrorStatus.INVALID_TOKEN_ERROR);
         }
         return tokenInfo;
     }

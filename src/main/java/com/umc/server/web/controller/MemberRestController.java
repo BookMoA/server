@@ -82,7 +82,7 @@ public class MemberRestController {
             throws JsonProcessingException {
 
         if (error != null && !error.isEmpty()) {
-            throw new MemberHandler(ErrorStatus.valueOf("KAKAO_SIGN_IN_ERROR"));
+            throw new MemberHandler(ErrorStatus.KAKAO_SIGN_IN_ERROR);
         }
 
         String accessToken = kakaoService.getAccessToken(code);
@@ -102,7 +102,7 @@ public class MemberRestController {
 
         String refreshToken = requestToken.getRefreshToken();
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new MemberHandler(ErrorStatus.valueOf("_BAD_REQUEST"));
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);
         }
         String accessToken = authorizationHeader.substring(7);
         MemberResponseDTO.TokenInfo tokenInfo = memberService.renew(accessToken, refreshToken);
@@ -119,7 +119,7 @@ public class MemberRestController {
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new MemberHandler(ErrorStatus.valueOf("_BAD_REQUEST"));
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);
         }
         String accessToken = authorizationHeader.substring(7);
         memberService.signOut(signInmember);
