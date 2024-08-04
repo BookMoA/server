@@ -17,7 +17,7 @@ public interface ClubService {
 
     void deleteClub(Long clubId, Long memberId);
 
-    Slice<Club> recommendClub(String category, Long page);
+    Slice<Club> recommendClub(String category, Integer page);
 
-    Page<Club> searchClub(String category, String word, Long page);
+    Page<Club> searchClub(String category, String word, Integer page);
 }

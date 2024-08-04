@@ -173,10 +173,10 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public Slice<Club> recommendClub(String category, Long page) {
+    public Slice<Club> recommendClub(String category, Integer page) {
         Slice<Club> clubList;
         PageRequest pageRequest =
-                PageRequest.of((int) (page - 1), 10, Sort.by("created_at").descending());
+                PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
 
         if (category.equals("new")) {
             clubList = clubRepository.findAll(pageRequest);
@@ -192,11 +192,11 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public Page<Club> searchClub(String category, String word, Long page) {
+    public Page<Club> searchClub(String category, String word, Integer page) {
         Page<Club> clubList;
         String keyword = word.replace(" ", ".*");
         PageRequest pageRequest =
-                PageRequest.of((int) (page - 1), 10, Sort.by("created_at").descending());
+                PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
 
         if (category.equals("name")) {
             clubList = clubRepository.findByNameContaining(keyword, pageRequest);

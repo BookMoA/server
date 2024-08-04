@@ -65,24 +65,26 @@ public class ClubRestController {
     }
 
     @Operation(summary = "모임 추천 API", description = "추천 독서 모임의 리스트 조회 API")
-    @GetMapping("")
+    @GetMapping("/recommend")
     @Parameter(name = "category", description = "추천 분류 (new,activity,deadline)")
-    public ApiResponse<Slice<Club>> clubRecommendAPI(
+    public ApiResponse<ClubResponseDTO.ClubRecommendResponseDTO> clubRecommendAPI(
             @RequestParam(name = "category", defaultValue = "new") String category,
-            @RequestParam(name = "page", defaultValue = "1") Long page) {
-        Slice<Club> clubList = clubService.recommendClub(category, page);
-        return ApiResponse.onSuccess(clubList);
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        Slice<Club> clubSlice = clubService.recommendClub(category, page);
+        return ApiResponse.onSuccess(
+                ClubConverter.toClubRecommendResponseDTO(clubSlice, category, page));
     }
 
     @Operation(summary = "모임 검색 API", description = "검색한 독서 모임의 리스트 조회 API")
     @GetMapping("/search")
     @Parameter(name = "category", description = "검색 분류 (name, notice)")
     @Parameter(name = "word", description = "검색어")
-    public ApiResponse<Page<Club>> clubSearchAPI(
+    public ApiResponse<ClubResponseDTO.ClubSearchResponseDTO> clubSearchAPI(
             @RequestParam(name = "category", defaultValue = "name") String category,
             @RequestParam(name = "word", defaultValue = "") String word,
-            @RequestParam(name = "page", defaultValue = "1") Long page) {
-        Page<Club> clubList = clubService.searchClub(category, word, page);
-        return ApiResponse.onSuccess(clubList);
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        Page<Club> clubPage = clubService.searchClub(category, word, page);
+        return ApiResponse.onSuccess(
+                ClubConverter.toClubSearchResponseDTO(clubPage, category, word, page));
     }
 }
