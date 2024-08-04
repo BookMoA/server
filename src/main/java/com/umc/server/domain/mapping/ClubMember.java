@@ -33,4 +33,8 @@ public class ClubMember extends BaseEntity {
     @OneToOne()
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
 }
