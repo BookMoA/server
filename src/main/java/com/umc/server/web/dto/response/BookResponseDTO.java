@@ -1,4 +1,4 @@
-package com.umc.server.web.dto;
+package com.umc.server.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

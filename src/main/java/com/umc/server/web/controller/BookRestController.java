@@ -4,19 +4,20 @@ import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.BookConverter;
 import com.umc.server.domain.Book;
 import com.umc.server.service.BookService.BookService;
-import com.umc.server.web.dto.BookRequestDTO;
-import com.umc.server.web.dto.BookResponseDTO;
+import com.umc.server.web.dto.request.BookRequestDTO;
+import com.umc.server.web.dto.response.BookResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/books")
 public class BookRestController {
 
     private final BookService bookService;
@@ -31,9 +32,9 @@ public class BookRestController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @PostMapping("books/")
+    @PostMapping("/")
     public ApiResponse<BookResponseDTO.CreateBookResultDTO> createBook(
-            @RequestBody BookRequestDTO.CreateBookDTO createBookDTO) {
+            @RequestBody @Valid BookRequestDTO.CreateBookDTO createBookDTO) {
         Book book = bookService.createBook(createBookDTO);
         return ApiResponse.onSuccess(BookConverter.toCreateBookResultDTO(book));
     }
@@ -49,7 +50,7 @@ public class BookRestController {
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "bookId", description = "책의 아이디, path variable 입니다.")
-    @GetMapping("books/{bookId}")
+    @GetMapping("/{bookId}")
     public ApiResponse<BookResponseDTO.BookPreviewDTO> readBook(
             @PathVariable(name = "bookId") Long bookId) {
         Book book = bookService.readBook(bookId);
@@ -67,10 +68,10 @@ public class BookRestController {
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "bookId", description = "책의 아이디, path variable 입니다.")
-    @PatchMapping("books/{bookId}")
+    @PatchMapping("/{bookId}")
     public ApiResponse<BookResponseDTO.BookPreviewDTO> updateBook(
             @PathVariable(name = "bookId") Long bookId,
-            @RequestBody BookRequestDTO.UpdateBookDTO updateBookDTO) {
+            @RequestBody @Valid BookRequestDTO.UpdateBookDTO updateBookDTO) {
         Book book = bookService.updateBook(bookId, updateBookDTO);
         return ApiResponse.onSuccess(BookConverter.toBookPreviewDTO(book));
     }

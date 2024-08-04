@@ -30,17 +30,25 @@ public class Club extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String notice;
 
-    @Column(nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String code;
 
     @Column(length = 10)
     private String password;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubMember> clubMemberList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubPost> clubPostList = new ArrayList<>();
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
+
+    public void setNotice(String notice) {
+        this.notice = notice;
+    }
 }
