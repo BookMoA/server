@@ -1,8 +1,8 @@
 package com.umc.server.converter;
 
 import com.umc.server.domain.Book;
-import com.umc.server.web.dto.BookRequestDTO;
-import com.umc.server.web.dto.BookResponseDTO;
+import com.umc.server.web.dto.request.BookRequestDTO;
+import com.umc.server.web.dto.response.BookResponseDTO;
 
 public class BookConverter {
 

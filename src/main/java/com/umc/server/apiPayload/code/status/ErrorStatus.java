@@ -17,7 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", false, "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", false, "금지된 요청입니다."),
 
-    // 멤버 관려 에러
+    // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4004", false, "존재하지 않는 회원입니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER4001", false, "이미 존재하는 회원입니다."),
     KAKAO_SIGN_IN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER5000", false, "카카오 로그인 에러 입니다."),
@@ -32,7 +32,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 책 관련 에러
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
+  
     INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다."),
+
+    // 멤버 책 관련 에러
+    MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
 
     // 독서 모임
     CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUB4001", false, "독서 모임이 없습니다."),
