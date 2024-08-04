@@ -1,6 +1,8 @@
 package com.umc.server.web.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +41,13 @@ public class ClubResponseDTO {
 
         String intro;
 
+        LocalDateTime createAt;
+
+        LocalDateTime updateAt;
+
         Integer memberCount;
+
+        Integer postCount;
     }
 
     @SuperBuilder
@@ -70,5 +78,39 @@ public class ClubResponseDTO {
         LocalDateTime createAt;
 
         LocalDateTime updateAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClubRecommendResponseDTO {
+        String category;
+
+        Integer page;
+
+        Integer size;
+
+        @Builder.Default List<ClubPreviewResponseDTO> clubList = new ArrayList<>();
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClubSearchResponseDTO {
+        String category;
+
+        String word;
+
+        Integer page;
+
+        Integer totalElements;
+
+        Integer totalPages;
+
+        Integer size;
+
+        @Builder.Default List<ClubPreviewResponseDTO> clubList = new ArrayList<>();
     }
 }

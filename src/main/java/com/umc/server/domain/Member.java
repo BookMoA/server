@@ -52,14 +52,18 @@ public class Member extends BaseEntity implements UserDetails {
     @Lob
     @Column(columnDefinition = "TEXT")
     @Setter
+    private String kakaoAccessToken;
+
+    private Long kakaoId;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Setter
     private String refreshToken;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String profileURL;
-
-    @ColumnDefault("false")
-    private Boolean isDeleted;
 
     @Setter private LocalDate inActiveDate;
 

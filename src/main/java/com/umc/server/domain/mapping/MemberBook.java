@@ -13,9 +13,11 @@ import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
@@ -33,6 +35,8 @@ public class MemberBook extends BaseEntity {
 
     private Long readPage;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDate startedAt;
 
     private LocalDate endedAt;

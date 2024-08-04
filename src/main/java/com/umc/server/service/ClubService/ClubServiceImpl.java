@@ -14,11 +14,12 @@ import com.umc.server.web.dto.ClubRequestDTO;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -169,6 +170,43 @@ public class ClubServiceImpl implements ClubService {
 
         System.out.println("clubRepository");
         clubRepository.delete(club);
+    }
+
+    @Override
+    public Slice<Club> recommendClub(String category, Integer page) {
+        Slice<Club> clubList;
+        PageRequest pageRequest =
+                PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
+
+        if (category.equals("new")) {
+            clubList = clubRepository.findAll(pageRequest);
+        } else if (category.equals("activity")) {
+            clubList = clubRepository.findAllOrderByClubPostCountDesc(pageRequest);
+        } else if (category.equals("deadline")) {
+            clubList = clubRepository.findAllOrderByClubMemberCountDesc(pageRequest);
+        } else {
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
+
+        return clubList;
+    }
+
+    @Override
+    public Page<Club> searchClub(String category, String word, Integer page) {
+        Page<Club> clubList;
+        String keyword = word.replace(" ", ".*");
+        PageRequest pageRequest =
+                PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
+
+        if (category.equals("name")) {
+            clubList = clubRepository.findByNameContaining(keyword, pageRequest);
+        } else if (category.equals("notice")) {
+            clubList = clubRepository.findByNoticeContaining(keyword, pageRequest);
+        } else {
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
+
+        return clubList;
     }
 
     private String generateCode(String name) {
