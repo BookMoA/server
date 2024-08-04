@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Optional<Member> member = memberRepository.findByNickname(nickname);
         if (member.isEmpty()) {
-            throw new MemberHandler(ErrorStatus.valueOf("MEMBER_NOT_FOUND"));
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         }
         return member.get();
     }

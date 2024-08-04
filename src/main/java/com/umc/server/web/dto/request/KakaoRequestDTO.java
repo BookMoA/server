@@ -8,7 +8,7 @@ public class KakaoRequestDTO {
     @Builder
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SignUpRequestDTO {
-        private Long id;
+        private Long kakaoId;
         private String nickname;
         private String profileURL;
         private String accessToken;
