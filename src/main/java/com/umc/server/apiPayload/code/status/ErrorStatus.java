@@ -25,7 +25,10 @@ public enum ErrorStatus implements BaseErrorCode {
     BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4003", false, "이미 추가된 책입니다."),
     BOOKLIST_BOOK_NO_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4004", false, "리스트에 없는 책입니다."),
 
+    // 책 에러
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
+
+    MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
 
     INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다.");
 
