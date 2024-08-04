@@ -74,21 +74,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return Optional.empty();
     }
 
-    // @Override
-    // protected boolean shouldNotFilter(HttpServletRequest request) {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
 
-    //     // request 에서 요청 path 추출
-    //     String path = request.getServletPath();
+        // request 에서 요청 path 추출
+        String path = request.getServletPath();
 
-    //     // filter 에서 제외한 url 목록
-    //     String[] excludedPaths = {"/users/auth/", "/swagger-ui/"};
+        // filter 에서 제외한 url 목록
+        // String[] excludedPaths = {"/users/auth/", "/swagger-ui/"};
+        String[] excludedPaths = {"/users/auth/"};
 
-    //     for (String excludedPath : excludedPaths) {
-    //         if (path.startsWith(excludedPath)) {
-    //             return true;
-    //         }
-    //     }
+        for (String excludedPath : excludedPaths) {
+            if (path.startsWith(excludedPath)) {
+                return false;
+            }
+        }
 
-    //     return false;
-    // }
+        return true;
+    }
 }
