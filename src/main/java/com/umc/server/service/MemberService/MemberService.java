@@ -1,5 +1,6 @@
 package com.umc.server.service.MemberService;
 
+import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 
@@ -13,4 +14,7 @@ public interface MemberService {
 
     // TODO: 토큰 만료시 재발급
     MemberResponseDTO.TokenInfo renew(String accessToken, String refreshToken);
+
+    // TODO: 로그아웃
+    void signOut(Member signInMember);
 }

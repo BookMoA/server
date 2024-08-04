@@ -45,6 +45,7 @@ public class MemberConverter {
                 .refreshToken(signUpRequestDTO.getRefreshToken())
                 .signUpType(SignUpType.valueOf("SOCIAL"))
                 .inActiveDate(LocalDate.now())
+                .kakaoId(signUpRequestDTO.getKakaoId())
                 .role(Role.valueOf("USER"))
                 .build();
     }

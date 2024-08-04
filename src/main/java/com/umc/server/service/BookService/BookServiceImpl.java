@@ -5,7 +5,7 @@ import com.umc.server.apiPayload.exception.handler.BookHandler;
 import com.umc.server.converter.BookConverter;
 import com.umc.server.domain.Book;
 import com.umc.server.repository.BookRepository;
-import com.umc.server.web.dto.BookRequestDTO;
+import com.umc.server.web.dto.request.BookRequestDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
