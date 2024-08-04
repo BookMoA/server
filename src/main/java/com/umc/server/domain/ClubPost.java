@@ -28,15 +28,15 @@ public class ClubPost extends BaseEntity {
     @Column(nullable = false, length = 500)
     private String context;
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubPostComment> clubPostCommentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubPostLike> clubPostLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubPostPhoto> clubPostPhotoList = new ArrayList<>();
 

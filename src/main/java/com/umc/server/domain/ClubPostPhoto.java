@@ -22,7 +22,7 @@ public class ClubPostPhoto extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_post_id", nullable = false)
     private ClubPost clubPost;
 }

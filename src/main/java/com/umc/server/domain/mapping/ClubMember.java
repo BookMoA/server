@@ -23,11 +23,11 @@ public class ClubMember extends BaseEntity {
     @Column(nullable = false)
     private Boolean reader;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String statusMessage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "club_id")
     private Club club;
 
     @OneToOne()
