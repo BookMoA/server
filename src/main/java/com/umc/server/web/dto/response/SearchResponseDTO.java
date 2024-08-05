@@ -25,6 +25,7 @@ public class SearchResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchMemoResponseDTO {
+        private Long id; // 메모 아이디
         private Long bookId;
         private String coverImage;
         private String title;
