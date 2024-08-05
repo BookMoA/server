@@ -67,4 +67,8 @@ public class BookList extends BaseEntity {
     public void setBookCnt(int i) {
         this.bookCnt = i;
     }
+
+    public void setLikeCnt(int i) {
+        this.likeCnt = i;
+    }
 }
