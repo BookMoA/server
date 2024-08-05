@@ -3,11 +3,13 @@ package com.umc.server.service.BookListService;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.BookListHandler;
 import com.umc.server.converter.BookListConverter;
+import com.umc.server.converter.MemberBookListConverter;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
+import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.repository.*;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
@@ -29,6 +31,7 @@ public class BookListServiceImpl implements BookListService {
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
+    private final MemberBookListRepository memberBookListRepository;
 
     // 책리스트 추가
     @Override
@@ -124,13 +127,14 @@ public class BookListServiceImpl implements BookListService {
 
     @Override
     public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page) {
+        Long memberId = 1L;
         // PageRequest를 생성하여 페이지네이션 적용
         Page<BookList> bookLists =
                 bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page - 1, 10));
 
         // Page<BookList>에서 content만 추출하여 변환
         return bookLists.getContent().stream()
-                .map(BookListConverter::toLibraryBookListDTO)
+                .map(bookList -> BookListConverter.toLibraryBookListDTO(bookList, memberId))
                 .collect(Collectors.toList());
     }
 
@@ -255,5 +259,54 @@ public class BookListServiceImpl implements BookListService {
 
         // BookList 업데이트
         bookListRepository.save(bookList);
+    }
+
+    @Override
+    public String toggleLike(Long bookListId) {
+        Long memberId = 1L;
+        int i = 1; // 좋아요 여부
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        Member member =
+                memberRepository
+                        .findById(memberId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList == null) {
+            // 사용자가 좋아요를 누르지 않았으면, 좋아요 추가
+            memberBookList =
+                    MemberBookListConverter.createMemberBookList(bookList, member, true, false);
+            memberBookListRepository.save(memberBookList);
+
+            bookList.setLikeCnt(bookList.getLikeCnt() + 1);
+            i = 1;
+        } else {
+            if (memberBookList.getIsLiked()) {
+                // 사용자가 이미 좋아요를 눌렀으면, 좋아요 제거
+                memberBookList.setIsLiked(false);
+                bookList.setLikeCnt(bookList.getLikeCnt() - 1);
+                i = 0;
+            } else {
+                // 사용자가 좋아요를 누르지 않았으면, 좋아요 추가
+                memberBookList.setIsLiked(true);
+                bookList.setLikeCnt(bookList.getLikeCnt() + 1);
+                i = 1;
+            }
+        }
+
+        bookListRepository.save(bookList); // 좋아요 개수 저장
+        memberBookListRepository.save(memberBookList); // 사용자 좋아요 여부 저장
+
+        if (i == 0) return "좋아요 취소";
+        else return "좋아요 추가";
     }
 }
