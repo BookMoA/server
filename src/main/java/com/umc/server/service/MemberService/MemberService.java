@@ -17,4 +17,7 @@ public interface MemberService {
 
     // TODO: 로그아웃
     void signOut(Member signInMember);
+
+    // TODO: 닉네임 존재 여부 확인
+    Boolean nicknameExist(String nickname);
 }

@@ -10,7 +10,7 @@ import com.umc.server.domain.mapping.ClubMember;
 import com.umc.server.repository.ClubMemberRepository;
 import com.umc.server.repository.ClubRepository;
 import com.umc.server.repository.MemberRepository;
-import com.umc.server.web.dto.ClubRequestDTO;
+import com.umc.server.web.dto.request.ClubRequestDTO;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
