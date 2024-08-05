@@ -23,7 +23,7 @@ public class ClubPostComment extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String context;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_post_id", nullable = false)
     private ClubPost clubPost;
 
