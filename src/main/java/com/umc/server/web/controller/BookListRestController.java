@@ -64,7 +64,7 @@ public class BookListRestController {
             description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
     @GetMapping("")
     public ApiResponse<List<BookListResponseDTO.LibraryBookListDTO>> getLibraryBookList(
-            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
         List<BookListResponseDTO.LibraryBookListDTO> bookListDTOs =
                 bookListService.getLibraryBookList(page);
         return ApiResponse.onSuccess(bookListDTOs);
