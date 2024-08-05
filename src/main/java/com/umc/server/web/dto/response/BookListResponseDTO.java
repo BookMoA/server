@@ -30,7 +30,7 @@ public class BookListResponseDTO {
         private String title;
         private String img;
         private String spec;
-        private int like;
+        private int likeCnt;
         private int bookCnt;
         private String listStatus;
         private String nickname;
