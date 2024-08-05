@@ -34,7 +34,7 @@ public class BookListResponseDTO {
         private int bookCnt;
         private String listStatus;
         private String nickname;
-        private boolean likeStatus;
+        private boolean likeStatus; // 좋아요 여부
         private List<BookDTO> books;
     }
 
