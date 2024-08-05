@@ -20,6 +20,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 멤버 관려 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", false, "사용자가 없습니다."),
 
+    // 책리스트 관련 에러
     BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST4001", false, "책리스트가 없습니다."),
     BOOKLIST_INVALID_STATUS(HttpStatus.BAD_REQUEST, "BOOKLIST4002", false, "STATUS형식이 올바르지 않습니다."),
     BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4003", false, "이미 추가된 책입니다."),
@@ -27,7 +28,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
 
-    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다.");
+    INVALID_PAGE(HttpStatus.NOT_FOUND, "PAGE4001", false, "잘못된 페이지입니다."),
+
+    SEARCH_BOOKLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4001", false, "없는 책리스트입니다."),
+    SEARCH_BOOKMEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", false, "없는 메모입니다."),
+    SEARCH_INVALID_SORT(HttpStatus.NOT_FOUND, "SEARCH4003", false, "SORTBY형식이 올바르지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
