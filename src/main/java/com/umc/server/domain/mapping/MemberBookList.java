@@ -32,4 +32,8 @@ public class MemberBookList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_list_id", nullable = false)
     private BookList bookList;
+
+    public void setIsLiked(boolean b) {
+        this.isLiked = b;
+    }
 }

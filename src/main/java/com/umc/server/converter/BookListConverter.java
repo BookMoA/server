@@ -7,6 +7,7 @@ import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
+import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import java.util.List;
@@ -68,7 +69,7 @@ public class BookListConverter {
 
     // 책 + 책리스트 조회
     public static BookListResponseDTO.BookListPreviewDTO toBookListPreviewDTO(
-            Optional<BookList> optionalBookList) {
+            Optional<BookList> optionalBookList, Long memberId) {
         if (optionalBookList.isEmpty()) {
             // Optional이 비어있는 경우에 대한 처리를 여기에 작성합니다.
             throw new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND);
@@ -81,15 +82,26 @@ public class BookListConverter {
                         .map(BookListConverter::getBookDTO)
                         .collect(Collectors.toList());
 
+        // 현재 사용자의 좋아요 상태를 확인하기 위한 필터링
+        boolean likeStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsLiked)
+                        .findFirst()
+                        .orElse(false);
+
         return BookListResponseDTO.BookListPreviewDTO.builder()
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .spec(bookList.getSpec())
-                .like(bookList.getLikeCnt())
+                .likeCnt(bookList.getLikeCnt())
                 .bookCnt(bookList.getBookCnt())
                 .listStatus(bookList.getListStatus().name())
                 .nickname(bookList.getMember().getNickname())
+                .likeStatus(likeStatus)
                 .books(getBookDTOList)
                 .build();
     }
@@ -104,13 +116,24 @@ public class BookListConverter {
                 .build();
     }
 
-    public static BookListResponseDTO.LibraryBookListDTO toLibraryBookListDTO(BookList bookList) {
+    public static BookListResponseDTO.LibraryBookListDTO toLibraryBookListDTO(
+            BookList bookList, Long memberId) {
+        // 현재 사용자의 좋아요 상태를 확인하기 위한 필터링
+        boolean likeStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsLiked)
+                        .findFirst()
+                        .orElse(false);
         return BookListResponseDTO.LibraryBookListDTO.builder()
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .bookCnt(bookList.getBookCnt())
                 .listStatus(bookList.getListStatus().name())
+                .likeStatus(likeStatus)
                 .build();
     }
 
