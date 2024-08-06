@@ -60,9 +60,11 @@ public class BookListResponseDTO {
         private Long id;
         private String title;
         private String img;
+        private int likeCnt;
         private int bookCnt;
         private String listStatus;
         private boolean likeStatus;
+        private boolean storedStatus;
     }
 
     //
@@ -99,5 +101,15 @@ public class BookListResponseDTO {
         private int likeCnt;
         private String listStatus;
         private boolean likeStatus;
+    }
+
+    // 타사용자 책리스트 추가 결과값
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddaAnotherBookListResultDTO {
+        Long memberBookId;
+        LocalDateTime createdAt;
     }
 }

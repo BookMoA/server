@@ -127,13 +127,25 @@ public class BookListConverter {
                         .map(MemberBookList::getIsLiked)
                         .findFirst()
                         .orElse(false);
+
+        boolean storedStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsStored)
+                        .findFirst()
+                        .orElse(false);
+
         return BookListResponseDTO.LibraryBookListDTO.builder()
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
+                .likeCnt(bookList.getLikeCnt())
                 .bookCnt(bookList.getBookCnt())
                 .listStatus(bookList.getListStatus().name())
                 .likeStatus(likeStatus)
+                .storedStatus(storedStatus)
                 .build();
     }
 
