@@ -128,4 +128,14 @@ public class BookListRestController {
                 bookListService.anotherToLibrary(bookListId, signInmember);
         return ApiResponse.onSuccess(response);
     }
+
+    @Operation(summary = "타사용자 책리스트 삭제 API", description = "타사용자 책리스트를 보관함에 삭제하는 API입니다.")
+    @DeleteMapping("/{bookListId}/another")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<?> deleteAnotherBookListToLibrary(
+            @PathVariable Long bookListId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        bookListService.deleteAnotherBookListToLibrary(bookListId, signInmember);
+        return ApiResponse.onSuccess("타사용자 책리스트를 보관함에서 삭제하는데 성공하였습니다!");
+    }
 }
