@@ -186,4 +186,10 @@ public class MemberServiceImpl implements MemberService {
 
         return jsonNode.get("id").asLong();
     }
+
+    // TODO: 닉네임 존재 여부 확인
+    public Boolean nicknameExist(String nickname) {
+
+        return memberRepository.existsByNickname(nickname);
+    }
 }
