@@ -99,4 +99,13 @@ public class BookListRestController {
         String response = bookListService.toggleLike(bookListId);
         return ApiResponse.onSuccess(response);
     }
+
+    @Operation(summary = "인기 책리스트 조회 API", description = "인기 책리스트를 조회하는 API입니다.")
+    @GetMapping("/top")
+    public ApiResponse<BookListResponseDTO.TopBookListAndTimeDTO> getTopBookList(
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        BookListResponseDTO.TopBookListAndTimeDTO topBookList =
+                bookListService.getTopBookList(page);
+        return ApiResponse.onSuccess(topBookList);
+    }
 }

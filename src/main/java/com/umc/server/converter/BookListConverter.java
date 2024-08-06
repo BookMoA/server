@@ -143,4 +143,26 @@ public class BookListConverter {
                 .addedBookIds(addBookIds)
                 .build();
     }
+
+    public static BookListResponseDTO.TopBookListDTO topBookListAndTimeDTO(
+            BookList bookList, long memberId) {
+        boolean likeStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsLiked)
+                        .findFirst()
+                        .orElse(false);
+
+        return BookListResponseDTO.TopBookListDTO.builder()
+                .id(bookList.getId())
+                .title(bookList.getTitle())
+                .img(bookList.getImg())
+                .bookCnt(bookList.getBookCnt())
+                .likeCnt(bookList.getLikeCnt())
+                .listStatus(String.valueOf(bookList.getListStatus()))
+                .likeStatus(likeStatus)
+                .build();
+    }
 }
