@@ -313,6 +313,7 @@ public class BookListServiceImpl implements BookListService {
         else return "좋아요 추가";
     }
 
+    // 인기책리스트 조회
     @Override
     public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page) {
         Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
