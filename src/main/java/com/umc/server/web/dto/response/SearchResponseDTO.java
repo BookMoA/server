@@ -16,6 +16,7 @@ public class SearchResponseDTO {
         private String img;
         private int likeCnt;
         private int bookCnt;
+        private boolean likeStatus;
         private LocalDate createdAt;
     }
 

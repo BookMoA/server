@@ -39,12 +39,11 @@ public class BookListServiceImpl implements BookListService {
     // 책리스트 추가
     @Override
     @Transactional
-    public BookList addBookList(BookListRequestDTO.AddBookListDTO request) {
-        // 현재 인증된 멤버를 가져오는 부분 (추후 수정)
-        Member member =
-                memberRepository
-                        .findById(1L)
-                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public BookList addBookList(BookListRequestDTO.AddBookListDTO request, Member member) {
+        // 현재 인증된 멤버를 가져오는 부분
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
 
         // DTO를 엔티티로 변환
         BookList bookList = BookListConverter.toBookList(request, member);
@@ -129,11 +128,13 @@ public class BookListServiceImpl implements BookListService {
     }
 
     @Override
-    public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page) {
-        Long memberId = 1L;
+    public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(
+            Integer page, Member member) {
+        Long memberId = member.getId();
         // PageRequest를 생성하여 페이지네이션 적용
         Page<BookList> bookLists =
-                bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page - 1, 10));
+                bookListRepository.findStoredBooksByMemberId(
+                        memberId, PageRequest.of(page - 1, 10));
 
         // Page<BookList>에서 content만 추출하여 변환
         return bookLists.getContent().stream()
@@ -265,8 +266,8 @@ public class BookListServiceImpl implements BookListService {
     }
 
     @Override
-    public String toggleLike(Long bookListId) {
-        Long memberId = 1L;
+    public String toggleLike(Long bookListId, Member member) {
+        Long memberId = member.getId();
         int i = 1; // 좋아요 여부
         // 책 리스트와 사용자를 조회
         BookList bookList =
@@ -274,10 +275,9 @@ public class BookListServiceImpl implements BookListService {
                         .findById(bookListId)
                         .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
-        Member member =
-                memberRepository
-                        .findById(memberId)
-                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
 
         MemberBookList memberBookList =
                 memberBookListRepository
@@ -315,13 +315,13 @@ public class BookListServiceImpl implements BookListService {
 
     // 인기책리스트 조회
     @Override
-    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page) {
+    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member) {
         Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
         List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
 
         LocalDateTime currentDate = LocalDateTime.now();
 
-        Long memberId = 1L;
+        Long memberId = member.getId();
 
         List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
                 bookLists.stream()
