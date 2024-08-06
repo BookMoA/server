@@ -26,4 +26,7 @@ public interface BookListService {
     public String toggleLike(Long bookListId, Member member);
 
     public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member);
+
+    public BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
+            Long bookListId, Member member);
 }

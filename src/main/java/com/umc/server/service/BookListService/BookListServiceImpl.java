@@ -335,4 +335,47 @@ public class BookListServiceImpl implements BookListService {
                 .bookLists(topBookListDTOs)
                 .build();
     }
+
+    // 타사용자 책리스트 보관함에 추가
+    public BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
+            Long bookListId, Member member) {
+        Long memberId = member.getId();
+
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList == null) {
+            // 새로운 MemberBookList 엔티티 생성 및 저장
+            memberBookList =
+                    MemberBookListConverter.createMemberBookList(bookList, member, false, true);
+            memberBookListRepository.save(memberBookList);
+        } else {
+            if (memberBookList.getIsStored()) {
+                // 사용자가 이미 리스트에 포함했으면
+                throw new BookListHandler(ErrorStatus.BOOKLIST_ALREADY_EXISTS);
+            } else {
+                // 사용자가 리스트에 포함하지 않았으면, 보관함에 추가
+                memberBookList.setIsStored(true);
+                memberBookListRepository.save(memberBookList);
+            }
+        }
+
+        // 결과 DTO 반환
+        return BookListResponseDTO.AddaAnotherBookListResultDTO.builder()
+                .memberBookId(memberBookList.getId())
+                .createdAt(memberBookList.getCreatedAt())
+                .build();
+    }
 }
