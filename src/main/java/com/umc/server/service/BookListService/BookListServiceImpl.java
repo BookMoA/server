@@ -379,6 +379,7 @@ public class BookListServiceImpl implements BookListService {
                 .build();
     }
 
+    // 타사용자 리스트 삭제
     public void deleteAnotherBookListToLibrary(Long bookListId, Member member) {
         Long memberId = member.getId();
 
