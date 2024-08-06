@@ -3,6 +3,7 @@ package com.umc.server.web.controller;
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.BookListConverter;
 import com.umc.server.domain.BookList;
+import com.umc.server.domain.Member;
 import com.umc.server.service.BookListService.BookListService;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,8 +27,9 @@ public class BookListRestController {
             description = "책리스트를 추가하는 API입니다. status값에는 PUBLIC이나 PRIVATE로 입력해주세요.")
     @PostMapping("/add")
     public ApiResponse<BookListResponseDTO.AddBookListResultDTO> addBookList(
-            @RequestBody @Valid BookListRequestDTO.AddBookListDTO request) {
-        BookList bookList = bookListService.addBookList(request);
+            @RequestBody @Valid BookListRequestDTO.AddBookListDTO request,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        BookList bookList = bookListService.addBookList(request, signInmember);
         return ApiResponse.onSuccess(BookListConverter.toAddBookListResultDTO(bookList));
     }
 
@@ -34,8 +37,9 @@ public class BookListRestController {
     @GetMapping("/{bookListId}")
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<BookListResponseDTO.BookListPreviewDTO> getBookList(
-            @PathVariable(name = "bookListId") Long bookListId) {
-        Long memberId = 1L;
+            @PathVariable(name = "bookListId") Long bookListId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        Long memberId = signInmember.getId();
         Optional<BookList> bookList = bookListService.getBookList(bookListId);
         return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList, memberId));
     }
@@ -65,9 +69,10 @@ public class BookListRestController {
             description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
     @GetMapping("")
     public ApiResponse<List<BookListResponseDTO.LibraryBookListDTO>> getLibraryBookList(
-            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
         List<BookListResponseDTO.LibraryBookListDTO> bookListDTOs =
-                bookListService.getLibraryBookList(page);
+                bookListService.getLibraryBookList(page, signInmember);
         return ApiResponse.onSuccess(bookListDTOs);
     }
 
@@ -95,17 +100,20 @@ public class BookListRestController {
     @Operation(summary = "책리스트 좋아요 추가 API", description = "책리스트에서 좋아요를 추가하는 API입니다.")
     @PostMapping("/likes/{bookListId}")
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
-    public ApiResponse<?> addLikeToBookList(@PathVariable Long bookListId) {
-        String response = bookListService.toggleLike(bookListId);
+    public ApiResponse<?> addLikeToBookList(
+            @PathVariable Long bookListId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        String response = bookListService.toggleLike(bookListId, signInmember);
         return ApiResponse.onSuccess(response);
     }
 
     @Operation(summary = "인기 책리스트 조회 API", description = "인기 책리스트를 조회하는 API입니다.")
     @GetMapping("/top")
     public ApiResponse<BookListResponseDTO.TopBookListAndTimeDTO> getTopBookList(
-            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
         BookListResponseDTO.TopBookListAndTimeDTO topBookList =
-                bookListService.getTopBookList(page);
+                bookListService.getTopBookList(page, signInmember);
         return ApiResponse.onSuccess(topBookList);
     }
 }
