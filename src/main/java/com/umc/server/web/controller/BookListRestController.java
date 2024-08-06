@@ -116,4 +116,16 @@ public class BookListRestController {
                 bookListService.getTopBookList(page, signInmember);
         return ApiResponse.onSuccess(topBookList);
     }
+
+    @Operation(summary = "타사용자 책리스트 추가 API", description = "타사용자 책리스트를 보관함에 추가하는 API입니다.")
+    @PostMapping("/{bookListId}/another")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListResponseDTO.AddaAnotherBookListResultDTO>
+            addAnotherBookListToLibrary(
+                    @PathVariable Long bookListId,
+                    @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        BookListResponseDTO.AddaAnotherBookListResultDTO response =
+                bookListService.anotherToLibrary(bookListId, signInmember);
+        return ApiResponse.onSuccess(response);
+    }
 }
