@@ -35,8 +35,9 @@ public class BookListRestController {
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<BookListResponseDTO.BookListPreviewDTO> getBookList(
             @PathVariable(name = "bookListId") Long bookListId) {
+        Long memberId = 1L;
         Optional<BookList> bookList = bookListService.getBookList(bookListId);
-        return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList));
+        return ApiResponse.onSuccess(BookListConverter.toBookListPreviewDTO(bookList, memberId));
     }
 
     @Operation(
@@ -64,7 +65,7 @@ public class BookListRestController {
             description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
     @GetMapping("")
     public ApiResponse<List<BookListResponseDTO.LibraryBookListDTO>> getLibraryBookList(
-            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
         List<BookListResponseDTO.LibraryBookListDTO> bookListDTOs =
                 bookListService.getLibraryBookList(page);
         return ApiResponse.onSuccess(bookListDTOs);
@@ -89,5 +90,22 @@ public class BookListRestController {
             @RequestBody @Valid BookListRequestDTO.DeleteBookInBookListDTO request) {
         bookListService.deleteBookInBookList(bookListId, request);
         return ApiResponse.onSuccess("책 리스트의 책을 삭제에 성공하였습니다!");
+    }
+
+    @Operation(summary = "책리스트 좋아요 추가 API", description = "책리스트에서 좋아요를 추가하는 API입니다.")
+    @PostMapping("/likes/{bookListId}")
+    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<?> addLikeToBookList(@PathVariable Long bookListId) {
+        String response = bookListService.toggleLike(bookListId);
+        return ApiResponse.onSuccess(response);
+    }
+
+    @Operation(summary = "인기 책리스트 조회 API", description = "인기 책리스트를 조회하는 API입니다.")
+    @GetMapping("/top")
+    public ApiResponse<BookListResponseDTO.TopBookListAndTimeDTO> getTopBookList(
+            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        BookListResponseDTO.TopBookListAndTimeDTO topBookList =
+                bookListService.getTopBookList(page);
+        return ApiResponse.onSuccess(topBookList);
     }
 }

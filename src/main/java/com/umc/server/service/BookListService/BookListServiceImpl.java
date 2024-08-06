@@ -1,17 +1,20 @@
 package com.umc.server.service.BookListService;
 
 import com.umc.server.apiPayload.code.status.ErrorStatus;
-import com.umc.server.apiPayload.exception.GeneralException;
+import com.umc.server.apiPayload.exception.handler.BookListHandler;
 import com.umc.server.converter.BookListConverter;
+import com.umc.server.converter.MemberBookListConverter;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.mapping.BookListEntry;
+import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.repository.*;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +34,7 @@ public class BookListServiceImpl implements BookListService {
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
+    private final MemberBookListRepository memberBookListRepository;
 
     // 책리스트 추가
     @Override
@@ -38,7 +44,7 @@ public class BookListServiceImpl implements BookListService {
         Member member =
                 memberRepository
                         .findById(1L)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // DTO를 엔티티로 변환
         BookList bookList = BookListConverter.toBookList(request, member);
@@ -54,14 +60,14 @@ public class BookListServiceImpl implements BookListService {
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
         // 2. 상태 값 변환
         ListStatus listStatus;
         try {
             listStatus = ListStatus.valueOf(request.getStatus());
         } catch (IllegalArgumentException e) {
-            throw new GeneralException(ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 올바르지 않으면 오류
+            throw new BookListHandler(ErrorStatus.BOOKLIST_INVALID_STATUS); // status값이 올바르지 않으면 오류
         }
 
         // 3. 책 리스트 정보 업데이트
@@ -78,7 +84,7 @@ public class BookListServiceImpl implements BookListService {
             Book book =
                     bookRepository
                             .findById(entryDTO.getId())
-                            .orElseThrow(() -> new GeneralException(ErrorStatus.BOOK_NOT_FOUND));
+                            .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOK_NOT_FOUND));
 
             BookListEntry newEntry =
                     BookListEntry.builder()
@@ -108,9 +114,7 @@ public class BookListServiceImpl implements BookListService {
                         bookListRepository
                                 .findById(id)
                                 .orElseThrow(
-                                        () ->
-                                                new GeneralException(
-                                                        ErrorStatus.BOOKLIST_NOT_FOUND)));
+                                        () -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND)));
         return bookList;
     }
 
@@ -120,19 +124,20 @@ public class BookListServiceImpl implements BookListService {
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
         bookListRepository.delete(bookList);
     }
 
     @Override
     public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page) {
+        Long memberId = 1L;
         // PageRequest를 생성하여 페이지네이션 적용
         Page<BookList> bookLists =
-                bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page, 10));
+                bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page - 1, 10));
 
         // Page<BookList>에서 content만 추출하여 변환
         return bookLists.getContent().stream()
-                .map(BookListConverter::toLibraryBookListDTO)
+                .map(bookList -> BookListConverter.toLibraryBookListDTO(bookList, memberId))
                 .collect(Collectors.toList());
     }
 
@@ -143,7 +148,7 @@ public class BookListServiceImpl implements BookListService {
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
         // 책 추가
         addBooksToBookList(bookList, request.getBooksId());
@@ -160,13 +165,13 @@ public class BookListServiceImpl implements BookListService {
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
         // 책 리스트에서 책 찾기
         List<Book> books = bookRepository.findAllById(request.getBooksId());
 
         if (books.size() != request.getBooksId().size()) {
-            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+            throw new BookListHandler(ErrorStatus.BOOK_NOT_FOUND);
         }
 
         // 기존에 존재하는 책을 확인
@@ -182,7 +187,7 @@ public class BookListServiceImpl implements BookListService {
                         .collect(Collectors.toList());
 
         if (duplicateBookIds.isEmpty()) {
-            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_NO_EXISTS);
+            throw new BookListHandler(ErrorStatus.BOOKLIST_BOOK_NO_EXISTS);
         }
 
         // 삭제할 책 엔티티를 BookListEntry에서 제거
@@ -214,7 +219,7 @@ public class BookListServiceImpl implements BookListService {
         List<Book> books = bookRepository.findAllById(bookIds);
 
         if (books.size() != bookIds.size()) {
-            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
+            throw new BookListHandler(ErrorStatus.BOOK_NOT_FOUND);
         }
 
         // 기존에 추가된 책을 확인
@@ -228,7 +233,7 @@ public class BookListServiceImpl implements BookListService {
                 bookIds.stream().filter(existingBookIds::contains).collect(Collectors.toList());
 
         if (!duplicateBookIds.isEmpty()) {
-            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_ALREADY_EXISTS);
+            throw new BookListHandler(ErrorStatus.BOOKLIST_BOOK_ALREADY_EXISTS);
         }
 
         // 새로 추가할 책 리스트에서 기존에 추가되지 않은 책만 선택
@@ -259,60 +264,75 @@ public class BookListServiceImpl implements BookListService {
         bookListRepository.save(bookList);
     }
 
-    //    @Override
-    //    @Transactional
-    //    public void deleteBookInBookList(
-    //            Long bookListId, BookListRequestDTO.DeleteBookInBookListDTO request) {
-    //        // 책 리스트 찾기
-    //        BookList bookList =
-    //                bookListRepository
-    //                        .findById(bookListId)
-    //                        .orElseThrow(() -> new
-    // GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND));
-    //
-    //        // 책 리스트에서 책 찾기
-    //        List<Book> books = bookRepository.findAllById(request.getBooksId());
-    //
-    //        if (books.size() != request.getBooksId().size()) {
-    //            throw new GeneralException(ErrorStatus.BOOK_NOT_FOUND);
-    //        }
-    //
-    //        // 기존에 존재하는 책을 확인
-    //        List<Long> existingBookIds =
-    //                bookList.getBookListEntry().stream()
-    //                        .map(entry -> entry.getBook().getId())
-    //                        .collect(Collectors.toList());
-    //
-    //        // 해당책 리스트에서 삭제하려는 아이디의 책이 있는지 확인
-    //        List<Long> duplicateBookIds =
-    //                request.getBooksId().stream()
-    //                        .filter(existingBookIds::contains)
-    //                        .collect(Collectors.toList());
-    //
-    //        if (duplicateBookIds.isEmpty()) {
-    //            throw new GeneralException(ErrorStatus.BOOKLIST_BOOK_NO_EXISTS);
-    //        }
-    //
-    //        // 삭제할 책 엔티티를 BookListEntry에서 제거
-    //        List<BookListEntry> entriesToRemove =
-    //                bookList.getBookListEntry().stream()
-    //                        .filter(entry -> duplicateBookIds.contains(entry.getBook().getId()))
-    //                        .collect(Collectors.toList());
-    //
-    //        // BookListEntry 삭제
-    //        bookList.getBookListEntry().removeAll(entriesToRemove);
-    //        entriesToRemove.forEach(entry -> bookListEntryRepository.delete(entry));
-    //
-    //        // 남은 책들의 number를 1부터 순서대로 재정렬
-    //        List<BookListEntry> remainingEntries = bookList.getBookListEntry();
-    //        for (int i = 0; i < remainingEntries.size(); i++) {
-    //            remainingEntries.get(i).setNumber(i + 1);
-    //        }
-    //
-    //        // BookList의 bookCnt 값 업데이트
-    //        bookList.setBookCnt(remainingEntries.size());
-    //
-    //        // BookList 업데이트
-    //        bookListRepository.save(bookList);
-    //    }
+    @Override
+    public String toggleLike(Long bookListId) {
+        Long memberId = 1L;
+        int i = 1; // 좋아요 여부
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        Member member =
+                memberRepository
+                        .findById(memberId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList == null) {
+            // 사용자가 좋아요를 누르지 않았으면, 좋아요 추가
+            memberBookList =
+                    MemberBookListConverter.createMemberBookList(bookList, member, true, false);
+            memberBookListRepository.save(memberBookList);
+
+            bookList.setLikeCnt(bookList.getLikeCnt() + 1);
+            i = 1;
+        } else {
+            if (memberBookList.getIsLiked()) {
+                // 사용자가 이미 좋아요를 눌렀으면, 좋아요 제거
+                memberBookList.setIsLiked(false);
+                bookList.setLikeCnt(bookList.getLikeCnt() - 1);
+                i = 0;
+            } else {
+                // 사용자가 좋아요를 누르지 않았으면, 좋아요 추가
+                memberBookList.setIsLiked(true);
+                bookList.setLikeCnt(bookList.getLikeCnt() + 1);
+                i = 1;
+            }
+        }
+
+        bookListRepository.save(bookList); // 좋아요 개수 저장
+        memberBookListRepository.save(memberBookList); // 사용자 좋아요 여부 저장
+
+        if (i == 0) return "좋아요 취소";
+        else return "좋아요 추가";
+    }
+
+    // 인기책리스트 조회
+    @Override
+    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page) {
+        Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
+        List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
+
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        Long memberId = 1L;
+
+        List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
+                bookLists.stream()
+                        .map(
+                                bookList ->
+                                        BookListConverter.topBookListAndTimeDTO(bookList, memberId))
+                        .collect(Collectors.toList());
+
+        return BookListResponseDTO.TopBookListAndTimeDTO.builder()
+                .updatedAt(currentDate)
+                .bookLists(topBookListDTOs)
+                .build();
+    }
 }

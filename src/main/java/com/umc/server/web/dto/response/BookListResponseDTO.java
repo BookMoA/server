@@ -1,5 +1,6 @@
 package com.umc.server.web.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,11 @@ public class BookListResponseDTO {
         private String title;
         private String img;
         private String spec;
-        private int like;
+        private int likeCnt;
         private int bookCnt;
         private String listStatus;
         private String nickname;
+        private boolean likeStatus; // 좋아요 여부
         private List<BookDTO> books;
     }
 
@@ -60,6 +62,7 @@ public class BookListResponseDTO {
         private String img;
         private int bookCnt;
         private String listStatus;
+        private boolean likeStatus;
     }
 
     //
@@ -69,5 +72,32 @@ public class BookListResponseDTO {
     @AllArgsConstructor
     public static class AddBookInBookListResultDTO {
         private List<Long> addedBookIds;
+    }
+
+    // 책리스트 상세 값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopBookListAndTimeDTO {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime updatedAt;
+
+        private List<TopBookListDTO> bookLists;
+    }
+
+    // 인기 책리스트 값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopBookListDTO {
+        private Long id;
+        private String title;
+        private String img;
+        private int bookCnt;
+        private int likeCnt;
+        private String listStatus;
+        private boolean likeStatus;
     }
 }

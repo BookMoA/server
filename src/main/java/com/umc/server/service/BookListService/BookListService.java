@@ -21,4 +21,8 @@ public interface BookListService {
     List<Long> addBookInBookList(Long bookListId, BookListRequestDTO.AddBookInBookListDTO request);
 
     void deleteBookInBookList(Long bookListId, BookListRequestDTO.DeleteBookInBookListDTO request);
+
+    public String toggleLike(Long bookListId);
+
+    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page);
 }
