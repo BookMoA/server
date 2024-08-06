@@ -81,6 +81,12 @@ public class SearchServiceImpl implements SearchService {
             case "relevance":
                 sort = Sort.by("body").ascending();
                 break;
+            case "rating_desc":
+                sort = Sort.by("memberBook.score").descending();
+                break;
+            case "rating_asc":
+                sort = Sort.by("memberBook.score").ascending();
+                break;
             default:
                 throw new SearchHandler(ErrorStatus.SEARCH_INVALID_SORT);
         }

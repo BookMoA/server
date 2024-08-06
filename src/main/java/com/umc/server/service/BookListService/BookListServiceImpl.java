@@ -14,6 +14,7 @@ import com.umc.server.repository.*;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -308,5 +311,27 @@ public class BookListServiceImpl implements BookListService {
 
         if (i == 0) return "좋아요 취소";
         else return "좋아요 추가";
+    }
+
+    @Override
+    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page) {
+        Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
+        List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
+
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        Long memberId = 1L;
+
+        List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
+                bookLists.stream()
+                        .map(
+                                bookList ->
+                                        BookListConverter.topBookListAndTimeDTO(bookList, memberId))
+                        .collect(Collectors.toList());
+
+        return BookListResponseDTO.TopBookListAndTimeDTO.builder()
+                .updatedAt(currentDate)
+                .bookLists(topBookListDTOs)
+                .build();
     }
 }
