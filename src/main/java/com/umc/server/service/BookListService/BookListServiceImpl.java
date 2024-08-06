@@ -336,6 +336,7 @@ public class BookListServiceImpl implements BookListService {
                 .build();
     }
 
+    // 타사용자 책리스트 보관함에 추가
     public BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
             Long bookListId, Member member) {
         Long memberId = member.getId();
