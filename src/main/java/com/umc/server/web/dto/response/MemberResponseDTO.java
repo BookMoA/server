@@ -32,4 +32,14 @@ public class MemberResponseDTO {
             return new TokenInfo(accessToken, refreshToken);
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class UniqueNickname {
+        Boolean isUnique;
+
+        public static UniqueNickname of(Boolean isUnique) {
+            return new UniqueNickname(isUnique);
+        }
+    }
 }
