@@ -23,10 +23,12 @@ public interface BookListService {
 
     void deleteBookInBookList(Long bookListId, BookListRequestDTO.DeleteBookInBookListDTO request);
 
-    public String toggleLike(Long bookListId, Member member);
+    String toggleLike(Long bookListId, Member member);
 
-    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member);
+    BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member);
 
-    public BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
+    BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
             Long bookListId, Member member);
+
+    void deleteAnotherBookListToLibrary(Long bookListId, Member member);
 }

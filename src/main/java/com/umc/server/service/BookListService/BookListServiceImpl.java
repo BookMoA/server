@@ -378,4 +378,30 @@ public class BookListServiceImpl implements BookListService {
                 .createdAt(memberBookList.getCreatedAt())
                 .build();
     }
+
+    public void deleteAnotherBookListToLibrary(Long bookListId, Member member) {
+        Long memberId = member.getId();
+
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList.getIsLiked() == false) {
+            memberBookListRepository.delete(memberBookList);
+        } else {
+            memberBookList.setIsStored(false);
+            memberBookListRepository.save(memberBookList);
+        }
+    }
 }
