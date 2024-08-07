@@ -20,4 +20,8 @@ public interface MemberService {
 
     // TODO: 닉네임 존재 여부 확인
     Boolean nicknameExist(String nickname);
+
+    // TODO: 알림 상태 변경
+    MemberResponseDTO.PushNotification setNotification(
+            Long memberId, Boolean commentPush, Boolean likePush, Boolean nightPush);
 }

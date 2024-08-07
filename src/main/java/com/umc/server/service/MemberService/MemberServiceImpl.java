@@ -7,15 +7,16 @@ import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
+import com.umc.server.domain.PushNotification;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.enums.TokenStatus;
 import com.umc.server.repository.MemberRepository;
+import com.umc.server.repository.PushNotificationRepository;
 import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -39,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PushNotificationRepository pushNotificationRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
 
@@ -57,8 +59,19 @@ public class MemberServiceImpl implements MemberService {
         final String password = signUpRequestDTO.getPassword();
         final String encodedPassword = passwordEncoder.encode(password);
         signUpRequestDTO.setPassword(encodedPassword);
-
         final Member newMember = MemberConverter.toMember(signUpRequestDTO);
+
+        // 알림 정보 생성
+        PushNotification newPushNotification =
+                PushNotification.builder()
+                        .commentPushEnabled(Boolean.TRUE)
+                        .likePushEnabled(Boolean.TRUE)
+                        .nightPushEnabled(Boolean.TRUE)
+                        .build();
+
+        // 두 엔티티 연결
+        newMember.setPushNotification(newPushNotification);
+        newPushNotification.setMember(newMember);
         Member signInMember = memberRepository.save(newMember);
 
         return getToken(password, signInMember);
@@ -102,7 +115,6 @@ public class MemberServiceImpl implements MemberService {
             final String refreshToken = tokenInfo.getRefreshToken();
 
             signInMember.setRefreshToken(refreshToken);
-            signInMember.setInActiveDate(LocalDate.now());
             signInMember = memberRepository.save(signInMember);
 
             MemberResponseDTO.SignInResponseDTO signInMemberDTO =
@@ -189,7 +201,32 @@ public class MemberServiceImpl implements MemberService {
 
     // TODO: 닉네임 존재 여부 확인
     public Boolean nicknameExist(String nickname) {
-
         return memberRepository.existsByNickname(nickname);
+    }
+
+    // TODO: 알림 동의 여부 변경
+    public MemberResponseDTO.PushNotification setNotification(
+            Long memberId, Boolean likePush, Boolean commentPush, Boolean nightPush) {
+        PushNotification pushNotification =
+                pushNotificationRepository
+                        .findByMemberId(memberId)
+                        .orElseThrow(
+                                () -> new MemberHandler(ErrorStatus.PUSH_NOTIFICATION_NOT_FOUND));
+
+        if (likePush != null) {
+            pushNotification.setLikePushEnabled(likePush);
+        }
+        if (commentPush != null) {
+            pushNotification.setCommentPushEnabled(commentPush);
+        }
+        if (nightPush != null) {
+            pushNotification.setNightPushEnabled(nightPush);
+        }
+        PushNotification updatedNotification = pushNotificationRepository.save(pushNotification);
+
+        return MemberResponseDTO.PushNotification.of(
+                updatedNotification.getLikePushEnabled(),
+                updatedNotification.getCommentPushEnabled(),
+                updatedNotification.getNightPushEnabled());
     }
 }

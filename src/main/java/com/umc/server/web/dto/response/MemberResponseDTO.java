@@ -20,13 +20,14 @@ public class MemberResponseDTO {
         @Setter private String accessToken;
         @Setter private String refreshToken;
         private String profileURL;
+        private MemberResponseDTO.PushNotification pushNotification;
     }
 
     @Getter
     @AllArgsConstructor
     public static class TokenInfo {
-        String accessToken;
-        String refreshToken;
+        private String accessToken;
+        private String refreshToken;
 
         public static TokenInfo of(String accessToken, String refreshToken) {
             return new TokenInfo(accessToken, refreshToken);
@@ -36,10 +37,24 @@ public class MemberResponseDTO {
     @Getter
     @AllArgsConstructor
     public static class UniqueNickname {
-        Boolean isUnique;
+        private Boolean isUnique;
 
         public static UniqueNickname of(Boolean isUnique) {
             return new UniqueNickname(isUnique);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PushNotification {
+
+        private Boolean likePush;
+        private Boolean comment;
+        private Boolean nightPush;
+
+        public static PushNotification of(
+                Boolean likePush, Boolean commentPush, Boolean nightPush) {
+            return new PushNotification(likePush, commentPush, nightPush);
         }
     }
 }
