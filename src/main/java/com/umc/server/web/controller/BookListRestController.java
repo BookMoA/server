@@ -97,7 +97,7 @@ public class BookListRestController {
         return ApiResponse.onSuccess("책 리스트의 책을 삭제에 성공하였습니다!");
     }
 
-    @Operation(summary = "책리스트 좋아요 추가 API", description = "책리스트에서 좋아요를 추가하는 API입니다.")
+    @Operation(summary = "책리스트 좋아요 API", description = "책리스트에서 좋아요를 추가, 삭제하는 API입니다.")
     @PostMapping("list/likes/{bookListId}")
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<?> addLikeToBookList(
@@ -141,7 +141,7 @@ public class BookListRestController {
 
     @Operation(summary = "추천 책 조회 API", description = "추천 책 5개를 조회하는 API입니다.")
     @GetMapping("recommend")
-    public ApiResponse<BookListResponseDTO.RecommendBookAndTimeDTO> getTopBookList() {
+    public ApiResponse<BookListResponseDTO.RecommendBookAndTimeDTO> getRecommendBooks() {
         BookListResponseDTO.RecommendBookAndTimeDTO recommendBooks =
                 bookListService.getRecommendBooks();
         return ApiResponse.onSuccess(recommendBooks);
