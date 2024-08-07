@@ -52,8 +52,8 @@ public class MemberBookRestController {
                 responseCode = "COMMON200",
                 description = "OK, 멤버 책 조회 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "MEMBER_BOOK4001",
-                description = "멤버 책이 아닙니다.",
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
@@ -72,8 +72,8 @@ public class MemberBookRestController {
                 responseCode = "COMMON200",
                 description = "OK, 멤버 책 수정 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "MEMBER_BOOK4001",
-                description = "멤버 책이 아닙니다.",
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
@@ -94,8 +94,8 @@ public class MemberBookRestController {
                 responseCode = "COMMON200",
                 description = "OK, 멤버 책 삭제 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "MEMBER_BOOK4001",
-                description = "멤버 책이 아닙니다.",
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({
