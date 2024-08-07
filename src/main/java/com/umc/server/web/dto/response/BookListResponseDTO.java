@@ -24,7 +24,7 @@ public class BookListResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookListPreviewDTO {
-        private Long id;
+        private Long bookListId;
         private String title;
         private String img;
         private String spec;
@@ -41,7 +41,7 @@ public class BookListResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookDTO {
-        private Long id;
+        private Long bookId;
         private String title;
         private String coverImg;
         private String writer;
@@ -54,7 +54,7 @@ public class BookListResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LibraryBookListDTO {
-        private Long id;
+        private Long bookListId;
         private String title;
         private String img;
         private int likeCnt;
@@ -91,7 +91,7 @@ public class BookListResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class TopBookListDTO {
-        private Long id;
+        private Long bookListId;
         private String title;
         private String img;
         private int bookCnt;
@@ -129,9 +129,18 @@ public class BookListResponseDTO {
     @RequiredArgsConstructor
     @AllArgsConstructor
     public static class RecommendBookDTO {
-        private Long id;
+        private Long bookId;
         private String title;
         private String writer;
         private String coverImage;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LibraryBookDTO {
+        private String bookStatus;
+        private List<RecommendBookDTO> books;
     }
 }
