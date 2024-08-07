@@ -3,18 +3,29 @@ package com.umc.server.converter;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.BookMemo;
+import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.web.dto.response.SearchResponseDTO;
 
 public class SearchConverter {
 
     public static SearchResponseDTO.SearchBookListResponseDTO searchBookListResponseDTO(
-            BookList bookList) {
+            BookList bookList, Long memberId) {
+
+        boolean likeStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsLiked)
+                        .findFirst()
+                        .orElse(false);
         return SearchResponseDTO.SearchBookListResponseDTO.builder()
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .likeCnt(bookList.getLikeCnt())
                 .bookCnt(bookList.getBookCnt())
+                .likeStatus(likeStatus)
                 .createdAt(bookList.getCreatedAt().toLocalDate())
                 .build();
     }

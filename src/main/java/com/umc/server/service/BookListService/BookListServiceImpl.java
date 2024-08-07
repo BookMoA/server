@@ -2,6 +2,7 @@ package com.umc.server.service.BookListService;
 
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.BookListHandler;
+import com.umc.server.converter.BookConverter;
 import com.umc.server.converter.BookListConverter;
 import com.umc.server.converter.MemberBookListConverter;
 import com.umc.server.domain.Book;
@@ -14,13 +15,16 @@ import com.umc.server.repository.*;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,20 +32,21 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
-    private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
     private final MemberBookListRepository memberBookListRepository;
+    private final MemberBookRepository memberBookRepository;
+    private List<BookListResponseDTO.RecommendBookDTO> cachedRecommendations = new ArrayList<>();
+    private LocalDateTime lastUpdate = LocalDateTime.MIN;
 
     // 책리스트 추가
     @Override
     @Transactional
-    public BookList addBookList(BookListRequestDTO.AddBookListDTO request) {
-        // 현재 인증된 멤버를 가져오는 부분 (추후 수정)
-        Member member =
-                memberRepository
-                        .findById(1L)
-                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public BookList addBookList(BookListRequestDTO.AddBookListDTO request, Member member) {
+        // 현재 인증된 멤버를 가져오는 부분
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
 
         // DTO를 엔티티로 변환
         BookList bookList = BookListConverter.toBookList(request, member);
@@ -126,11 +131,13 @@ public class BookListServiceImpl implements BookListService {
     }
 
     @Override
-    public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page) {
-        Long memberId = 1L;
+    public List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(
+            Integer page, Member member) {
+        Long memberId = member.getId();
         // PageRequest를 생성하여 페이지네이션 적용
         Page<BookList> bookLists =
-                bookListRepository.findStoredBooksByMemberId(1L, PageRequest.of(page - 1, 10));
+                bookListRepository.findStoredBooksByMemberId(
+                        memberId, PageRequest.of(page - 1, 10));
 
         // Page<BookList>에서 content만 추출하여 변환
         return bookLists.getContent().stream()
@@ -262,8 +269,8 @@ public class BookListServiceImpl implements BookListService {
     }
 
     @Override
-    public String toggleLike(Long bookListId) {
-        Long memberId = 1L;
+    public String toggleLike(Long bookListId, Member member) {
+        Long memberId = member.getId();
         int i = 1; // 좋아요 여부
         // 책 리스트와 사용자를 조회
         BookList bookList =
@@ -271,10 +278,9 @@ public class BookListServiceImpl implements BookListService {
                         .findById(bookListId)
                         .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
-        Member member =
-                memberRepository
-                        .findById(memberId)
-                        .orElseThrow(() -> new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
 
         MemberBookList memberBookList =
                 memberBookListRepository
@@ -308,5 +314,158 @@ public class BookListServiceImpl implements BookListService {
 
         if (i == 0) return "좋아요 취소";
         else return "좋아요 추가";
+    }
+
+    // 인기책리스트 조회
+    @Override
+    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member) {
+        Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
+        List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
+
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        Long memberId = member.getId();
+
+        List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
+                bookLists.stream()
+                        .map(
+                                bookList ->
+                                        BookListConverter.topBookListAndTimeDTO(bookList, memberId))
+                        .collect(Collectors.toList());
+
+        return BookListResponseDTO.TopBookListAndTimeDTO.builder()
+                .updatedAt(currentDate)
+                .bookLists(topBookListDTOs)
+                .build();
+    }
+
+    // 타사용자 책리스트 보관함에 추가
+    public BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
+            Long bookListId, Member member) {
+        Long memberId = member.getId();
+
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList == null) {
+            // 새로운 MemberBookList 엔티티 생성 및 저장
+            memberBookList =
+                    MemberBookListConverter.createMemberBookList(bookList, member, false, true);
+            memberBookListRepository.save(memberBookList);
+        } else {
+            if (memberBookList.getIsStored()) {
+                // 사용자가 이미 리스트에 포함했으면
+                throw new BookListHandler(ErrorStatus.BOOKLIST_ALREADY_EXISTS);
+            } else {
+                // 사용자가 리스트에 포함하지 않았으면, 보관함에 추가
+                memberBookList.setIsStored(true);
+                memberBookListRepository.save(memberBookList);
+            }
+        }
+
+        // 결과 DTO 반환
+        return BookListResponseDTO.AddaAnotherBookListResultDTO.builder()
+                .memberBookId(memberBookList.getId())
+                .createdAt(memberBookList.getCreatedAt())
+                .build();
+    }
+
+    // 타사용자 리스트 삭제
+    public void deleteAnotherBookListToLibrary(Long bookListId, Member member) {
+        Long memberId = member.getId();
+
+        // 책 리스트와 사용자를 조회
+        BookList bookList =
+                bookListRepository
+                        .findById(bookListId)
+                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        if (member == null) {
+            throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        MemberBookList memberBookList =
+                memberBookListRepository
+                        .findByBookListIdAndMemberId(bookListId, memberId)
+                        .orElse(null);
+
+        if (memberBookList.getIsLiked() == false) {
+            memberBookListRepository.delete(memberBookList);
+        } else {
+            memberBookList.setIsStored(false);
+            memberBookListRepository.save(memberBookList);
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정에 실행
+    public void updateRecommendations() {
+        Pageable topBooksPageable = PageRequest.of(0, 3);
+        List<Long> topBookIds = memberBookRepository.findTopBooksByAverageScore(topBooksPageable);
+
+        // 상위 3권의 책 정보를 조회
+        List<Book> topBooks = bookRepository.findAllById(topBookIds);
+
+        // 상위 3권을 제외한 나머지 책을 조회
+        List<Book> remainingBooks = bookRepository.findBooksNotInList(topBookIds);
+
+        // 랜덤으로 2권 선택
+        Collections.shuffle(remainingBooks); // 랜덤으로 섞기
+        List<Book> randomBooks =
+                remainingBooks.stream()
+                        .limit(2) // 상위 2권 선택
+                        .collect(Collectors.toList());
+
+        // 추천 DTO 생성
+        List<BookListResponseDTO.RecommendBookDTO> recommendBookDTOs = new ArrayList<>();
+
+        // 상위 3권
+        recommendBookDTOs.addAll(
+                topBooks.stream()
+                        .map(BookConverter::toRecommendBookDTO)
+                        .collect(Collectors.toList()));
+
+        // 랜덤 2권
+        recommendBookDTOs.addAll(
+                randomBooks.stream()
+                        .map(BookConverter::toRecommendBookDTO)
+                        .collect(Collectors.toList()));
+
+        // 캐시 업데이트
+        cachedRecommendations = recommendBookDTOs;
+        lastUpdate = LocalDateTime.now();
+
+        System.out.println("Recommendations updated at: " + lastUpdate);
+    }
+
+    // 책 추천
+    public BookListResponseDTO.RecommendBookAndTimeDTO getRecommendBooks() {
+        // 다음 업데이트 날짜 (1주일 후)
+        LocalDateTime nextUpdate = lastUpdate.plus(1, ChronoUnit.WEEKS);
+
+        // 현재 시간
+        LocalDateTime now = LocalDateTime.now();
+
+        // 만약 업데이트가 오래된 경우 업데이트를 강제로 호출
+        if (cachedRecommendations.isEmpty() || now.isAfter(nextUpdate)) {
+            updateRecommendations(); // 데이터가 없거나 너무 오래된 경우 업데이트
+        }
+
+        return BookListResponseDTO.RecommendBookAndTimeDTO.builder()
+                .updatedAt(lastUpdate)
+                .nextUpdate(nextUpdate)
+                .books(cachedRecommendations)
+                .build();
     }
 }

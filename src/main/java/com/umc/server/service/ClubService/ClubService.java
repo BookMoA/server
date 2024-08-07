@@ -1,7 +1,7 @@
 package com.umc.server.service.ClubService;
 
 import com.umc.server.domain.Club;
-import com.umc.server.web.dto.ClubRequestDTO;
+import com.umc.server.web.dto.request.ClubRequestDTO;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;

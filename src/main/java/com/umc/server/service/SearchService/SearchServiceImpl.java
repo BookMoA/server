@@ -5,9 +5,9 @@ import com.umc.server.apiPayload.exception.handler.SearchHandler;
 import com.umc.server.converter.SearchConverter;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.BookMemo;
+import com.umc.server.domain.Member;
 import com.umc.server.repository.BookListRepository;
 import com.umc.server.repository.BookMemoRepository;
-import com.umc.server.repository.BookRepository;
 import com.umc.server.web.dto.response.SearchResponseDTO;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -24,12 +24,12 @@ import org.springframework.stereotype.Service;
 public class SearchServiceImpl implements SearchService {
     private final BookListRepository bookListRepository;
     private final BookMemoRepository bookMemoRepository;
-    private final BookRepository bookRepository;
 
     public List<SearchResponseDTO.SearchBookListResponseDTO> searchBookList(
-            String title, String sortBy, Integer page) {
+            String title, String sortBy, Integer page, Member member) {
         // 기본적으로 'relevance' 정렬을 기준으로 설정
         Sort sort;
+        Long memberId = member.getId();
 
         switch (sortBy) {
             case "newest":
@@ -61,15 +61,15 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return bookLists.stream()
-                .map(SearchConverter::searchBookListResponseDTO)
+                .map(bookList -> SearchConverter.searchBookListResponseDTO(bookList, memberId))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<SearchResponseDTO.SearchMemoResponseDTO> searchMemoList(
-            String keyword, String sortBy, Integer page) {
+            String keyword, String sortBy, Integer page, Member member) {
         Sort sort;
-        Long memberId = 1L;
+        Long memberId = member.getId();
 
         switch (sortBy) {
             case "newest":
@@ -80,6 +80,12 @@ public class SearchServiceImpl implements SearchService {
                 break;
             case "relevance":
                 sort = Sort.by("body").ascending();
+                break;
+            case "rating_desc":
+                sort = Sort.by("memberBook.score").descending();
+                break;
+            case "rating_asc":
+                sort = Sort.by("memberBook.score").ascending();
                 break;
             default:
                 throw new SearchHandler(ErrorStatus.SEARCH_INVALID_SORT);

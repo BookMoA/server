@@ -1,11 +1,9 @@
 package com.umc.server.web.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class BookListResponseDTO {
 
@@ -59,9 +57,11 @@ public class BookListResponseDTO {
         private Long id;
         private String title;
         private String img;
+        private int likeCnt;
         private int bookCnt;
         private String listStatus;
         private boolean likeStatus;
+        private boolean storedStatus;
     }
 
     //
@@ -71,5 +71,67 @@ public class BookListResponseDTO {
     @AllArgsConstructor
     public static class AddBookInBookListResultDTO {
         private List<Long> addedBookIds;
+    }
+
+    // 책리스트 상세 값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopBookListAndTimeDTO {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime updatedAt;
+
+        private List<TopBookListDTO> bookLists;
+    }
+
+    // 인기 책리스트 값 읽기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopBookListDTO {
+        private Long id;
+        private String title;
+        private String img;
+        private int bookCnt;
+        private int likeCnt;
+        private String listStatus;
+        private boolean likeStatus;
+    }
+
+    // 타사용자 책리스트 추가 결과값
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddaAnotherBookListResultDTO {
+        Long memberBookId;
+        LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendBookAndTimeDTO {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime updatedAt;
+
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime nextUpdate;
+
+        private List<RecommendBookDTO> books;
+    }
+
+    @Getter
+    @Builder
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendBookDTO {
+        private Long id;
+        private String title;
+        private String writer;
+        private String coverImage;
     }
 }

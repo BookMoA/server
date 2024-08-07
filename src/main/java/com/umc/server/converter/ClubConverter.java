@@ -1,8 +1,8 @@
 package com.umc.server.converter;
 
 import com.umc.server.domain.Club;
-import com.umc.server.web.dto.ClubRequestDTO;
-import com.umc.server.web.dto.ClubResponseDTO;
+import com.umc.server.web.dto.request.ClubRequestDTO;
+import com.umc.server.web.dto.response.ClubResponseDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

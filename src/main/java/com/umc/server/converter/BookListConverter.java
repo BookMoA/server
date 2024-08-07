@@ -127,13 +127,25 @@ public class BookListConverter {
                         .map(MemberBookList::getIsLiked)
                         .findFirst()
                         .orElse(false);
+
+        boolean storedStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsStored)
+                        .findFirst()
+                        .orElse(false);
+
         return BookListResponseDTO.LibraryBookListDTO.builder()
                 .id(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
+                .likeCnt(bookList.getLikeCnt())
                 .bookCnt(bookList.getBookCnt())
                 .listStatus(bookList.getListStatus().name())
                 .likeStatus(likeStatus)
+                .storedStatus(storedStatus)
                 .build();
     }
 
@@ -141,6 +153,28 @@ public class BookListConverter {
             List<Long> addBookIds) {
         return BookListResponseDTO.AddBookInBookListResultDTO.builder()
                 .addedBookIds(addBookIds)
+                .build();
+    }
+
+    public static BookListResponseDTO.TopBookListDTO topBookListAndTimeDTO(
+            BookList bookList, long memberId) {
+        boolean likeStatus =
+                bookList.getMemberBookList().stream()
+                        .filter(
+                                memberBookList ->
+                                        memberBookList.getMember().getId().equals(memberId))
+                        .map(MemberBookList::getIsLiked)
+                        .findFirst()
+                        .orElse(false);
+
+        return BookListResponseDTO.TopBookListDTO.builder()
+                .id(bookList.getId())
+                .title(bookList.getTitle())
+                .img(bookList.getImg())
+                .bookCnt(bookList.getBookCnt())
+                .likeCnt(bookList.getLikeCnt())
+                .listStatus(String.valueOf(bookList.getListStatus()))
+                .likeStatus(likeStatus)
                 .build();
     }
 }

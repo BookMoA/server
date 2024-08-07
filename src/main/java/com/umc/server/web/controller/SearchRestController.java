@@ -1,12 +1,14 @@
 package com.umc.server.web.controller;
 
 import com.umc.server.apiPayload.ApiResponse;
+import com.umc.server.domain.Member;
 import com.umc.server.service.SearchService.SearchService;
 import com.umc.server.web.dto.response.SearchResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +27,11 @@ public class SearchRestController {
             @RequestParam(name = "sortBy", defaultValue = "relevance")
                     @Parameter(description = "정렬 기준")
                     String sortBy,
-            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
 
         List<SearchResponseDTO.SearchBookListResponseDTO> bookList =
-                searchService.searchBookList(title, sortBy, page);
+                searchService.searchBookList(title, sortBy, page, signInmember);
         return ApiResponse.onSuccess(bookList);
     }
 
@@ -42,10 +45,11 @@ public class SearchRestController {
             @RequestParam(name = "sortBy", defaultValue = "relevance")
                     @Parameter(description = "정렬 기준")
                     String sortBy,
-            @RequestParam(name = "page", defaultValue = "1") Integer page) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
 
         List<SearchResponseDTO.SearchMemoResponseDTO> memoList =
-                searchService.searchMemoList(keyword, sortBy, page);
+                searchService.searchMemoList(keyword, sortBy, page, signInmember);
         return ApiResponse.onSuccess(memoList);
     }
 }
