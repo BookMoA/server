@@ -52,7 +52,7 @@ public class BookListRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookListEntryDTO {
-        private Long id; // Book의 ID
+        private Long bookId; // Book의 ID
         private Integer number; // 새로운 number 값
     }
 }

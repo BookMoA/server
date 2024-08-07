@@ -9,6 +9,7 @@ import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
+import com.umc.server.domain.enums.MemberBookStatus;
 import com.umc.server.domain.mapping.BookListEntry;
 import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.repository.*;
@@ -85,7 +86,7 @@ public class BookListServiceImpl implements BookListService {
         for (BookListRequestDTO.BookListEntryDTO entryDTO : request.getBooks()) {
             Book book =
                     bookRepository
-                            .findById(entryDTO.getId())
+                            .findById(entryDTO.getBookId())
                             .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOK_NOT_FOUND));
 
             BookListEntry newEntry =
@@ -466,6 +467,48 @@ public class BookListServiceImpl implements BookListService {
                 .updatedAt(lastUpdate)
                 .nextUpdate(nextUpdate)
                 .books(cachedRecommendations)
+                .build();
+    }
+
+    // 보관함 책 조회
+    public BookListResponseDTO.LibraryBookDTO getLibraryBooks(
+            String category, String sortBy, Integer page, Member member) {
+        Long memberId = member.getId();
+
+        MemberBookStatus status = null;
+        switch (category) {
+            case "reading":
+                status = MemberBookStatus.READING;
+                break;
+            case "finished":
+                status = MemberBookStatus.FINISHED;
+                break;
+            case "all":
+                status = null;
+                break;
+            default:
+                throw new BookListHandler(ErrorStatus.BOOK_INVALID_CATEGORY);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
+
+        Page<Book> booksPage = bookRepository.findBooks(memberId, status, sortBy, pageRequest);
+
+        if (booksPage.isEmpty()) {
+            throw new BookListHandler(ErrorStatus.BOOK_NOT_FOUND);
+        }
+
+        List<Book> sortedBooks = booksPage.getContent();
+
+        // DTO로 변환
+        List<BookListResponseDTO.RecommendBookDTO> books =
+                sortedBooks.stream()
+                        .map(BookConverter::toRecommendBookDTO)
+                        .collect(Collectors.toList());
+
+        return BookListResponseDTO.LibraryBookDTO.builder()
+                .bookStatus(category)
+                .books(books)
                 .build();
     }
 }
