@@ -59,7 +59,7 @@ public class BookListConverter {
     public static BookListResponseDTO.BookDTO getBookDTO(BookListEntry bookListEntry) {
         Book book = bookListEntry.getBook();
         return BookListResponseDTO.BookDTO.builder()
-                .id(book.getId())
+                .bookId(book.getId())
                 .title(book.getTitle())
                 .coverImg(book.getCoverImage())
                 .writer(book.getWriter())
@@ -93,7 +93,7 @@ public class BookListConverter {
                         .orElse(false);
 
         return BookListResponseDTO.BookListPreviewDTO.builder()
-                .id(bookList.getId())
+                .bookListId(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .spec(bookList.getSpec())
@@ -138,7 +138,7 @@ public class BookListConverter {
                         .orElse(false);
 
         return BookListResponseDTO.LibraryBookListDTO.builder()
-                .id(bookList.getId())
+                .bookListId(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .likeCnt(bookList.getLikeCnt())
@@ -168,7 +168,7 @@ public class BookListConverter {
                         .orElse(false);
 
         return BookListResponseDTO.TopBookListDTO.builder()
-                .id(bookList.getId())
+                .bookListId(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .bookCnt(bookList.getBookCnt())
