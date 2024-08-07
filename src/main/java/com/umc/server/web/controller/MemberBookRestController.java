@@ -2,6 +2,7 @@ package com.umc.server.web.controller;
 
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.MemberBookConverter;
+import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.service.MemberBookService.MemberBookService;
 import com.umc.server.web.dto.request.MemberBookRequestDTO;
@@ -14,16 +15,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/")
-public class MemberBookController {
+@RequestMapping("/memberBooks/")
+public class MemberBookRestController {
 
     private final MemberBookService memberBookService;
 
-    @Operation(summary = "멤버 책 생성 API", description = "멤버 책을 생성하는 API입니다.")
+    @Operation(summary = "멤버 책 생성 API", description = "멤버가 멤버 책을 생성하는 API입니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "COMMON200",
@@ -33,12 +35,12 @@ public class MemberBookController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @Parameter(name = "memberId", description = "멤버 아이디, path variable 입니다.")
-    @PostMapping("{memberId}/memberBooks")
+    @PostMapping
     public ApiResponse<MemberBookResponseDTO.CreateMemberBookResultDTO> createMemberBook(
-            @PathVariable(name = "memberId") Long memberId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @RequestBody @Valid MemberBookRequestDTO.CreateMemberBookDTO createMemberBookDTO) {
-        MemberBook memberBook = memberBookService.createMemberBook(memberId, createMemberBookDTO);
+        MemberBook memberBook =
+                memberBookService.createMemberBook(signInmember, createMemberBookDTO);
         return ApiResponse.onSuccess(MemberBookConverter.toCreateMemberBookResult(memberBook));
     }
 
@@ -52,15 +54,13 @@ public class MemberBookController {
                 description = "멤버 책이 아닙니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @Parameters({
-        @Parameter(name = "memberId", description = "멤버 아이디, path variable 입니다."),
-        @Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")
-    })
-    @GetMapping("{memberId}/memberBooks/{memberBookId}")
+    @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
+    @GetMapping("{memberBookId}")
     public ApiResponse<MemberBookResponseDTO.MemberBookPreviewDTO> readMemberBook(
-            @PathVariable(name = "memberId") Long memberId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @PathVariable(name = "memberBookId") Long memberBookId) {
-        MemberBook memberBook = memberBookService.readMemberBook(memberId, memberBookId);
+        MemberBook memberBook =
+                memberBookService.readMemberBook(signInmember.getId(), memberBookId);
         return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
     }
 
@@ -74,17 +74,15 @@ public class MemberBookController {
                 description = "멤버 책이 아닙니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @Parameters({
-        @Parameter(name = "memberId", description = "멤버 아이디, path variable 입니다."),
-        @Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")
-    })
-    @PatchMapping("{memberId}/memberBooks/{memberBookId}")
+    @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
+    @PatchMapping("{memberBookId}")
     public ApiResponse<MemberBookResponseDTO.MemberBookPreviewDTO> updateMemberBook(
-            @PathVariable(name = "memberId") Long memberId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @PathVariable(name = "memberBookId") Long memberBookId,
             @RequestBody @Valid MemberBookRequestDTO.UpdateMemberBookDTO updateMemberBookDTO) {
         MemberBook memberBook =
-                memberBookService.updateMemberBook(memberId, memberBookId, updateMemberBookDTO);
+                memberBookService.updateMemberBook(
+                        signInmember.getId(), memberBookId, updateMemberBookDTO);
         return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
     }
 
@@ -102,11 +100,31 @@ public class MemberBookController {
         @Parameter(name = "memberId", description = "멤버 아이디, path variable 입니다."),
         @Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")
     })
-    @DeleteMapping("{memberId}/memberBooks/{memberBookId}")
+    @DeleteMapping("{memberBookId}")
     public ApiResponse<String> deleteMemberBook(
-            @PathVariable(name = "memberId") Long memberId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @PathVariable(name = "memberBookId") Long memberBookId) {
-        memberBookService.deleteMemberBook(memberId, memberBookId);
+        memberBookService.deleteMemberBook(signInmember.getId(), memberBookId);
         return ApiResponse.onSuccess("독서 메모에서 해당 멤버 책을 삭제하였습니다.");
+    }
+
+    @Operation(summary = "독서 메모 멤버 책 조회 API", description = "독서 메모가 있는 멤버 책 하나를 조회하는 API입니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON200",
+                description = "OK, 독서 메모 멤버 책 조회 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
+                content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
+    @GetMapping("bookMemos/{memberBookId}")
+    public ApiResponse<MemberBookResponseDTO.MemberBookPreviewDTO> readMemberBookByBookMemo(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @PathVariable(name = "memberBookId") Long memberBookId) {
+        MemberBook memberBook =
+                memberBookService.readMemberBookByBookMemo(signInmember, memberBookId);
+        return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
     }
 }

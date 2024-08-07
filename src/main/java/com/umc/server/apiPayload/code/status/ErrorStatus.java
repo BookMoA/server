@@ -39,8 +39,12 @@ public enum ErrorStatus implements BaseErrorCode {
     SEARCH_BOOKLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4001", false, "없는 책리스트입니다."),
     SEARCH_BOOKMEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", false, "없는 메모입니다."),
     SEARCH_INVALID_SORT(HttpStatus.NOT_FOUND, "SEARCH4003", false, "SORTBY형식이 올바르지 않습니다."),
+
     // 멤버 책 관련 에러
     MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
+
+    // 독서 메모 관련 에러
+    BOOK_MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_MEMO4001", false, "해당하는 독서 메모가 없습니다."),
 
     // 검색&조회
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", false, "유효하지 않은 분류입니다."),
