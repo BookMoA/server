@@ -141,7 +141,7 @@ public class BookListRestController {
 
     @Operation(summary = "추천 책 조회 API", description = "추천 책 5개를 조회하는 API입니다.")
     @GetMapping("recommend")
-    public ApiResponse<BookListResponseDTO.RecommendBookAndTimeDTO> getRecommendBookList() {
+    public ApiResponse<BookListResponseDTO.RecommendBookAndTimeDTO> getRecommendBooks() {
         BookListResponseDTO.RecommendBookAndTimeDTO recommendBooks =
                 bookListService.getRecommendBooks();
         return ApiResponse.onSuccess(recommendBooks);
