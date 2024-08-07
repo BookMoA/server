@@ -5,6 +5,7 @@ import com.umc.server.converter.MemberBookConverter;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.service.MemberBookService.MemberBookService;
+import com.umc.server.validation.annotation.CheckPage;
 import com.umc.server.web.dto.request.MemberBookRequestDTO;
 import com.umc.server.web.dto.response.MemberBookResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,7 +92,7 @@ public class MemberBookRestController {
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "COMMON200",
-                description = "OK, 멤버 책 수정 성공"),
+                description = "OK, 멤버 책 삭제 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
                 responseCode = "MEMBER_BOOK4001",
                 description = "멤버 책이 아닙니다.",
@@ -126,5 +128,25 @@ public class MemberBookRestController {
         MemberBook memberBook =
                 memberBookService.readMemberBookByBookMemo(signInmember, memberBookId);
         return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
+    }
+
+    @Operation(summary = "독서 메모 멤버 책 전체 조회 API", description = "독서 메모가 있는 멤버 책 전체를 조회하는 API입니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON200",
+                description = "OK, 독서 메모 멤버 책 전체 조회 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
+                content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("bookMemos")
+    public ApiResponse<MemberBookResponseDTO.MemberBookPreviewListDTO> readMemberBookListByBookMemo(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @CheckPage @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        Page<MemberBook> memoMemberBookPage =
+                memberBookService.readMemberBookListByBookMemo(signInmember, page);
+        return ApiResponse.onSuccess(
+                MemberBookConverter.toMemberBookPreviewListDTO(memoMemberBookPage));
     }
 }

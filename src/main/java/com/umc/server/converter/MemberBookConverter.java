@@ -3,6 +3,9 @@ package com.umc.server.converter;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.web.dto.request.MemberBookRequestDTO;
 import com.umc.server.web.dto.response.MemberBookResponseDTO;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class MemberBookConverter {
 
@@ -34,6 +37,18 @@ public class MemberBookConverter {
                 .score(memberBook.getScore())
                 .memberId(memberBook.getMember().getId())
                 .bookId(memberBook.getBook().getId())
+                .build();
+    }
+
+    public static MemberBookResponseDTO.MemberBookPreviewListDTO toMemberBookPreviewListDTO(
+            Page<MemberBook> memoMemberBookPage) {
+        List<MemberBookResponseDTO.MemberBookPreviewDTO> memberBookPreviewDTOList =
+                memoMemberBookPage.stream()
+                        .map(MemberBookConverter::toMemberBookPreviewDTO)
+                        .collect(Collectors.toList());
+
+        return MemberBookResponseDTO.MemberBookPreviewListDTO.builder()
+                .memberBookPreviewDTOList(memberBookPreviewDTOList)
                 .build();
     }
 }
