@@ -1,6 +1,7 @@
 package com.umc.server.web.dto.response;
 
 import com.umc.server.domain.enums.SignUpType;
+import java.time.LocalDateTime;
 import lombok.*;
 
 public class MemberResponseDTO {
@@ -68,6 +69,18 @@ public class MemberResponseDTO {
 
         public static EditProfileInfo of(String email, String nickname, String profileURL) {
             return new EditProfileInfo(email, nickname, profileURL);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class CodeDTO {
+
+        private String code;
+        private LocalDateTime generateTime;
+
+        public static CodeDTO of(String code, LocalDateTime generateTime) {
+            return new CodeDTO(code, generateTime);
         }
     }
 }

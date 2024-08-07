@@ -14,6 +14,7 @@ import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.mail.MessagingException;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -156,7 +157,7 @@ public class MemberRestController {
                         signInmember.getId(), commentPush, likePush, nightPush));
     }
 
-    // TODO: 회원정보(email, nickname) 변경하기
+    // TODO: 회원정보(email, nickname, profileImg) 변경하기
     @Operation(
             summary = "회원 정보 변경 api",
             description =
@@ -171,5 +172,22 @@ public class MemberRestController {
 
         return ApiResponse.onSuccess(
                 awsService.editProfileInfo(profileImg, signInmember, nickname, email));
+    }
+
+    // TODO: 인증번호 전달하기
+    @Operation(summary = "인증번호 전송 api", description = "비밀번호 찾기시, 이메일로 인증번호를 보내는 api입니다.")
+    @GetMapping("/auth/password")
+    public ApiResponse<MemberResponseDTO.CodeDTO> sendCode(
+            @RequestParam(value = "email") String email) throws MessagingException {
+        return ApiResponse.onSuccess(memberService.sendCode(email));
+    }
+
+    // TODO: 비밀번호 찾기 -> 비밀번호 변경하기
+    @Operation(summary = "비밀번호 변경 api", description = "비밀번호 재설정을 진행하는 api입니다.")
+    @PutMapping("/auth/password")
+    public ApiResponse<String> changePassword(
+            @RequestBody MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        memberService.changePassword(changePasswordDTO);
+        return ApiResponse.onSuccess("비밀번호 변경에 성공했습니다.");
     }
 }

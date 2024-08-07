@@ -3,6 +3,7 @@ package com.umc.server.service.MemberService;
 import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
+import jakarta.mail.MessagingException;
 
 public interface MemberService {
 
@@ -24,4 +25,10 @@ public interface MemberService {
     // TODO: 알림 상태 변경
     MemberResponseDTO.PushNotification setNotification(
             Long memberId, Boolean commentPush, Boolean likePush, Boolean nightPush);
+
+    // TODO: 이메일로 인증번호 보내기
+    MemberResponseDTO.CodeDTO sendCode(String email) throws MessagingException;
+
+    // TODO: 비밀번호 변경하기
+    void changePassword(MemberRequestDTO.ChangePasswordDTO changePasswordDTO);
 }

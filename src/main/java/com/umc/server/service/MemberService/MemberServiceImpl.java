@@ -16,13 +16,20 @@ import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.jsonwebtoken.Claims;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -41,8 +48,12 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PushNotificationRepository pushNotificationRepository;
+    private final JavaMailSender emailSender;
 
     @Autowired PasswordEncoder passwordEncoder;
+
+    @Value("${NAVER_ID}")
+    private String NAVER_ID;
 
     // TODO: 회원가입 기능
     public MemberResponseDTO.SignInResponseDTO signUp(
@@ -228,5 +239,79 @@ public class MemberServiceImpl implements MemberService {
                 updatedNotification.getLikePushEnabled(),
                 updatedNotification.getCommentPushEnabled(),
                 updatedNotification.getNightPushEnabled());
+    }
+
+    // TODO: 이메일로 인증번호 보내기
+    public MemberResponseDTO.CodeDTO sendCode(String email) throws MessagingException {
+        Boolean isExist = memberRepository.existsByEmailAndSignUpType(email, SignUpType.GENERAL);
+        if (!isExist) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        // 난수 생성
+        Random random = new Random();
+        final String code = String.format("%04d", random.nextInt(10000));
+
+        // 이메일 전송
+        MimeMessage message = mailBody(email, code);
+        try {
+            emailSender.send(message);
+        } catch (Exception e) {
+            throw new MemberHandler(ErrorStatus.EMAIL_SEND_ERROR);
+        }
+
+        return MemberResponseDTO.CodeDTO.of(code, LocalDateTime.now());
+    }
+
+    // 이메일 내용 만들기
+    private MimeMessage mailBody(String email, String code) throws MessagingException {
+
+        MimeMessage message = emailSender.createMimeMessage();
+        message.addRecipients(Message.RecipientType.TO, email); // 받는 사람
+        message.setSubject("[책모아] 비밀번호 재설정을 위한 인증번호가 도착했습니다"); // 제목
+
+        String msgg = "";
+        msgg += "<div style='margin:100px;'>";
+        msgg += "<h1 style='color:#2E7D32; font-size:30px; font-weight:bold;'>비밀번호 재설정 인증번호</h1>";
+        msgg += "<br>";
+        msgg += "<p style='color:#212121; font-size:17px; line-height:1.5;'>";
+        msgg += "안녕하세요.<br>";
+        msgg += "요청하신 비밀번호 재설정 인증번호입니다.<br>";
+        msgg += "아래의 인증번호를 입력하여 비밀번호 재설정을 완료해 주세요.";
+        msgg += "</p>";
+        msgg += "<br>";
+        msgg +=
+                "<div style='font-size:54px; font-weight:bold; text-align:center; background-color:#F5F5F5; padding:20px; border-radius:10px;'>";
+        msgg += code;
+        msgg += "</div>";
+        msgg += "<br>";
+        msgg += "<p style='color:#757575; font-size:13px; line-height:1.5;'>";
+        msgg += "본 이메일은 비밀번호 재설정을 위해 발송되었습니다.<br>";
+        msgg += "만약 본인이 요청하지 않았다면 이 메일을 무시하셔도 됩니다.<br>";
+        msgg += "인증번호는 5분 동안 유효합니다.";
+        msgg += "</p>";
+        msgg += "</div>";
+        msgg +=
+                "<div style='margin-top:50px; padding-top:20px; border-top:1px solid #EEEEEE; font-size:12px; color:#757575;'>";
+        msgg += "© 2024 UMC 책모아. All rights reserved.<br>";
+        msgg += "book-moa@naver.com";
+        msgg += "</div>";
+
+        message.setText(msgg, "utf-8", "html");
+        message.setFrom(NAVER_ID);
+
+        return message;
+    }
+
+    // TODO: 비밀번호 변경하기
+    public void changePassword(MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        Member member =
+                memberRepository
+                        .findByEmail(changePasswordDTO.getEmail())
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        final String newPassword = passwordEncoder.encode(changePasswordDTO.getPassword());
+        member.setPassword(newPassword);
+        memberRepository.save(member);
     }
 }

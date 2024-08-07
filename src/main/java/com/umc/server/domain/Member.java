@@ -34,6 +34,7 @@ public class Member extends BaseEntity implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @Column(nullable = false, length = 20)

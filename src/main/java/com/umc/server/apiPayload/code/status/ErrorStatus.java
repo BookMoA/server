@@ -25,6 +25,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN_ERROR(HttpStatus.FORBIDDEN, "TOKEN403", false, "리프레시 토큰이 만료되었습니다. 다시 로그인해주세요."),
     PUSH_NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "PUSH404", false, "존재하지 않는 알림 정보입니다."),
     AWS_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AWS500", false, "s3에 이미지를 업로드하지 못했습니다."),
+    EMAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL500", false, "인증 코드 전송에 실패하였습니다."),
 
     // 책리스트 관련 에러
     BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST4001", false, "책리스트가 없습니다."),
