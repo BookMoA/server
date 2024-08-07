@@ -5,6 +5,7 @@ import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.domain.Member;
+import com.umc.server.service.MemberService.AwsService;
 import com.umc.server.service.MemberService.KakaoService;
 import com.umc.server.service.MemberService.MemberService;
 import com.umc.server.service.MemberService.TokenBlacklistService;
@@ -13,10 +14,12 @@ import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
@@ -33,6 +36,7 @@ public class MemberRestController {
     private final MemberService memberService;
     private final KakaoService kakaoService;
     private final TokenBlacklistService blacklistService;
+    private final AwsService awsService;
 
     // TODO: 회원가입
     @Operation(
@@ -150,5 +154,22 @@ public class MemberRestController {
         return ApiResponse.onSuccess(
                 memberService.setNotification(
                         signInmember.getId(), commentPush, likePush, nightPush));
+    }
+
+    // TODO: 회원정보(email, nickname) 변경하기
+    @Operation(
+            summary = "회원 정보 변경 api",
+            description =
+                    "email 또는 nickname을 변경할 때 사용하는 api입니다. 반드시 header의 content-type을 \"multipart/form-data\"로 묶어서 보내주세요.")
+    @PutMapping("/profileInfo")
+    public ApiResponse<MemberResponseDTO.EditProfileInfo> editProfileInfo(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "profileImg", required = false) MultipartFile profileImg)
+            throws IOException {
+
+        return ApiResponse.onSuccess(
+                awsService.editProfileInfo(profileImg, signInmember, nickname, email));
     }
 }

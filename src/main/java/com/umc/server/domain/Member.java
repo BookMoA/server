@@ -30,12 +30,14 @@ public class Member extends BaseEntity implements UserDetails {
     private Long id;
 
     @Column(length = 100)
+    @Setter
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 20)
+    @Setter
     private String nickname;
 
     @ColumnDefault("false")
@@ -62,6 +64,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Lob
     @Column(columnDefinition = "TEXT")
+    @Setter
     private String profileURL;
 
     @Enumerated(EnumType.STRING)

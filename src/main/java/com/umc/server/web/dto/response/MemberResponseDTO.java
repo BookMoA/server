@@ -57,4 +57,17 @@ public class MemberResponseDTO {
             return new PushNotification(likePush, commentPush, nightPush);
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class EditProfileInfo {
+
+        private String email;
+        private String nickname;
+        @Setter private String profileURL;
+
+        public static EditProfileInfo of(String email, String nickname, String profileURL) {
+            return new EditProfileInfo(email, nickname, profileURL);
+        }
+    }
 }
