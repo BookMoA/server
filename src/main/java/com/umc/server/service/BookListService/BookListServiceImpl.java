@@ -2,6 +2,7 @@ package com.umc.server.service.BookListService;
 
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.BookListHandler;
+import com.umc.server.converter.BookConverter;
 import com.umc.server.converter.BookListConverter;
 import com.umc.server.converter.MemberBookListConverter;
 import com.umc.server.domain.Book;
@@ -15,15 +16,15 @@ import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,10 +32,12 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
-    private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
     private final MemberBookListRepository memberBookListRepository;
+    private final MemberBookRepository memberBookRepository;
+    private List<BookListResponseDTO.RecommendBookDTO> cachedRecommendations = new ArrayList<>();
+    private LocalDateTime lastUpdate = LocalDateTime.MIN;
 
     // 책리스트 추가
     @Override
@@ -404,5 +407,65 @@ public class BookListServiceImpl implements BookListService {
             memberBookList.setIsStored(false);
             memberBookListRepository.save(memberBookList);
         }
+    }
+
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정에 실행
+    public void updateRecommendations() {
+        Pageable topBooksPageable = PageRequest.of(0, 3);
+        List<Long> topBookIds = memberBookRepository.findTopBooksByAverageScore(topBooksPageable);
+
+        // 상위 3권의 책 정보를 조회
+        List<Book> topBooks = bookRepository.findAllById(topBookIds);
+
+        // 상위 3권을 제외한 나머지 책을 조회
+        List<Book> remainingBooks = bookRepository.findBooksNotInList(topBookIds);
+
+        // 랜덤으로 2권 선택
+        Collections.shuffle(remainingBooks); // 랜덤으로 섞기
+        List<Book> randomBooks =
+                remainingBooks.stream()
+                        .limit(2) // 상위 2권 선택
+                        .collect(Collectors.toList());
+
+        // 추천 DTO 생성
+        List<BookListResponseDTO.RecommendBookDTO> recommendBookDTOs = new ArrayList<>();
+
+        // 상위 3권
+        recommendBookDTOs.addAll(
+                topBooks.stream()
+                        .map(BookConverter::toRecommendBookDTO)
+                        .collect(Collectors.toList()));
+
+        // 랜덤 2권
+        recommendBookDTOs.addAll(
+                randomBooks.stream()
+                        .map(BookConverter::toRecommendBookDTO)
+                        .collect(Collectors.toList()));
+
+        // 캐시 업데이트
+        cachedRecommendations = recommendBookDTOs;
+        lastUpdate = LocalDateTime.now();
+
+        System.out.println("Recommendations updated at: " + lastUpdate);
+    }
+
+    // 책 추천
+    public BookListResponseDTO.RecommendBookAndTimeDTO getRecommendBooks() {
+        // 다음 업데이트 날짜 (1주일 후)
+        LocalDateTime nextUpdate = lastUpdate.plus(1, ChronoUnit.WEEKS);
+
+        // 현재 시간
+        LocalDateTime now = LocalDateTime.now();
+
+        // 만약 업데이트가 오래된 경우 업데이트를 강제로 호출
+        if (cachedRecommendations.isEmpty() || now.isAfter(nextUpdate)) {
+            updateRecommendations(); // 데이터가 없거나 너무 오래된 경우 업데이트
+        }
+
+        return BookListResponseDTO.RecommendBookAndTimeDTO.builder()
+                .updatedAt(lastUpdate)
+                .nextUpdate(nextUpdate)
+                .books(cachedRecommendations)
+                .build();
     }
 }

@@ -31,4 +31,6 @@ public interface BookListService {
             Long bookListId, Member member);
 
     void deleteAnotherBookListToLibrary(Long bookListId, Member member);
+
+    BookListResponseDTO.RecommendBookAndTimeDTO getRecommendBooks();
 }
