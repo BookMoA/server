@@ -135,7 +135,7 @@ public class MemberRestController {
 
     // TODO: 회원가입시 닉네임 중복 조회
     @Operation(summary = "닉네임 중복 조회 api", description = "회원가입시 중복된 닉네임이 있는지 확인하는 api입니다.")
-    @GetMapping("/auth/nickname")
+    @GetMapping("/auth")
     public ApiResponse<MemberResponseDTO.UniqueNickname> isUniqueNickname(
             @RequestParam("nickname") String nickname) {
 
