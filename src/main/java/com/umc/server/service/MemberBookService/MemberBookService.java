@@ -16,4 +16,6 @@ public interface MemberBookService {
             MemberBookRequestDTO.UpdateMemberBookDTO updateMemberBookDTO);
 
     void deleteMemberBook(Long memberId, Long memberBookId);
+
+    MemberBook readMemberBookByBookMemo(Member signInmember, Long memberBookId);
 }

@@ -107,4 +107,24 @@ public class MemberBookRestController {
         memberBookService.deleteMemberBook(signInmember.getId(), memberBookId);
         return ApiResponse.onSuccess("독서 메모에서 해당 멤버 책을 삭제하였습니다.");
     }
+
+    @Operation(summary = "독서 메모 멤버 책 조회 API", description = "독서 메모가 있는 멤버 책 하나를 조회하는 API입니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON200",
+                description = "OK, 독서 메모 멤버 책 조회 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
+                content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
+    @GetMapping("bookMemos/{memberBookId}")
+    public ApiResponse<MemberBookResponseDTO.MemberBookPreviewDTO> readMemberBookByBookMemo(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @PathVariable(name = "memberBookId") Long memberBookId) {
+        MemberBook memberBook =
+                memberBookService.readMemberBookByBookMemo(signInmember, memberBookId);
+        return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
+    }
 }

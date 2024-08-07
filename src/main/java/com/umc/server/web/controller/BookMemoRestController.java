@@ -39,7 +39,7 @@ public class BookMemoRestController {
     @PostMapping("{memberBookId}/bookMemos")
     public ApiResponse<BookMemoResponseDTO.CreateBookMemoResultDTO> createBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
-            @RequestParam(name = "memberBookId") Long memberBookId,
+            @PathVariable(name = "memberBookId") Long memberBookId,
             @RequestBody BookMemoRequestDTO.CreateBookMemoDTO createBookMemoDTO) {
         BookMemo bookMemo =
                 bookMemoService.createBookMemo(signInmember, memberBookId, createBookMemoDTO);
@@ -63,8 +63,8 @@ public class BookMemoRestController {
     @GetMapping("{memberBookId}/bookMemos/{bookMemoId}")
     public ApiResponse<BookMemoResponseDTO.BookMemoPreviewDTO> readBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
-            @RequestParam(name = "memberBookId") Long memberBookId,
-            @RequestParam(name = "bookMemoId") Long bookMemoId) {
+            @PathVariable(name = "memberBookId") Long memberBookId,
+            @PathVariable(name = "bookMemoId") Long bookMemoId) {
         BookMemo bookMemo = bookMemoService.readBookMemo(signInmember, memberBookId, bookMemoId);
         return ApiResponse.onSuccess(BookMemoConverter.toBookMemoPreviewDTO(bookMemo));
     }
@@ -86,7 +86,7 @@ public class BookMemoRestController {
     @GetMapping("{memberBookId}/bookMemos")
     public ApiResponse<BookMemoResponseDTO.BookMemoPreviewListDTO> readBookMemoList(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
-            @RequestParam(name = "memberBookId") Long memberBookId,
+            @PathVariable(name = "memberBookId") Long memberBookId,
             @CheckPage @RequestParam(name = "page", defaultValue = "1") Integer page) {
         Page<BookMemo> bookMemoPage =
                 bookMemoService.readBookMemoList(signInmember, memberBookId, page);
@@ -110,8 +110,8 @@ public class BookMemoRestController {
     @PatchMapping("{memberBookId}/bookMemos/{bookMemoId}")
     public ApiResponse<BookMemoResponseDTO.BookMemoPreviewDTO> updateBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
-            @RequestParam(name = "memberBookId") Long memberBookId,
-            @RequestParam(name = "bookMemoId") Long bookMemoId,
+            @PathVariable(name = "memberBookId") Long memberBookId,
+            @PathVariable(name = "bookMemoId") Long bookMemoId,
             @RequestBody BookMemoRequestDTO.UpdateBookMemoDTO updateBookMemoDTO) {
         BookMemo bookMemo =
                 bookMemoService.updateBookMemo(
@@ -136,8 +136,8 @@ public class BookMemoRestController {
     @DeleteMapping("{memberBookId}/bookMemos/{bookMemoId}")
     public ApiResponse<String> deleteBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
-            @RequestParam(name = "memberBookId") Long memberBookId,
-            @RequestParam(name = "bookMemoId") Long bookMemoId) {
+            @PathVariable(name = "memberBookId") Long memberBookId,
+            @PathVariable(name = "bookMemoId") Long bookMemoId) {
         bookMemoService.deleteBookMemo(signInmember, memberBookId, bookMemoId);
         return ApiResponse.onSuccess("멤버 책에서 해당 독서 메모를 삭제하였습니다.");
     }

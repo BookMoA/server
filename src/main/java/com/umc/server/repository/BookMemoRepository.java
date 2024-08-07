@@ -20,4 +20,6 @@ public interface BookMemoRepository extends JpaRepository<BookMemo, Long> {
     Optional<BookMemo> findByIdAndMemberBook(Long id, MemberBook memberBook);
 
     Page<BookMemo> findAllByMemberBook(MemberBook memberBook, PageRequest pageRequest);
+
+    Boolean existsByMemberBook(MemberBook memberBook);
 }
