@@ -115,6 +115,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        return true;
+        return false;
     }
 }

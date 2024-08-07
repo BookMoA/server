@@ -133,7 +133,22 @@ public class MemberRestController {
     @GetMapping("/auth")
     public ApiResponse<MemberResponseDTO.UniqueNickname> isUniqueNickname(
             @RequestParam("nickname") String nickname) {
+
         return ApiResponse.onSuccess(
                 MemberResponseDTO.UniqueNickname.of(!memberService.nicknameExist(nickname)));
+    }
+
+    // TODO: 푸시 알림 저장하기
+    @Operation(summary = "푸시 알림 저장 api", description = "푸시 알림 동의를 변경할 때 사용하는 api입니다.")
+    @PutMapping("/pushNotification")
+    public ApiResponse<MemberResponseDTO.PushNotification> setNotificationState(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestParam(value = "commentPush", required = false) Boolean commentPush,
+            @RequestParam(value = "likePush", required = false) Boolean likePush,
+            @RequestParam(value = "nightPush", required = false) Boolean nightPush) {
+
+        return ApiResponse.onSuccess(
+                memberService.setNotification(
+                        signInmember.getId(), commentPush, likePush, nightPush));
     }
 }
