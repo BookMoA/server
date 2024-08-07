@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class BookListServiceImpl implements BookListService {
     private final BookListRepository bookListRepository;
-    private final Random random = new Random();
     private final BookRepository bookRepository;
     private final BookListEntryRepository bookListEntryRepository;
     private final MemberBookListRepository memberBookListRepository;
