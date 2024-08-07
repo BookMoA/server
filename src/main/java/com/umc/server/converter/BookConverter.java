@@ -35,6 +35,7 @@ public class BookConverter {
                 .build();
     }
 
+    // 추천 책
     public static BookListResponseDTO.RecommendBookDTO toRecommendBookDTO(Book book) {
         return BookListResponseDTO.RecommendBookDTO.builder()
                 .id(book.getId())
