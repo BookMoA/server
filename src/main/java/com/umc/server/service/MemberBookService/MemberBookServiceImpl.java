@@ -8,6 +8,7 @@ import com.umc.server.converter.MemberBookConverter;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
+import com.umc.server.repository.BookMemoRepository;
 import com.umc.server.repository.BookRepository;
 import com.umc.server.repository.MemberBookRepository;
 import com.umc.server.repository.MemberRepository;
@@ -23,6 +24,7 @@ public class MemberBookServiceImpl implements MemberBookService {
     private final MemberBookRepository memberBookRepository;
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
+    private final BookMemoRepository bookMemoRepository;
 
     @Override
     public MemberBook createMemberBook(
@@ -107,5 +109,25 @@ public class MemberBookServiceImpl implements MemberBookService {
                                     throw new MemberBookHandler(ErrorStatus.MEMBER_BOOK_NOT_FOUND);
                                 });
         memberBookRepository.delete(memberBook);
+    }
+
+    @Override
+    public MemberBook readMemberBookByBookMemo(Member member, Long memberBookId) {
+        if (member == null) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        // 특정 멤버가 해당 책을 멤버 책으로 가지고 있는지 확인
+        MemberBook memberBook =
+                memberBookRepository
+                        .findByIdAndMember(memberBookId, member)
+                        .orElseThrow(
+                                () -> {
+                                    throw new MemberBookHandler(ErrorStatus.MEMBER_BOOK_NOT_FOUND);
+                                });
+
+        // 그 멤버 책에 메모가 존재한다면 멤버 책 반환
+        Boolean hasBookMemos = bookMemoRepository.existsByMemberBook(memberBook);
+
+        if (hasBookMemos) return memberBook;
+        else throw new MemberBookHandler(ErrorStatus.BOOK_MEMO_NOT_FOUND);
     }
 }
