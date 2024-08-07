@@ -13,7 +13,12 @@ import com.umc.server.repository.BookRepository;
 import com.umc.server.repository.MemberBookRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.web.dto.request.MemberBookRequestDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +117,7 @@ public class MemberBookServiceImpl implements MemberBookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberBook readMemberBookByBookMemo(Member member, Long memberBookId) {
         if (member == null) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
@@ -129,5 +135,36 @@ public class MemberBookServiceImpl implements MemberBookService {
 
         if (hasBookMemos) return memberBook;
         else throw new MemberBookHandler(ErrorStatus.BOOK_MEMO_NOT_FOUND);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MemberBook> readMemberBookListByBookMemo(Member member, Integer page) {
+        if (member == null) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        // 특정 멤버가 가지고 있는 멤버 책들 리스트
+        List<MemberBook> memberBookList =
+                memberBookRepository
+                        .findAllByMember(member)
+                        .orElseThrow(
+                                () -> {
+                                    throw new MemberBookHandler(ErrorStatus.MEMBER_BOOK_NOT_FOUND);
+                                });
+
+        // 위 리스트에서 메모를 가진 멤버 책만 리스트로 다시 변환
+        List<MemberBook> memoMemberBookList =
+                memberBookList.stream()
+                        .filter(bookMemoRepository::existsByMemberBook)
+                        .collect(Collectors.toList());
+
+        // 메모를 가진 멤버 책들이 아예 없을 시 에러 메시지
+        if (memoMemberBookList.isEmpty())
+            throw new MemberBookHandler(ErrorStatus.BOOK_MEMO_NOT_FOUND);
+
+        // 페이지네이션 적용
+        Page<MemberBook> memoMemberBookPage =
+                new PageImpl<>(
+                        memoMemberBookList, PageRequest.of(page, 10), memoMemberBookList.size());
+        return memoMemberBookPage;
     }
 }

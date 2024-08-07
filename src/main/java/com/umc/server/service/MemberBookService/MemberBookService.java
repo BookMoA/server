@@ -3,6 +3,7 @@ package com.umc.server.service.MemberBookService;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.web.dto.request.MemberBookRequestDTO;
+import org.springframework.data.domain.Page;
 
 public interface MemberBookService {
     MemberBook createMemberBook(
@@ -18,4 +19,6 @@ public interface MemberBookService {
     void deleteMemberBook(Long memberId, Long memberBookId);
 
     MemberBook readMemberBookByBookMemo(Member signInmember, Long memberBookId);
+
+    Page<MemberBook> readMemberBookListByBookMemo(Member signInmember, Integer page);
 }
