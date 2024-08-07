@@ -103,12 +103,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // filter 에서 제외한 url 목록
-        // String[] excludedPaths = {"/users/auth/", "/swagger-ui/", "/v3/"};
+        String[] excludedPaths = {"/users/auth/**", "/swagger-ui/**", "/v3/**"};
 
-        // if ("/".equals(path)) {
-        //     return true;
-        // }
-        String[] excludedPaths = {"/users/auth/"};
+        if ("/".equals(path)) {
+            return true;
+        }
+        //        String[] excludedPaths = {"/users/auth/"};
 
         for (String excludedPath : excludedPaths) {
             if (path.startsWith(excludedPath)) {

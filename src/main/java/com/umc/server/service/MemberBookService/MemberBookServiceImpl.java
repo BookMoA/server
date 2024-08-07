@@ -26,15 +26,9 @@ public class MemberBookServiceImpl implements MemberBookService {
 
     @Override
     public MemberBook createMemberBook(
-            Long memberId, MemberBookRequestDTO.CreateMemberBookDTO createMemberBookDTO) {
+            Member member, MemberBookRequestDTO.CreateMemberBookDTO createMemberBookDTO) {
         MemberBook memberBook = MemberBookConverter.toMemberBook(createMemberBookDTO);
-        Member member =
-                memberRepository
-                        .findById(memberId)
-                        .orElseThrow(
-                                () -> {
-                                    throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
-                                });
+        if (member == null) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         Book book =
                 bookRepository
                         .findById(createMemberBookDTO.getBookId())
@@ -43,8 +37,8 @@ public class MemberBookServiceImpl implements MemberBookService {
                                     throw new BookHandler(ErrorStatus.BOOK_NOT_FOUND);
                                 });
 
-        memberBook.setBook(book);
         memberBook.setMember(member);
+        memberBook.setBook(book);
 
         return memberBookRepository.save(memberBook);
     }
