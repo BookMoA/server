@@ -320,7 +320,7 @@ public class BookListServiceImpl implements BookListService {
     // 인기책리스트 조회
     @Override
     public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member) {
-        Pageable pageable = PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "likeCnt"));
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "likeCnt"));
         List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
 
         LocalDateTime currentDate = LocalDateTime.now();
