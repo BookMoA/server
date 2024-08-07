@@ -43,4 +43,12 @@ public class MemberRequestDTO {
     public static class RequestTokenDTO {
         private String refreshToken;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangePasswordDTO {
+        private String password;
+        private String email;
+    }
 }

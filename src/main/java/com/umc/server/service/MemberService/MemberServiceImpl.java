@@ -302,4 +302,16 @@ public class MemberServiceImpl implements MemberService {
 
         return message;
     }
+
+    // TODO: 비밀번호 변경하기
+    public void changePassword(MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        Member member =
+                memberRepository
+                        .findByEmail(changePasswordDTO.getEmail())
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        final String newPassword = passwordEncoder.encode(changePasswordDTO.getPassword());
+        member.setPassword(newPassword);
+        memberRepository.save(member);
+    }
 }

@@ -28,4 +28,7 @@ public interface MemberService {
 
     // TODO: 이메일로 인증번호 보내기
     MemberResponseDTO.CodeDTO sendCode(String email) throws MessagingException;
+
+    // TODO: 비밀번호 변경하기
+    void changePassword(MemberRequestDTO.ChangePasswordDTO changePasswordDTO);
 }

@@ -135,7 +135,7 @@ public class MemberRestController {
 
     // TODO: 회원가입시 닉네임 중복 조회
     @Operation(summary = "닉네임 중복 조회 api", description = "회원가입시 중복된 닉네임이 있는지 확인하는 api입니다.")
-    @GetMapping("/auth")
+    @GetMapping("/auth/nickname")
     public ApiResponse<MemberResponseDTO.UniqueNickname> isUniqueNickname(
             @RequestParam("nickname") String nickname) {
 
@@ -180,5 +180,14 @@ public class MemberRestController {
     public ApiResponse<MemberResponseDTO.CodeDTO> sendCode(
             @RequestParam(value = "email") String email) throws MessagingException {
         return ApiResponse.onSuccess(memberService.sendCode(email));
+    }
+
+    // TODO: 비밀번호 찾기 -> 비밀번호 변경하기
+    @Operation(summary = "비밀번호 변경 api", description = "비밀번호 재설정을 진행하는 api입니다.")
+    @PutMapping("/auth/password")
+    public ApiResponse<String> changePassword(
+            @RequestBody MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        memberService.changePassword(changePasswordDTO);
+        return ApiResponse.onSuccess("비밀번호 변경에 성공했습니다.");
     }
 }
