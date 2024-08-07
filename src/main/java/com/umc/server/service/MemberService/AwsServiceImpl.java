@@ -60,7 +60,7 @@ public class AwsServiceImpl implements AwsService {
         }
 
         String fileName = newFileName(file.getOriginalFilename()); // s3에 저장될 이름
-        File convertedFile = convertMultiPartToFile(file);
+        File convertedFile = convertMultiPartToFile(file); // 임시파일로 변경한 후 업로드
 
         try {
             amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, convertedFile));
@@ -72,6 +72,7 @@ public class AwsServiceImpl implements AwsService {
         }
     }
 
+    // TODO: multipartFile -> 임시 File로 변경
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
