@@ -20,7 +20,7 @@ public class SearchConverter {
                         .findFirst()
                         .orElse(false);
         return SearchResponseDTO.SearchBookListResponseDTO.builder()
-                .id(bookList.getId())
+                .bookListId(bookList.getId())
                 .title(bookList.getTitle())
                 .img(bookList.getImg())
                 .likeCnt(bookList.getLikeCnt())
@@ -35,7 +35,7 @@ public class SearchConverter {
         Book book = bookMemo.getMemberBook().getBook(); // BookMemo에서 Book 정보를 가져옴
 
         return SearchResponseDTO.SearchMemoResponseDTO.builder()
-                .id(bookMemo.getId())
+                .memmoId(bookMemo.getId())
                 .bookId(book.getId())
                 .title(book.getTitle())
                 .coverImage(book.getCoverImage())

@@ -11,7 +11,7 @@ public class SearchResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchBookListResponseDTO {
-        private Long id;
+        private Long bookListId;
         private String title;
         private String img;
         private int likeCnt;
@@ -26,7 +26,7 @@ public class SearchResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchMemoResponseDTO {
-        private Long id; // 메모 아이디
+        private Long memmoId; // 메모 아이디
         private Long bookId;
         private String coverImage;
         private String title;

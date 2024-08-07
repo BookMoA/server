@@ -146,4 +146,25 @@ public class BookListRestController {
                 bookListService.getRecommendBooks();
         return ApiResponse.onSuccess(recommendBooks);
     }
+
+    @Operation(
+            summary = "보관함 책 조회 API",
+            description = "보관함 책을 조회 API입니다. 책을 전체, 읽는중, 완료 별로 따로 조회할 수 있습니다. sortBy로 정렬 가능합니다.")
+    @GetMapping("/book")
+    public ApiResponse<BookListResponseDTO.LibraryBookDTO> getLibraryBooks(
+            @RequestParam(name = "category", defaultValue = "all")
+                    @Parameter(description = "책 상태 ['all' - 전체, 'reading' - 읽는중, 'finished'- 완료]")
+                    String category,
+            @RequestParam(name = "sortBy", defaultValue = "relevance")
+                    @Parameter(
+                            description =
+                                    "정렬 기준 ['newest' - 최신순, 'oldest' - 오래된 순, 'relevance' - 정확도 순, 'rating_desc' - 별점 높은 순, 'rating_asc' - 별점 낮은 순]")
+                    String sortBy,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+
+        BookListResponseDTO.LibraryBookDTO bookDTOList =
+                bookListService.getLibraryBooks(category, sortBy, page, signInmember);
+        return ApiResponse.onSuccess(bookDTOList);
+    }
 }
