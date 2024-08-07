@@ -129,7 +129,7 @@ public class BookListResponseDTO {
     @RequiredArgsConstructor
     @AllArgsConstructor
     public static class RecommendBookDTO {
-        private Long bookId;
+        private Long id;
         private String title;
         private String writer;
         private String coverImage;
