@@ -17,6 +17,6 @@ public class FileNameUtils {
 
         String fileExtension = fileName.substring(fileExtensionIndex);
         String originalFileName = fileName.substring(0, fileExtensionIndex);
-        return originalFileName + "_" + now + FILE_EXTENSION_SEPARATOR + fileExtension;
+        return originalFileName + "_" + now + fileExtension;
     }
 }
