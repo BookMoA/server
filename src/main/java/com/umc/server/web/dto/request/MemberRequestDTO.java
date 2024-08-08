@@ -1,6 +1,6 @@
 package com.umc.server.web.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,13 +14,13 @@ public class MemberRequestDTO {
     @NoArgsConstructor
     public static class SignUpRequestDTO {
 
-        @NotBlank
+        @NotNull
         @Size(max = 100)
         private String email;
 
-        @Setter @NotBlank private String password;
+        @Setter @NotNull private String password;
 
-        @NotBlank
+        @NotNull
         @Size(max = 20)
         private String nickname;
     }
@@ -30,11 +30,11 @@ public class MemberRequestDTO {
     @NoArgsConstructor
     public static class SignInRequestDTO {
 
-        @NotBlank
+        @NotNull
         @Size(max = 100)
         private String email;
 
-        @Setter @NotBlank private String password;
+        @Setter @NotNull private String password;
     }
 
     @Getter
@@ -50,5 +50,15 @@ public class MemberRequestDTO {
     public static class ChangePasswordDTO {
         private String password;
         private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelAccountReasonDTO {
+
+        @NotNull private String reason;
+
+        private String extraOpinion = "";
     }
 }
