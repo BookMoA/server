@@ -341,12 +341,6 @@ public class MemberServiceImpl implements MemberService {
             Member signInMember, MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
 
         cancelAccountRepository.save(MemberConverter.toCancelAccount(cancelAccountReasonDTO));
-
-        // 1안 soft delete -> 문제는 다른 코드들이 알아서 걸려줘야함
-        // signInMember.setActive(Boolean.FALSE);
-        // memberRepository.save(signInMember);
-
-        // 2안 hard delete
         memberRepository.delete(signInMember);
     }
 }
