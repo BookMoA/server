@@ -4,14 +4,24 @@ import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface BookListService {
 
-    BookList addBookList(BookListRequestDTO.AddBookListDTO request, Member member);
+    BookList addBookList(
+            BookListRequestDTO.AddBookListDTO request, Member member, MultipartFile img)
+            throws IOException;
 
-    BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request);
+    // BookList addBookList(String title, String spec,String status,Member member, String url)
+    // throws IOException;
+
+    // BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request);
+    BookList updateBookList(
+            Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
+            throws IOException;
 
     Optional<BookList> getBookList(Long id);
 

@@ -10,11 +10,14 @@ import com.umc.server.web.dto.response.BookListResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,14 +25,28 @@ import org.springframework.web.bind.annotation.*;
 public class BookListRestController {
     private final BookListService bookListService;
 
+    //    private final S3Service s3Service;
     @Operation(
             summary = "책리스트 추가 API",
             description = "책리스트를 추가하는 API입니다. status값에는 PUBLIC이나 PRIVATE로 입력해주세요.")
-    @PostMapping("list/add")
+    @PostMapping(
+            value = "list/add",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ApiResponse<BookListResponseDTO.AddBookListResultDTO> addBookList(
-            @RequestBody @Valid BookListRequestDTO.AddBookListDTO request,
-            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
-        BookList bookList = bookListService.addBookList(request, signInmember);
+            @RequestPart("request") BookListRequestDTO.AddBookListDTO request,
+            //            @RequestParam(value = "title", required = false) String title,
+            //            @RequestParam(value = "spec", required = false) String spec,
+            //            @RequestParam(value = "status", required = false) String status,
+            @RequestPart(value = "img", required = false) MultipartFile img,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember)
+            throws IOException {
+        //        String newUrl = null;
+        //        if (img != null && !img.isEmpty()) {
+        //            newUrl = s3Service.uploadFile(img);
+        //        }
+        // BookList bookList = bookListService.addBookList(title, spec, status, signInmember,
+        // newUrl);
+        BookList bookList = bookListService.addBookList(request, signInmember, img);
         return ApiResponse.onSuccess(BookListConverter.toAddBookListResultDTO(bookList));
     }
 
@@ -47,13 +64,17 @@ public class BookListRestController {
     @Operation(
             summary = "특정 책리스트 수정 API",
             description = "특정 책리스트의 정보를 수정하는 API입니다. 책리스트의 책값을 모두 적어줘야 수정이 반영됩니다.")
-    @PatchMapping("list/{bookListId}")
+    @PatchMapping(
+            value = "list/{bookListId}",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
-    public ApiResponse<BookListRequestDTO.UpdateBookListDTO> updateBookList(
+    public ApiResponse<BookListResponseDTO.UpdateBookListResultDTO> updateBookList(
             @PathVariable(name = "bookListId") Long bookListId,
-            @RequestBody @Valid BookListRequestDTO.UpdateBookListDTO request) {
-        BookList bookList = bookListService.updateBookList(bookListId, request);
-        return ApiResponse.onSuccess(BookListConverter.toUpdateBookListDTO(bookList));
+            @RequestPart("request") BookListRequestDTO.UpdateBookListDTO request,
+            @RequestPart(value = "img", required = false) MultipartFile img)
+            throws IOException {
+        BookList bookList = bookListService.updateBookList(bookListId, request, img);
+        return ApiResponse.onSuccess(BookListConverter.toUpdateBookListDTO2(bookList));
     }
 
     @Operation(summary = "책리스트 삭제 API", description = "책리스트를 삭제하는 API입니다.")
