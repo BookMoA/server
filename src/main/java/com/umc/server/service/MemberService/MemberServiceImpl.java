@@ -10,6 +10,7 @@ import com.umc.server.domain.Member;
 import com.umc.server.domain.PushNotification;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.enums.TokenStatus;
+import com.umc.server.repository.AdminMemberRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.repository.PushNotificationRepository;
 import com.umc.server.util.JwtTokenUtil;
@@ -21,7 +22,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PushNotificationRepository pushNotificationRepository;
     private final JavaMailSender emailSender;
+    private final AdminMemberRepository adminMemberRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
 
@@ -313,5 +317,20 @@ public class MemberServiceImpl implements MemberService {
         final String newPassword = passwordEncoder.encode(changePasswordDTO.getPassword());
         member.setPassword(newPassword);
         memberRepository.save(member);
+    }
+
+    // TODO: 책모아 팀원 정보 얻기
+    public List<MemberResponseDTO.AdminMemberResponseDTO> getAdminInfo() {
+        return adminMemberRepository.findAll().stream()
+                .map(
+                        adminMember ->
+                                MemberResponseDTO.AdminMemberResponseDTO.builder()
+                                        .adminRole(adminMember.getAdminRole())
+                                        .emailAddress(adminMember.getEmailAddress())
+                                        .nickName(adminMember.getNickName())
+                                        .githubId(adminMember.getGithubId())
+                                        .profileUrl(adminMember.getProfileUrl())
+                                        .build())
+                .collect(Collectors.toList());
     }
 }

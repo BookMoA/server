@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.mail.MessagingException;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -189,5 +190,13 @@ public class MemberRestController {
             @RequestBody MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
         memberService.changePassword(changePasswordDTO);
         return ApiResponse.onSuccess("비밀번호 변경에 성공했습니다.");
+    }
+
+    // TODO: 책모아 팀원 정보
+    @Operation(summary = "책모아 팀원 정보 get api", description = "책모아 팀원들 정보를 전달하는 api입니다.")
+    @GetMapping("/adminInfo")
+    public ApiResponse<List<MemberResponseDTO.AdminMemberResponseDTO>> getAdminInfo() {
+
+        return ApiResponse.onSuccess(memberService.getAdminInfo());
     }
 }
