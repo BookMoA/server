@@ -2,6 +2,7 @@ package com.umc.server.domain.mapping;
 
 import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
+import com.umc.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Builder
-public class BookListEntry {
+public class BookListEntry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
