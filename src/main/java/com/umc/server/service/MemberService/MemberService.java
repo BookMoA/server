@@ -35,4 +35,8 @@ public interface MemberService {
 
     // TODO: 책모아 팀원 정보 얻기
     List<MemberResponseDTO.AdminMemberResponseDTO> getAdminInfo();
+
+    // TODO: 회원탈퇴
+    void cancelAccounts(
+            Member signInmember, MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO);
 }

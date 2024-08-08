@@ -201,5 +201,20 @@ public class MemberRestController {
     }
 
     // TODO: 회원 탈퇴
+    @Operation(summary = "회원탈퇴 api", description = "카카오 회원, 일반 회원 모두 탈퇴할 수 있는 api입니다.")
+    @PostMapping("/delete")
+    public ApiResponse<String> cancelAccounts(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authorizationHeader,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestBody MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);
+        }
 
+        String accessToken = authorizationHeader.substring(7);
+        memberService.cancelAccounts(signInmember, cancelAccountReasonDTO);
+        blacklistService.addToBlacklist(accessToken);
+
+        return ApiResponse.onSuccess("정상적으로 탈퇴되었습니다.");
+    }
 }

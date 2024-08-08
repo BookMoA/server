@@ -65,6 +65,7 @@ public class MemberConverter {
     // 입력한 탈퇴 사유를 entity로 변환
     public static CancelAccount toCancelAccount(
             MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
+
         return CancelAccount.builder()
                 .cancelReason(cancelAccountReasonDTO.getReason())
                 .extraOpinion(cancelAccountReasonDTO.getExtraOpinion())

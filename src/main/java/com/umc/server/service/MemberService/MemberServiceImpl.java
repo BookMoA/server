@@ -11,6 +11,7 @@ import com.umc.server.domain.PushNotification;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.enums.TokenStatus;
 import com.umc.server.repository.AdminMemberRepository;
+import com.umc.server.repository.CancelAccountRepository;
 import com.umc.server.repository.MemberRepository;
 import com.umc.server.repository.PushNotificationRepository;
 import com.umc.server.util.JwtTokenUtil;
@@ -53,6 +54,7 @@ public class MemberServiceImpl implements MemberService {
     private final PushNotificationRepository pushNotificationRepository;
     private final JavaMailSender emailSender;
     private final AdminMemberRepository adminMemberRepository;
+    private final CancelAccountRepository cancelAccountRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
 
@@ -332,5 +334,19 @@ public class MemberServiceImpl implements MemberService {
                                         .profileUrl(adminMember.getProfileUrl())
                                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // TODO: 회원탈퇴하기
+    public void cancelAccounts(
+            Member signInMember, MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
+
+        cancelAccountRepository.save(MemberConverter.toCancelAccount(cancelAccountReasonDTO));
+
+        // 1안 soft delete -> 문제는 다른 코드들이 알아서 걸려줘야함
+        // signInMember.setActive(Boolean.FALSE);
+        // memberRepository.save(signInMember);
+
+        // 2안 hard delete
+        memberRepository.delete(signInMember);
     }
 }

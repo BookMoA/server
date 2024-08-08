@@ -44,6 +44,10 @@ public class Member extends BaseEntity implements UserDetails {
     @ColumnDefault("false")
     private Boolean inFocusMode;
 
+    @ColumnDefault("true")
+    @Setter
+    private Boolean active;
+
     @ColumnDefault("0")
     private Long totalPages;
 
