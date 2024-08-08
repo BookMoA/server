@@ -51,4 +51,12 @@ public class MemberRequestDTO {
         private String password;
         private String email;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelAccountReasonDTO {
+        private String reason;
+        private String extraOpinion;
+    }
 }

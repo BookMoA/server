@@ -199,4 +199,7 @@ public class MemberRestController {
 
         return ApiResponse.onSuccess(memberService.getAdminInfo());
     }
+
+    // TODO: 회원 탈퇴
+
 }
