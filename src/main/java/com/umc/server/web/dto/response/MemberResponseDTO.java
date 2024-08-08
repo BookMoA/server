@@ -1,5 +1,6 @@
 package com.umc.server.web.dto.response;
 
+import com.umc.server.domain.enums.AdminRole;
 import com.umc.server.domain.enums.SignUpType;
 import java.time.LocalDateTime;
 import lombok.*;
@@ -82,5 +83,19 @@ public class MemberResponseDTO {
         public static CodeDTO of(String code, LocalDateTime generateTime) {
             return new CodeDTO(code, generateTime);
         }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AdminMemberResponseDTO {
+
+        private AdminRole adminRole;
+        private String nickName;
+        private String githubId;
+        private String emailAddress;
+        private String snsAddress;
+        private String profileUrl;
     }
 }
