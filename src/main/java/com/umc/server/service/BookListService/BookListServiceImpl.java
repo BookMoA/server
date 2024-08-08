@@ -139,6 +139,7 @@ public class BookListServiceImpl implements BookListService {
     //        return bookList;
     //    }
 
+    // 책리스트 수정
     @Override
     public BookList updateBookList(
             Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
