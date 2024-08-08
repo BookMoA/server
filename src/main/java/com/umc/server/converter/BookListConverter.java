@@ -10,6 +10,7 @@ import com.umc.server.domain.mapping.BookListEntry;
 import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,19 +30,35 @@ public class BookListConverter {
     }
 
     // 책리스트 추가 입력값
-    public static BookList toBookList(BookListRequestDTO.AddBookListDTO request, Member member) {
+    public static BookList toBookList(
+            BookListRequestDTO.AddBookListDTO request, Member member, String url) {
         ListStatus listStatus = convertToListStatus(request.getStatus());
 
         return BookList.builder()
                 .title(request.getTitle())
                 .spec(request.getSpec())
-                .img(request.getImg())
+                .img(url)
                 .listStatus(listStatus)
                 .likeCnt(0)
                 .bookCnt(0)
                 .member(member)
                 .build();
     }
+
+    //    public static BookList toBookList(String title, String spec, String status, Member member,
+    // String url) {
+    //        ListStatus listStatus = convertToListStatus(status);
+    //
+    //        return BookList.builder()
+    //                .title(title)
+    //                .spec(spec)
+    //                .img(url)
+    //                .listStatus(listStatus)
+    //                .likeCnt(0)
+    //                .bookCnt(0)
+    //                .member(member)
+    //                .build();
+    //    }
 
     // 책리스트 ENUM
     private static ListStatus convertToListStatus(String status) {
@@ -111,8 +128,40 @@ public class BookListConverter {
         return BookListRequestDTO.UpdateBookListDTO.builder()
                 .title(bookList.getTitle())
                 .spec(bookList.getSpec())
-                .img(bookList.getImg())
                 .status(bookList.getListStatus().name())
+                .build();
+    }
+
+    public static BookListResponseDTO.UpdateBookListResultDTO toUpdateBookListDTO2(
+            BookList bookList) {
+        // 기존 책 리스트에서 이미지 URL을 가져옵니다.
+        String img = bookList.getImg();
+
+        // BookListEntry 리스트를 가져옵니다.
+        List<BookListEntry> entries = bookList.getBookListEntry();
+
+        // BookListEntry 리스트를 UpdateBookDTO 리스트로 변환합니다.
+        List<BookListResponseDTO.UpdateBookDTO> books =
+                entries.stream()
+                        .map(
+                                entry ->
+                                        BookListResponseDTO.UpdateBookDTO.builder()
+                                                .bookId(entry.getBook().getId())
+                                                .number(entry.getNumber())
+                                                .build())
+                        .collect(Collectors.toList());
+
+        // 현재 시간을 가져옵니다. (업데이트 시간으로 설정)
+        LocalDateTime updatedAt = LocalDateTime.now();
+
+        return BookListResponseDTO.UpdateBookListResultDTO.builder()
+                .bookListId(bookList.getId())
+                .title(bookList.getTitle())
+                .spec(bookList.getSpec())
+                .status(bookList.getListStatus().name())
+                .img(img)
+                .books(books)
+                .updatedAt(updatedAt)
                 .build();
     }
 
