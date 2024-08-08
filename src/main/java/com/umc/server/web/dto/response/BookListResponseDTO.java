@@ -18,6 +18,30 @@ public class BookListResponseDTO {
         LocalDateTime createdAt;
     }
 
+    // 책리스트 수정 결과값
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateBookListResultDTO {
+        Long bookListId;
+        String title;
+        String spec;
+        String status;
+        String img;
+        private List<UpdateBookDTO> books;
+        LocalDateTime updatedAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateBookDTO {
+        private Long bookId;
+        private int number;
+    }
+
     // 책리스트 상세 값 읽기
     @Builder
     @Getter
