@@ -4,6 +4,7 @@ import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import jakarta.mail.MessagingException;
+import java.util.List;
 
 public interface MemberService {
 
@@ -31,4 +32,7 @@ public interface MemberService {
 
     // TODO: 비밀번호 변경하기
     void changePassword(MemberRequestDTO.ChangePasswordDTO changePasswordDTO);
+
+    // TODO: 책모아 팀원 정보 얻기
+    List<MemberResponseDTO.AdminMemberResponseDTO> getAdminInfo();
 }
