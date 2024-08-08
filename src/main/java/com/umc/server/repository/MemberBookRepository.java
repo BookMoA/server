@@ -17,4 +17,8 @@ public interface MemberBookRepository extends JpaRepository<MemberBook, Long> {
                     + "GROUP BY mb.book.id "
                     + "ORDER BY AVG(mb.score) DESC")
     List<Long> findTopBooksByAverageScore(Pageable pageable);
+
+    //    Boolean existsByMember(Member member);
+
+    Optional<List<MemberBook>> findAllByMember(Member member);
 }

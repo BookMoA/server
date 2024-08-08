@@ -2,6 +2,7 @@ package com.umc.server.web.dto.response;
 
 import com.umc.server.domain.enums.MemberBookStatus;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,5 +38,13 @@ public class MemberBookResponseDTO {
         private Long memberId;
 
         private Long bookId;
+    }
+
+    @Getter
+    @Builder
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    public static class MemberBookPreviewListDTO {
+        List<MemberBookPreviewDTO> memberBookPreviewDTOList;
     }
 }

@@ -45,8 +45,8 @@ public class BookRestController {
                 responseCode = "COMMON200",
                 description = "OK, 책 조회 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "BOOK4001",
-                description = "책을 찾을 수 없습니다.",
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "bookId", description = "책의 아이디, path variable 입니다.")
@@ -63,8 +63,8 @@ public class BookRestController {
                 responseCode = "COMMON200",
                 description = "OK, 책 수정 성공"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                responseCode = "BOOK4001",
-                description = "책을 찾을 수 없습니다.",
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "bookId", description = "책의 아이디, path variable 입니다.")

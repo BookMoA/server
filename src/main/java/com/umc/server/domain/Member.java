@@ -5,7 +5,6 @@ import com.umc.server.domain.enums.Role;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.mapping.*;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,12 +30,15 @@ public class Member extends BaseEntity implements UserDetails {
     private Long id;
 
     @Column(length = 100)
+    @Setter
     private String email;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @Column(nullable = false, length = 20)
+    @Setter
     private String nickname;
 
     @ColumnDefault("false")
@@ -63,15 +65,15 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Lob
     @Column(columnDefinition = "TEXT")
+    @Setter
     private String profileURL;
-
-    @Setter private LocalDate inActiveDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @Setter
     private PushNotification pushNotification;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)

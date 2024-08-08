@@ -17,7 +17,12 @@ jobs:
       KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
       KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
       KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
-
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      NAVER_ID: ${{ secrets.NAVER_ID }}
+      NAVER_PASSWORD: ${{ secrets.NAVER_PASSWORD }}
+    
     steps:
       - name: ✔️ 리포지토리 가져오기
         uses: actions/checkout@v4
@@ -27,17 +32,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: ✔️ Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches/modules-2
-            ~/.gradle/caches/jars-3
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: ✔️ Gradle 명령 실행 권한 설정
         run: chmod +x gradlew

@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
+import com.umc.server.domain.PushNotification;
 import com.umc.server.repository.MemberRepository;
+import com.umc.server.repository.PushNotificationRepository;
 import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class KaKaoServiceImpl implements KakaoService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PushNotificationRepository pushNotificationRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
 
@@ -132,7 +134,21 @@ public class KaKaoServiceImpl implements KakaoService {
             // 회원가입
             final String encodedPassword = passwordEncoder.encode(kakaoId.toString());
             signUpRequestDTO.setPassword(encodedPassword);
-            signInMember = memberRepository.save(MemberConverter.toMember(signUpRequestDTO));
+            Member newMember = MemberConverter.toMember(signUpRequestDTO);
+
+            // 알림 정보 생성
+            PushNotification newPushNotification =
+                    PushNotification.builder()
+                            .commentPushEnabled(Boolean.TRUE)
+                            .likePushEnabled(Boolean.TRUE)
+                            .nightPushEnabled(Boolean.TRUE)
+                            .build();
+
+            // 두 엔티티 연결
+            newMember.setPushNotification(newPushNotification);
+            newPushNotification.setMember(newMember);
+            signInMember = memberRepository.save(newMember);
+
         } else {
             // 이미 존재하는 회원의 액세스 토큰 업데이트
             signInMember = socialMember.get();
@@ -145,7 +161,6 @@ public class KaKaoServiceImpl implements KakaoService {
 
         signInMember.setRefreshToken(refreshToken);
         signInMember.setKakaoAccessToken(kakaoAccessToken);
-        signInMember.setInActiveDate(LocalDate.now());
         memberRepository.save(signInMember);
 
         // 로그인 진행
