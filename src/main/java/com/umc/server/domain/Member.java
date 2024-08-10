@@ -5,14 +5,12 @@ import com.umc.server.domain.enums.Role;
 import com.umc.server.domain.enums.SignUpType;
 import com.umc.server.domain.mapping.*;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import jakarta.persistence.CascadeType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @DynamicUpdate
 @DynamicInsert
 @Builder
+@SQLRestriction("active = 1")
+@SQLDelete(sql = "UPDATE member SET active = false WHERE id = ?")
 public class Member extends BaseEntity implements UserDetails {
 
     @Id
@@ -31,16 +31,23 @@ public class Member extends BaseEntity implements UserDetails {
     private Long id;
 
     @Column(length = 100)
+    @Setter
     private String email;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @Column(nullable = false, length = 20)
+    @Setter
     private String nickname;
 
     @ColumnDefault("false")
     private Boolean inFocusMode;
+
+    @ColumnDefault("true")
+    @Setter
+    private Boolean active;
 
     @ColumnDefault("0")
     private Long totalPages;
@@ -63,41 +70,57 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Lob
     @Column(columnDefinition = "TEXT")
+    @Setter
     private String profileURL;
-
-    @Setter private LocalDate inActiveDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToOne(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Setter
     private PushNotification pushNotification;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToOne(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private ClubMember clubMember;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<ClubPost> clubPostList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<ClubPostComment> clubPostCommentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<ClubPostLike> clubPostLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<MemberBook> memberBookList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<BookList> bookList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<MemberBookList> memberBookListList = new ArrayList<>();
 

@@ -1,6 +1,9 @@
 package com.umc.server.config;
 
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,5 +19,17 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowedHeaders("Content-Type", "Authorization")
                 .maxAge(3600); // cors 관련 정보 1시간동안 캐시함
+    }
+
+    private final OctetStreamReadMsgConverter octetStreamReadMsgConverter;
+
+    @Autowired
+    public WebConfig(OctetStreamReadMsgConverter octetStreamReadMsgConverter) {
+        this.octetStreamReadMsgConverter = octetStreamReadMsgConverter;
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(octetStreamReadMsgConverter);
     }
 }

@@ -2,6 +2,7 @@ package com.umc.server.domain.mapping;
 
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
+import com.umc.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Builder
-public class MemberBookList {
+public class MemberBookList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,4 +33,12 @@ public class MemberBookList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_list_id", nullable = false)
     private BookList bookList;
+
+    public void setIsLiked(boolean b) {
+        this.isLiked = b;
+    }
+
+    public void setIsStored(boolean b) {
+        this.isStored = b;
+    }
 }

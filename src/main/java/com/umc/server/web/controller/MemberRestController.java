@@ -5,6 +5,7 @@ import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.apiPayload.code.status.ErrorStatus;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.domain.Member;
+import com.umc.server.service.MemberService.AwsService;
 import com.umc.server.service.MemberService.KakaoService;
 import com.umc.server.service.MemberService.MemberService;
 import com.umc.server.service.MemberService.TokenBlacklistService;
@@ -13,10 +14,14 @@ import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.mail.MessagingException;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
@@ -33,6 +38,7 @@ public class MemberRestController {
     private final MemberService memberService;
     private final KakaoService kakaoService;
     private final TokenBlacklistService blacklistService;
+    private final AwsService awsService;
 
     // TODO: 회원가입
     @Operation(
@@ -126,5 +132,89 @@ public class MemberRestController {
         blacklistService.addToBlacklist(accessToken);
 
         return ApiResponse.onSuccess("로그아웃에 성공하였습니다.");
+    }
+
+    // TODO: 회원가입시 닉네임 중복 조회
+    @Operation(summary = "닉네임 중복 조회 api", description = "회원가입시 중복된 닉네임이 있는지 확인하는 api입니다.")
+    @GetMapping("/auth")
+    public ApiResponse<MemberResponseDTO.UniqueNickname> isUniqueNickname(
+            @RequestParam("nickname") String nickname) {
+
+        return ApiResponse.onSuccess(
+                MemberResponseDTO.UniqueNickname.of(!memberService.nicknameExist(nickname)));
+    }
+
+    // TODO: 푸시 알림 저장하기
+    @Operation(summary = "푸시 알림 저장 api", description = "푸시 알림 동의를 변경할 때 사용하는 api입니다.")
+    @PutMapping("/pushNotification")
+    public ApiResponse<MemberResponseDTO.PushNotification> setNotificationState(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestParam(value = "commentPush", required = false) Boolean commentPush,
+            @RequestParam(value = "likePush", required = false) Boolean likePush,
+            @RequestParam(value = "nightPush", required = false) Boolean nightPush) {
+
+        return ApiResponse.onSuccess(
+                memberService.setNotification(
+                        signInmember.getId(), commentPush, likePush, nightPush));
+    }
+
+    // TODO: 회원정보(email, nickname, profileImg) 변경하기
+    @Operation(
+            summary = "회원 정보 변경 api",
+            description =
+                    "email 또는 nickname을 변경할 때 사용하는 api입니다. 반드시 header의 content-type을 \"multipart/form-data\"로 묶어서 보내주세요.")
+    @PutMapping("/profileInfo")
+    public ApiResponse<MemberResponseDTO.EditProfileInfo> editProfileInfo(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "profileImg", required = false) MultipartFile profileImg)
+            throws IOException {
+
+        return ApiResponse.onSuccess(
+                awsService.editProfileInfo(profileImg, signInmember, nickname, email));
+    }
+
+    // TODO: 인증번호 전달하기
+    @Operation(summary = "인증번호 전송 api", description = "비밀번호 찾기시, 이메일로 인증번호를 보내는 api입니다.")
+    @GetMapping("/auth/password")
+    public ApiResponse<MemberResponseDTO.CodeDTO> sendCode(
+            @RequestParam(value = "email") String email) throws MessagingException {
+        return ApiResponse.onSuccess(memberService.sendCode(email));
+    }
+
+    // TODO: 비밀번호 찾기 -> 비밀번호 변경하기
+    @Operation(summary = "비밀번호 변경 api", description = "비밀번호 재설정을 진행하는 api입니다.")
+    @PutMapping("/auth/password")
+    public ApiResponse<String> changePassword(
+            @RequestBody MemberRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        memberService.changePassword(changePasswordDTO);
+        return ApiResponse.onSuccess("비밀번호 변경에 성공했습니다.");
+    }
+
+    // TODO: 책모아 팀원 정보
+    @Operation(summary = "책모아 팀원 정보 get api", description = "책모아 팀원들 정보를 전달하는 api입니다.")
+    @GetMapping("/adminInfo")
+    public ApiResponse<List<MemberResponseDTO.AdminMemberResponseDTO>> getAdminInfo() {
+
+        return ApiResponse.onSuccess(memberService.getAdminInfo());
+    }
+
+    // TODO: 회원 탈퇴
+    @Operation(summary = "회원탈퇴 api", description = "카카오 회원, 일반 회원 모두 탈퇴할 수 있는 api입니다.")
+    @PostMapping("/delete")
+    public ApiResponse<String> cancelAccounts(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authorizationHeader,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestBody MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);
+        }
+
+        String accessToken = authorizationHeader.substring(7);
+        memberService.cancelAccounts(signInmember, cancelAccountReasonDTO);
+        blacklistService.addToBlacklist(accessToken);
+
+        return ApiResponse.onSuccess("정상적으로 탈퇴되었습니다.");
     }
 }

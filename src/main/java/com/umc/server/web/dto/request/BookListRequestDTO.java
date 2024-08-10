@@ -13,10 +13,9 @@ public class BookListRequestDTO {
 
     @Getter
     public static class AddBookListDTO {
-        @NotBlank String title;
-        @NotNull String spec;
-        @NotBlank String img;
-        @NotBlank String status;
+        @NotBlank private String title;
+        @NotNull private String spec;
+        @NotBlank private String status;
     }
 
     @Getter
@@ -26,7 +25,6 @@ public class BookListRequestDTO {
     public static class UpdateBookListDTO {
         @NotBlank String title;
         @NotNull String spec;
-        @NotBlank String img;
         @NotBlank String status;
         @NotEmpty private List<BookListEntryDTO> books;
     }
@@ -52,7 +50,7 @@ public class BookListRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookListEntryDTO {
-        private Long id; // Book의 ID
+        private Long bookId; // Book의 ID
         private Integer number; // 새로운 number 값
     }
 }

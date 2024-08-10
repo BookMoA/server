@@ -5,17 +5,33 @@ import lombok.*;
 
 public class SearchResponseDTO {
 
-    // 보관함 책리스트 값 읽기!
+    // 보관함 책리스트 값 검색결과
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchBookListResponseDTO {
-        private Long id;
+        private Long bookListId;
         private String title;
         private String img;
         private int likeCnt;
         private int bookCnt;
+        private boolean likeStatus;
+        private LocalDate createdAt;
+    }
+
+    // 보관함 메모 값 검색결과
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SearchMemoResponseDTO {
+        private Long memmoId; // 메모 아이디
+        private Long bookId;
+        private String coverImage;
+        private String title;
+        private String writer;
+        private String memo;
         private LocalDate createdAt;
     }
 }

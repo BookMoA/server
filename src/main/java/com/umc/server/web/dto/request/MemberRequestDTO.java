@@ -1,38 +1,64 @@
 package com.umc.server.web.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class MemberRequestDTO {
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class SignUpRequestDTO {
 
-        @NotBlank
+        @NotNull
         @Size(max = 100)
-        String email;
+        private String email;
 
-        @Setter @NotBlank String password;
+        @Setter @NotNull private String password;
 
-        @NotBlank
+        @NotNull
         @Size(max = 20)
-        String nickname;
+        private String nickname;
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class SignInRequestDTO {
 
-        @NotBlank
+        @NotNull
         @Size(max = 100)
-        String email;
+        private String email;
 
-        @Setter @NotBlank String password;
+        @Setter @NotNull private String password;
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class RequestTokenDTO {
-        String refreshToken;
+        private String refreshToken;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChangePasswordDTO {
+        private String password;
+        private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CancelAccountReasonDTO {
+
+        @NotNull private String reason;
+
+        private String extraOpinion = "";
     }
 }

@@ -22,17 +22,21 @@ public class PushNotification extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("true")
+    @Setter
     private Boolean likePushEnabled;
 
     @Column(nullable = false)
     @ColumnDefault("true")
+    @Setter
     private Boolean commentPushEnabled;
 
     @Column(nullable = false)
     @ColumnDefault("true")
+    @Setter
     private Boolean nightPushEnabled;
 
     @OneToOne()
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    @Setter
     private Member member;
 }
