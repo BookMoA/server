@@ -12,9 +12,12 @@ import lombok.NoArgsConstructor;
 public class BookListRequestDTO {
 
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AddBookListDTO {
         @NotBlank private String title;
-        @NotNull private String spec;
+        @NotBlank private String spec;
         @NotBlank private String status;
     }
 

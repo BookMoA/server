@@ -33,7 +33,7 @@ public class BookListRestController {
             value = "list/add",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ApiResponse<BookListResponseDTO.AddBookListResultDTO> addBookList(
-            @RequestPart("request") BookListRequestDTO.AddBookListDTO request,
+            @Valid @RequestPart("request") BookListRequestDTO.AddBookListDTO request,
             //            @RequestParam(value = "title", required = false) String title,
             //            @RequestParam(value = "spec", required = false) String spec,
             //            @RequestParam(value = "status", required = false) String status,
