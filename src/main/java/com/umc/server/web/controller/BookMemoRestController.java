@@ -81,7 +81,7 @@ public class BookMemoRestController {
     })
     @Parameters({
         @Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다."),
-        @Parameter(name = "page", description = "페이지 번호(default는 1, 메모 10개씩 한 페이지)입니다.")
+        @Parameter(name = "page", description = "페이지 번호(메모 10개씩 한 페이지)입니다.")
     })
     @GetMapping("{memberBookId}/bookMemos")
     public ApiResponse<BookMemoResponseDTO.BookMemoPreviewListDTO> readBookMemoList(
