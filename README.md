@@ -12,6 +12,8 @@
 	1. [pull request 등록 후 CI ❌ 표시가 날 경우](#pull-request-등록-후-ci--표시가-날-경우)
 	2. [gradle build시](#gradle-build시)
 
+4. [배포가 시작되었습니다](#배포가-시작되었습니다) ✨updated✨
+
 ## 기본 세팅
 ### 1. gradle build 진행하기
 - intellij에서 gradle > build 클릭
@@ -62,3 +64,10 @@
 
 - gradle을 build할 때 spotless라는 코드 포맷터를 실행하는 스크립트가 아직 작동이 안된 경우, 위와 같은 에러가 날 수 있는데 _**일단 무시하고 작업한 후 commit하면 됩니다!**_
 - 일단 build를 실행함으로써 hook을 실행하는 스크립트를 .git 폴더 안으로 넣는 작업이 진행되면, commit 전에 spotless가 실행되어서 자동으로 정렬이 될 거에요!
+
+<br>
+<br>
+
+## 배포가 시작되었습니다
+- 배포가 시작되었습니다. 자세한 사항은 [discussion - [server] 배포과정](https://github.com/orgs/BookMoA/discussions/116)에 정리해두었으니 한번 확인해주세요
+- 여러분의 코드에 수정사항이 생겼을 경우 해당 페이지의 `3번. 배포방법`을 확인해주세요!
