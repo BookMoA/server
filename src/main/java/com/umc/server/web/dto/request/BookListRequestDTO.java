@@ -28,6 +28,7 @@ public class BookListRequestDTO {
     public static class UpdateBookListDTO {
         @NotBlank String title;
         @NotNull String spec;
+        @NotBlank String img;
         @NotBlank String status;
         @NotEmpty private List<BookListEntryDTO> books;
     }

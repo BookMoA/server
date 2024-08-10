@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600); // cors 관련 정보 1시간동안 캐시함
     }
 
-    private OctetStreamReadMsgConverter octetStreamReadMsgConverter;
+    private final OctetStreamReadMsgConverter octetStreamReadMsgConverter;
 
     @Autowired
     public WebConfig(OctetStreamReadMsgConverter octetStreamReadMsgConverter) {

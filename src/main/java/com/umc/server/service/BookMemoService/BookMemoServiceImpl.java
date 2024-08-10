@@ -85,7 +85,7 @@ public class BookMemoServiceImpl implements BookMemoService {
                                 });
         // 그 멤버 책의 모든 독서 메모 찾기
         Page<BookMemo> bookMemoPage =
-                bookMemoRepository.findAllByMemberBook(memberBook, PageRequest.of(page, 10));
+                bookMemoRepository.findAllByMemberBook(memberBook, PageRequest.of(page - 1, 10));
         return bookMemoPage;
     }
 

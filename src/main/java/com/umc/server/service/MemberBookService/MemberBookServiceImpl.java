@@ -6,6 +6,7 @@ import com.umc.server.apiPayload.exception.handler.MemberBookHandler;
 import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.converter.MemberBookConverter;
 import com.umc.server.domain.Book;
+import com.umc.server.domain.BookMemo;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.repository.BookMemoRepository;
@@ -153,9 +154,10 @@ public class MemberBookServiceImpl implements MemberBookService {
 
         // 위 리스트에서 메모를 가진 멤버 책만 리스트로 다시 변환
         List<MemberBook> memoMemberBookList =
-                memberBookList.stream()
-                        .filter(bookMemoRepository::existsByMemberBook)
-                        .collect(Collectors.toList());
+                bookMemoRepository.findAllByMemberBookIn(memberBookList).stream()
+                        .map(BookMemo::getMemberBook) // 각 BookMemo에서 MemberBook을 추출
+                        .distinct() // 중복된 MemberBook을 제거
+                        .collect(Collectors.toList()); // 리스트로 수집
 
         // 메모를 가진 멤버 책들이 아예 없을 시 에러 메시지
         if (memoMemberBookList.isEmpty())
@@ -164,7 +166,9 @@ public class MemberBookServiceImpl implements MemberBookService {
         // 페이지네이션 적용
         Page<MemberBook> memoMemberBookPage =
                 new PageImpl<>(
-                        memoMemberBookList, PageRequest.of(page, 10), memoMemberBookList.size());
+                        memoMemberBookList,
+                        PageRequest.of(page - 1, 10),
+                        memoMemberBookList.size());
         return memoMemberBookPage;
     }
 }

@@ -2,6 +2,7 @@ package com.umc.server.repository;
 
 import com.umc.server.domain.BookMemo;
 import com.umc.server.domain.mapping.MemberBook;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,4 +23,6 @@ public interface BookMemoRepository extends JpaRepository<BookMemo, Long> {
     Page<BookMemo> findAllByMemberBook(MemberBook memberBook, PageRequest pageRequest);
 
     Boolean existsByMemberBook(MemberBook memberBook);
+
+    List<BookMemo> findAllByMemberBookIn(List<MemberBook> memberBookList);
 }

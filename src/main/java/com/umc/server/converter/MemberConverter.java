@@ -1,5 +1,6 @@
 package com.umc.server.converter;
 
+import com.umc.server.domain.CancelAccount;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.PushNotification;
 import com.umc.server.domain.enums.Role;
@@ -58,6 +59,16 @@ public class MemberConverter {
                 .signUpType(SignUpType.valueOf("SOCIAL"))
                 .kakaoId(signUpRequestDTO.getKakaoId())
                 .role(Role.valueOf("USER"))
+                .build();
+    }
+
+    // 입력한 탈퇴 사유를 entity로 변환
+    public static CancelAccount toCancelAccount(
+            MemberRequestDTO.CancelAccountReasonDTO cancelAccountReasonDTO) {
+
+        return CancelAccount.builder()
+                .cancelReason(cancelAccountReasonDTO.getReason())
+                .extraOpinion(cancelAccountReasonDTO.getExtraOpinion())
                 .build();
     }
 }
