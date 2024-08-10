@@ -56,6 +56,8 @@ public enum ErrorStatus implements BaseErrorCode {
     // 독서 모임
     CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUB4001", false, "독서 모임이 없습니다."),
     CLUB_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CLUB4002", false, "이미 존재하는 독서 모임 이름입니다."),
+    CLUB_MEMBER_FULLED(HttpStatus.BAD_REQUEST, "CLUB4003", false, "독서 모임원이 가득 차 가입할 수 없습니다."),
+    CLUB_INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "CLUB4004", false, "독서 모임의 비밀번호가 잘못되었습니다."),
 
     // 독서 모임원
     CLUB_NOT_JOINED(HttpStatus.BAD_REQUEST, "CLUBMEMBER4001", false, "가입된 독서 모임이 없는 사용자입니다."),
@@ -67,7 +69,10 @@ public enum ErrorStatus implements BaseErrorCode {
             false,
             "권한이 불충분합니다. 독서 모임 리더의 권한이 필요한 동작입니다."),
     CLUB_MEMBER_REQUIRED(
-            HttpStatus.BAD_REQUEST, "CLUBMEMBER4004", false, "권한이 불충분합니다. 가입된 독서 모임이 아닙니다.");
+            HttpStatus.BAD_REQUEST,
+            "CLUBMEMBER4004",
+            false,
+            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
