@@ -69,7 +69,10 @@ public enum ErrorStatus implements BaseErrorCode {
             false,
             "권한이 불충분합니다. 독서 모임 리더의 권한이 필요한 동작입니다."),
     CLUB_MEMBER_REQUIRED(
-            HttpStatus.BAD_REQUEST, "CLUBMEMBER4004", false, "권한이 불충분합니다. 가입된 독서 모임이 아닙니다.");
+            HttpStatus.BAD_REQUEST,
+            "CLUBMEMBER4004",
+            false,
+            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

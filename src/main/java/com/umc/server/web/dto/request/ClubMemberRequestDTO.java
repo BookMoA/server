@@ -39,11 +39,17 @@ public class ClubMemberRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ClubMemberDeleteRequestDTO {
-        @NotBlank(message = "clubId cannot be Blank!!")
-        Long clubId;
-
+    public static class ClubMemberDropRequestDTO {
         @NotBlank(message = "memebrId cannot be Blank!!")
         Long memberId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClubMemberDeleteReaderRequestDTO {
+        @NotBlank(message = "readerId cannot be Blank!!")
+        Long newReaderId;
     }
 }
