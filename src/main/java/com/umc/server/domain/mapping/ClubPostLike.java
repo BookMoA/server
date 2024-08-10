@@ -25,6 +25,6 @@ public class ClubPostLike extends BaseEntity {
     private ClubPost clubPost;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 }

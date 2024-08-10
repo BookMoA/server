@@ -72,7 +72,11 @@ public enum ErrorStatus implements BaseErrorCode {
             HttpStatus.BAD_REQUEST,
             "CLUBMEMBER4004",
             false,
-            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다.");
+            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다."),
+
+    // 독서 모임 게시글
+    CLUB_POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUBPOST4001", false, "게시글을 찾을 수 없습니다."),
+    CLUB_POST_WRITER_REQUIRED(HttpStatus.BAD_REQUEST, "CLUBPOST4002", false, "게시글 글쓴이의 권한이 필요합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

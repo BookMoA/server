@@ -23,9 +23,11 @@ public class ClubPost extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, length = 100)
+    @Setter
     private String title;
 
     @Column(nullable = false, length = 500)
+    @Setter
     private String context;
 
     @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
@@ -42,9 +44,11 @@ public class ClubPost extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false)
+    @Setter
     private Club club;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @Setter
     private Member member;
 }
