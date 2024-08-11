@@ -2,6 +2,7 @@ package com.umc.server.web.controller;
 
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.BookListConverter;
+import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.service.BookListService.BookListService;
@@ -11,8 +12,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class BookListRestController {
     private final BookListService bookListService;
 
-    //    private final S3Service s3Service;
     @Operation(
             summary = "책리스트 추가 API",
             description = "책리스트를 추가하는 API입니다. status값에는 PUBLIC이나 PRIVATE로 입력해주세요.")
@@ -34,18 +36,9 @@ public class BookListRestController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ApiResponse<BookListResponseDTO.AddBookListResultDTO> addBookList(
             @Valid @RequestPart("request") BookListRequestDTO.AddBookListDTO request,
-            //            @RequestParam(value = "title", required = false) String title,
-            //            @RequestParam(value = "spec", required = false) String spec,
-            //            @RequestParam(value = "status", required = false) String status,
             @RequestPart(value = "img", required = false) MultipartFile img,
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember)
             throws IOException {
-        //        String newUrl = null;
-        //        if (img != null && !img.isEmpty()) {
-        //            newUrl = s3Service.uploadFile(img);
-        //        }
-        // BookList bookList = bookListService.addBookList(title, spec, status, signInmember,
-        // newUrl);
         BookList bookList = bookListService.addBookList(request, signInmember, img);
         return ApiResponse.onSuccess(BookListConverter.toAddBookListResultDTO(bookList));
     }
@@ -133,9 +126,22 @@ public class BookListRestController {
     public ApiResponse<BookListResponseDTO.TopBookListAndTimeDTO> getTopBookList(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
-        BookListResponseDTO.TopBookListAndTimeDTO topBookList =
-                bookListService.getTopBookList(page, signInmember);
-        return ApiResponse.onSuccess(topBookList);
+        List<BookList> bookLists = bookListService.getTopBookList(page, signInmember);
+
+        // 현재 시간을 구합니다.
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        // 책 리스트를 DTO로 변환합니다.
+        List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
+                bookLists.stream()
+                        .map(
+                                bookList ->
+                                        BookListConverter.topBookListDTO(
+                                                bookList, signInmember.getId()))
+                        .collect(Collectors.toList());
+
+        return ApiResponse.onSuccess(
+                BookListConverter.topBookListAndTimeDTO(currentDate, topBookListDTOs));
     }
 
     @Operation(summary = "타사용자 책리스트 추가 API", description = "타사용자 책리스트를 보관함에 추가하는 API입니다.")
@@ -187,5 +193,13 @@ public class BookListRestController {
         BookListResponseDTO.LibraryBookDTO bookDTOList =
                 bookListService.getLibraryBooks(category, sortBy, page, signInmember);
         return ApiResponse.onSuccess(bookDTOList);
+    }
+
+    @Operation(summary = "DB 책 조회 API", description = "DB에 책이 있는지 조회하는 API입니다.")
+    @GetMapping("/book/db")
+    @Parameter(name = "isbn", description = "책리스트의 아이디, path variable 입니다!")
+    public ApiResponse<BookListResponseDTO.DbBookDTO> getDbBook(@RequestParam String isbn) {
+        Book dbBook = bookListService.getDbBook(isbn);
+        return ApiResponse.onSuccess(BookListConverter.getDbBookDTO(dbBook));
     }
 }
