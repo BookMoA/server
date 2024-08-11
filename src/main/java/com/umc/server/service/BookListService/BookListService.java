@@ -1,5 +1,6 @@
 package com.umc.server.service.BookListService;
 
+import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.BookListRequestDTO;
@@ -15,10 +16,6 @@ public interface BookListService {
             BookListRequestDTO.AddBookListDTO request, Member member, MultipartFile img)
             throws IOException;
 
-    // BookList addBookList(String title, String spec,String status,Member member, String url)
-    // throws IOException;
-
-    // BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request);
     BookList updateBookList(
             Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
             throws IOException;
@@ -35,7 +32,7 @@ public interface BookListService {
 
     String toggleLike(Long bookListId, Member member);
 
-    BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member);
+    List<BookList> getTopBookList(Integer page, Member member);
 
     BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
             Long bookListId, Member member);
@@ -46,4 +43,6 @@ public interface BookListService {
 
     BookListResponseDTO.LibraryBookDTO getLibraryBooks(
             String category, String sortBy, Integer page, Member member);
+
+    Book getDbBook(String isbn);
 }

@@ -167,4 +167,12 @@ public class BookListResponseDTO {
         private String bookStatus;
         private List<RecommendBookDTO> books;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DbBookDTO {
+        private Long bookId;
+    }
 }

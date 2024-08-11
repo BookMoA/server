@@ -3,6 +3,7 @@ package com.umc.server.repository;
 import com.umc.server.domain.Book;
 import com.umc.server.domain.enums.MemberBookStatus;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("status") MemberBookStatus status,
             @Param("sortBy") String sortBy,
             Pageable pageable);
+
+    Optional<Book> findByIsbn(String isbn);
 }
