@@ -25,9 +25,11 @@ public class Club extends BaseEntity {
     private String name;
 
     @Column(nullable = false, length = 100)
+    @Setter
     private String intro;
 
     @Column(nullable = false, length = 200)
+    @Setter
     private String notice;
 
     @Column(unique = true, nullable = false, length = 50)
@@ -36,19 +38,11 @@ public class Club extends BaseEntity {
     @Column(length = 10)
     private String password;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ClubMember> clubMemberList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ClubPost> clubPostList = new ArrayList<>();
-
-    public void setIntro(String intro) {
-        this.intro = intro;
-    }
-
-    public void setNotice(String notice) {
-        this.notice = notice;
-    }
 }
