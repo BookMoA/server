@@ -426,6 +426,7 @@ public class BookListServiceImpl implements BookListService {
 
         List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
                 bookLists.stream()
+                        .filter(bookList -> bookList.getListStatus() == ListStatus.PUBLIC) // 필터링
                         .map(
                                 bookList ->
                                         BookListConverter.topBookListAndTimeDTO(bookList, memberId))
