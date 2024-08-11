@@ -205,7 +205,7 @@ public class BookListConverter {
                 .build();
     }
 
-    public static BookListResponseDTO.TopBookListDTO topBookListAndTimeDTO(
+    public static BookListResponseDTO.TopBookListDTO topBookListDTO(
             BookList bookList, long memberId) {
         boolean likeStatus =
                 bookList.getMemberBookList().stream()
@@ -225,5 +225,17 @@ public class BookListConverter {
                 .listStatus(String.valueOf(bookList.getListStatus()))
                 .likeStatus(likeStatus)
                 .build();
+    }
+
+    public static BookListResponseDTO.TopBookListAndTimeDTO topBookListAndTimeDTO(
+            LocalDateTime currentDate, List<BookListResponseDTO.TopBookListDTO> topBookListDTOs) {
+        return BookListResponseDTO.TopBookListAndTimeDTO.builder()
+                .updatedAt(currentDate)
+                .bookLists(topBookListDTOs)
+                .build();
+    }
+
+    public static BookListResponseDTO.DbBookDTO getDbBookDTO(Book book) {
+        return BookListResponseDTO.DbBookDTO.builder().bookId(book.getId()).build();
     }
 }
