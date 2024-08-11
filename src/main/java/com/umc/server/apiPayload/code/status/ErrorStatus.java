@@ -33,6 +33,7 @@ public enum ErrorStatus implements BaseErrorCode {
     BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.CONFLICT, "BOOKLIST4003", false, "이미 추가된 책입니다."),
     BOOKLIST_BOOK_NO_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4004", false, "리스트에 없는 책입니다."),
     BOOKLIST_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4005", false, "이미 추가된 리스트입니다."),
+    BOOKLIST_CANNOT_ADD_OWN(HttpStatus.NOT_FOUND, "BOOKLIST4006", false, "내 리스트는 추가할 수 없습니다."),
 
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
     BOOK_INVALID_CATEGORY(HttpStatus.NOT_FOUND, "BOOK4002", false, "유효하지 않은 보관함 카테고리 형식입니다."),
@@ -41,7 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     SEARCH_BOOKLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4001", false, "없는 책리스트입니다."),
     SEARCH_BOOKMEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", false, "없는 메모입니다."),
-    SEARCH_INVALID_SORT(HttpStatus.NOT_FOUND, "SEARCH4003", false, "SORTBY형식이 올바르지 않습니다."),
+    SEARCH_INVALID_SORT(HttpStatus.NOT_FOUND, "SEARCH4003", false, "SORTBY 형식이 올바르지 않습니다."),
 
     // 멤버 책 관련 에러
     MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),

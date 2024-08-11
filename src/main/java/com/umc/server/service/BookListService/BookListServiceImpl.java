@@ -426,6 +426,7 @@ public class BookListServiceImpl implements BookListService {
 
         List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
                 bookLists.stream()
+                        .filter(bookList -> bookList.getListStatus() == ListStatus.PUBLIC) // 필터링
                         .map(
                                 bookList ->
                                         BookListConverter.topBookListAndTimeDTO(bookList, memberId))
@@ -450,6 +451,10 @@ public class BookListServiceImpl implements BookListService {
 
         if (member == null) {
             throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        if (bookList.getMember().getId().equals(memberId)) {
+            throw new BookListHandler(ErrorStatus.BOOKLIST_CANNOT_ADD_OWN); // 자신의 리스트는 추가할 수 없음
         }
 
         MemberBookList memberBookList =
