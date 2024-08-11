@@ -195,7 +195,9 @@ public class BookListRestController {
         return ApiResponse.onSuccess(bookDTOList);
     }
 
-    @Operation(summary = "DB 책 조회 API", description = "DB에 책이 있는지 조회하는 API입니다.")
+    @Operation(
+            summary = "DB 책 조회 API",
+            description = "DB에 책이 있는지 조회하는 API입니다. 책리스트에 책을 넣기전, db에 있는지 없는지 확인하고 없다면 책 추가하게 돕습니다.")
     @GetMapping("/book/db")
     @Parameter(name = "isbn", description = "책리스트의 아이디, path variable 입니다!")
     public ApiResponse<BookListResponseDTO.DbBookDTO> getDbBook(@RequestParam String isbn) {
