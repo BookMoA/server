@@ -45,6 +45,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 책 관련 에러
     MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
+    INVALID_READ_PAGE(
+            HttpStatus.BAD_REQUEST, "MEMBER_BOOK4002", false, "이전 읽은 페이지 수보다 작은 수를 입력할 수 없습니다."),
+
+    // 하루 독서량 관련 에러
+    DAILY_READING_NOT_FOUND(HttpStatus.NOT_FOUND, "DAILY_READING4001", false, "하루 독서량이 없습니다."),
 
     // 독서 메모 관련 에러
     BOOK_MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_MEMO4001", false, "해당하는 독서 메모가 없습니다."),

@@ -91,6 +91,11 @@ public class MemberBookServiceImpl implements MemberBookService {
                                     throw new MemberBookHandler(ErrorStatus.MEMBER_BOOK_NOT_FOUND);
                                 });
 
+        // 새로운 readPage 값이 기존 값보다 작거나 같은 경우 예외 발생
+        if (updateMemberBookDTO.getReadPage() <= memberBook.getReadPage()) {
+            throw new MemberBookHandler(ErrorStatus.INVALID_READ_PAGE);
+        }
+
         memberBook.setReadPage(updateMemberBookDTO.getReadPage());
         memberBook.setMemberBookStatus(updateMemberBookDTO.getMemberBookStatus());
         memberBook.setEndedAt(updateMemberBookDTO.getEndedAt());
@@ -167,7 +172,7 @@ public class MemberBookServiceImpl implements MemberBookService {
         Page<MemberBook> memoMemberBookPage =
                 new PageImpl<>(
                         memoMemberBookList,
-                        PageRequest.of(page - 1, 10),
+                        PageRequest.of(page - 1, 15),
                         memoMemberBookList.size());
         return memoMemberBookPage;
     }
