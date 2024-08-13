@@ -82,7 +82,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 독서 모임 게시글
     CLUB_POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUBPOST4001", false, "게시글을 찾을 수 없습니다."),
-    CLUB_POST_WRITER_REQUIRED(HttpStatus.BAD_REQUEST, "CLUBPOST4002", false, "게시글 글쓴이의 권한이 필요합니다.");
+    CLUB_POST_WRITER_REQUIRED(HttpStatus.BAD_REQUEST, "CLUBPOST4002", false, "게시글 글쓴이의 권한이 필요합니다."),
+    CLUB_POST_COMMENT_NOT_FOUND(
+            HttpStatus.BAD_REQUEST, "CLUBPOSTCOMMENT4001", false, "댓글을 찾을 수 없습니다."),
+    CLUB_POST_COMMENT_WRITER_REQUIRED(
+            HttpStatus.BAD_REQUEST, "CLUBPOSTCOMMENT4002", false, "댓글 글쓴이의 권한이 필요합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
