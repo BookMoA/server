@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberBookRestController {
 
     private final MemberBookService memberBookService;
+    private final DailyReadingRestController dailyReadingRestController;
 
     @Operation(summary = "멤버 책 생성 API", description = "멤버가 멤버 책을 생성하는 API입니다.")
     @ApiResponses({
@@ -43,6 +44,9 @@ public class MemberBookRestController {
             @RequestBody @Valid MemberBookRequestDTO.CreateMemberBookDTO createMemberBookDTO) {
         MemberBook memberBook =
                 memberBookService.createMemberBook(signInmember, createMemberBookDTO);
+
+        // 멤버 책 생성 동시에 하루 독서량 생성
+        dailyReadingRestController.createDailyReading(memberBook.getId());
         return ApiResponse.onSuccess(MemberBookConverter.toCreateMemberBookResult(memberBook));
     }
 
@@ -85,6 +89,9 @@ public class MemberBookRestController {
         MemberBook memberBook =
                 memberBookService.updateMemberBook(
                         signInmember.getId(), memberBookId, updateMemberBookDTO);
+
+        // 멤버 책 수정 동시에 하루 독서량 수정
+        dailyReadingRestController.updateDailyReading(memberBook.getId());
         return ApiResponse.onSuccess(MemberBookConverter.toMemberBookPreviewDTO(memberBook));
     }
 
@@ -98,10 +105,7 @@ public class MemberBookRestController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @Parameters({
-        @Parameter(name = "memberId", description = "멤버 아이디, path variable 입니다."),
-        @Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")
-    })
+    @Parameters({@Parameter(name = "memberBookId", description = "멤버 책의 아이디, path variable 입니다.")})
     @DeleteMapping("{memberBookId}")
     public ApiResponse<String> deleteMemberBook(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
@@ -140,6 +144,7 @@ public class MemberBookRestController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
+    @Parameter(name = "page", description = "페이지 번호(메모 15개씩 한 페이지)입니다.")
     @GetMapping("bookMemos")
     public ApiResponse<MemberBookResponseDTO.MemberBookPreviewListDTO> readMemberBookListByBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
