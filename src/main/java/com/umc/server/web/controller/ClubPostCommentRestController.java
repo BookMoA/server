@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/clubs/posts/commemts")
+@RequestMapping("/clubs/posts/comments")
 @RequiredArgsConstructor
 public class ClubPostCommentRestController {
     private final ClubPostCommentService clubPostCommentService;
