@@ -57,7 +57,7 @@ public class ClubPostRestController {
 
     @Operation(summary = "독서 모임 게시글 검색 API", description = "독서 모임 게시글 검색 API")
     @GetMapping("/search")
-    @Parameter(name = "category", description = "검색 분류(글+댓글-context, 제목-title, 글쓴이-writer)")
+    @Parameter(name = "category", description = "검색 분류(글-context, 제목-title, 글쓴이-writer)")
     @Parameter(name = "word", description = "검색어")
     @Parameter(name = "page", description = "페이징")
     public ApiResponse<ClubPostResponseDTO.ClubPostSearchResponseDTO> clubPostSearchAPI(

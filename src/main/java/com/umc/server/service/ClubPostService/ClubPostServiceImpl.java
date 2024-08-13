@@ -94,8 +94,7 @@ public class ClubPostServiceImpl implements ClubPostService {
         } else if (category.equals("title")) {
             postList = clubPostRepository.findByTitleContaining(keyword, pageRequest);
         } else if (category.equals("writer")) {
-            postList = clubPostRepository.findByTitleContaining(keyword, pageRequest);
-            // postList = clubPostRepository.findByNickNameContaining(keyword, pageRequest);
+            postList = clubPostRepository.findByNicknameContaining(keyword, pageRequest);
         } else {
             throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
         }
@@ -115,10 +114,10 @@ public class ClubPostServiceImpl implements ClubPostService {
                 clubMemberRepository
                         .findByMemberId(member.getId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_JOINED));
-        if (!clubPost.getClub().equals(clubMember.getClub())) {
+        if (!clubPost.getClub().getId().equals(clubMember.getClub().getId())) {
             throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
         }
-        if (!clubPost.getMember().equals(member)) {
+        if (!clubPost.getMember().getId().equals(member.getId())) {
             throw new GeneralException(ErrorStatus.CLUB_POST_WRITER_REQUIRED);
         }
         clubPost.setTitle(request.getTitle());
@@ -137,10 +136,10 @@ public class ClubPostServiceImpl implements ClubPostService {
                 clubMemberRepository
                         .findByMemberId(member.getId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_JOINED));
-        if (!clubPost.getClub().equals(clubMember.getClub())) {
+        if (!clubPost.getClub().getId().equals(clubMember.getClub().getId())) {
             throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
         }
-        if (!clubPost.getMember().equals(member)) {
+        if (!clubPost.getMember().getId().equals(member.getId())) {
             throw new GeneralException(ErrorStatus.CLUB_POST_WRITER_REQUIRED);
         }
         clubPostRepository.delete(clubPost);

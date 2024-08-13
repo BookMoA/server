@@ -32,21 +32,28 @@ public class ClubPostConverter {
 
     public static ClubPostResponseDTO.ClubPostDetailResponseDTO toClubPostDetailResponseDTO(
             Optional<ClubPost> clubPost) {
-        return ClubPostResponseDTO.ClubPostDetailResponseDTO.builder()
-                .postId(clubPost.getId())
-                .memberId(clubPost.getMember().getId())
-                .title(clubPost.getTitle())
-                .context(clubPost.getContext())
-                .createAt(clubPost.getCreatedAt())
-                .updateAt(clubPost.getUpdatedAt())
-                .build();
+
+        if (clubPost.isPresent()) {
+            ClubPost post = clubPost.get();
+
+            return ClubPostResponseDTO.ClubPostDetailResponseDTO.builder()
+                    .postId(post.getId())
+                    .memberId(post.getMember().getId())
+                    .title(post.getTitle())
+                    .context(post.getContext())
+                    .createAt(post.getCreatedAt())
+                    .updateAt(post.getUpdatedAt())
+                    .build();
+        } else {
+            return ClubPostResponseDTO.ClubPostDetailResponseDTO.builder().build();
+        }
     }
 
     public static ClubPostResponseDTO.ClubPostListResponseDTO toClubPostListResponseDTO(
             Long clubId, Integer page, Slice<ClubPost> postSlice) {
         List<ClubPostResponseDTO.ClubPostDetailResponseDTO> postList = new ArrayList<>();
         for (ClubPost post : postSlice.getContent()) {
-            postList.add(toClubPostDetailResponseDTO(post));
+            postList.add(toClubPostDetailResponseDTO(Optional.ofNullable(post)));
         }
         return ClubPostResponseDTO.ClubPostListResponseDTO.builder()
                 .clubId(clubId)
@@ -60,10 +67,14 @@ public class ClubPostConverter {
             String category, String word, Integer page, Page<ClubPost> postPage) {
         List<ClubPostResponseDTO.ClubPostDetailResponseDTO> postList = new ArrayList<>();
         for (ClubPost post : postPage.getContent()) {
-            postList.add(toClubPostDetailResponseDTO(post));
+            postList.add(toClubPostDetailResponseDTO(Optional.ofNullable(post)));
+        }
+        Long clubId = null;
+        if (!postPage.getContent().isEmpty()) {
+            clubId = postPage.getContent().get(0).getClub().getId();
         }
         return ClubPostResponseDTO.ClubPostSearchResponseDTO.builder()
-                .clubId(postPage.getContent().get(0).getClub().getId())
+                .clubId(clubId)
                 .category(category)
                 .word(word)
                 .page(page)
