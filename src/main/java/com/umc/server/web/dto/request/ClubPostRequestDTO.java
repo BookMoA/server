@@ -18,11 +18,11 @@ public class ClubPostRequestDTO {
         Long clubId;
 
         @NotNull(message = "title cannot be Null!!")
-        @Size(min = 0, max = 10, message = "title's min = 0, max = 100")
+        @Size(min = 0, max = 100, message = "title's min = 0, max = 100")
         String title;
 
         @NotNull(message = "context cannot be Null!!")
-        @Size(min = 0, max = 10, message = "context's min = 0, max = 500")
+        @Size(min = 0, max = 500, message = "context's min = 0, max = 500")
         String context;
     }
 
@@ -35,11 +35,11 @@ public class ClubPostRequestDTO {
         Long postId;
 
         @NotNull(message = "title cannot be Null!!")
-        @Size(min = 0, max = 10, message = "title's min = 0, max = 100")
+        @Size(min = 0, max = 100, message = "title's min = 0, max = 100")
         String title;
 
         @NotNull(message = "context cannot be Null!!")
-        @Size(min = 0, max = 10, message = "context's min = 0, max = 500")
+        @Size(min = 0, max = 500, message = "context's min = 0, max = 500")
         String context;
     }
 
