@@ -26,6 +26,8 @@ public class ClubPostCommentResponseDTO {
 
         Long memberId;
 
+        String nickname;
+
         String context;
 
         LocalDateTime createAt;

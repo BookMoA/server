@@ -34,6 +34,7 @@ public class ClubPostCommentConverter {
         return ClubPostCommentResponseDTO.ClubPostCommentDetailResponseDTO.builder()
                 .commentId(clubPostComment.getId())
                 .memberId(clubPostComment.getMember().getId())
+                .nickname(clubPostComment.getMember().getNickname())
                 .context(clubPostComment.getContext())
                 .createAt(clubPostComment.getCreatedAt())
                 .updateAt(clubPostComment.getUpdatedAt())
