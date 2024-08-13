@@ -12,9 +12,12 @@ import lombok.NoArgsConstructor;
 public class BookListRequestDTO {
 
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AddBookListDTO {
         @NotBlank private String title;
-        @NotNull private String spec;
+        @NotBlank private String spec;
         @NotBlank private String status;
     }
 
@@ -25,6 +28,7 @@ public class BookListRequestDTO {
     public static class UpdateBookListDTO {
         @NotBlank String title;
         @NotNull String spec;
+        @NotBlank String img;
         @NotBlank String status;
         @NotEmpty private List<BookListEntryDTO> books;
     }
