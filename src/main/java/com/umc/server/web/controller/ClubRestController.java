@@ -3,6 +3,7 @@ package com.umc.server.web.controller;
 import com.umc.server.apiPayload.ApiResponse;
 import com.umc.server.converter.ClubConverter;
 import com.umc.server.domain.Club;
+import com.umc.server.domain.Member;
 import com.umc.server.service.ClubService.ClubService;
 import com.umc.server.web.dto.request.ClubRequestDTO;
 import com.umc.server.web.dto.response.ClubResponseDTO;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,22 +27,22 @@ public class ClubRestController {
     @Operation(summary = "모임 생성 API", description = "독서 모임을 생성 API")
     @PostMapping("")
     public ApiResponse<ClubResponseDTO.ClubCreateResponseDTO> clubCreateAPI(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @RequestBody @Valid ClubRequestDTO.ClubCreateRequestDTO request) {
-        Club club = clubService.createClub(request);
+        Club club = clubService.createClub(signInmember, request);
         return ApiResponse.onSuccess(ClubConverter.toClubCreateResponseDTO(club));
     }
 
     @Operation(summary = "내 모임 조회 API", description = "사용자가 속해있는 독서 모임 조회 API")
-    @GetMapping("/{memberId}")
-    @Parameter(name = "memberId", description = "사용자의 아이디")
+    @GetMapping("")
     public ApiResponse<ClubResponseDTO.MyClubResponseDTO> myClubAPI(
-            @PathVariable(name = "memberId") Long memberId) {
-        Optional<Club> club = clubService.readMyClub(memberId);
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
+        Optional<Club> club = clubService.readMyClub(signInmember);
         return ApiResponse.onSuccess(ClubConverter.toMyClubResponseDTO(club));
     }
 
     @Operation(summary = "모임 상세 조회 API", description = "특정 독서 모임의 상세 정보 조회 API")
-    @GetMapping("")
+    @GetMapping("/detail")
     @Parameter(name = "clubId", description = "조회할 독서 모임의 아이디")
     public ApiResponse<ClubResponseDTO.ClubDetailResponseDTO> clubDetailAPI(
             @RequestParam(name = "clubId", defaultValue = "") Long clubId) {
@@ -49,19 +51,20 @@ public class ClubRestController {
     }
 
     @Operation(summary = "모임 수정 API", description = "독서 모임의 정보(한 줄 소개, 공지사항) 수정 API")
-    @PatchMapping("/{clubId}")
-    @Parameter(name = "clubId", description = "수정할 모임의 아이디")
+    @PatchMapping("")
     public ApiResponse<ClubResponseDTO.ClubUpdateResponseDTO> clubUpdateAPI(
-            @PathVariable(name = "clubId") Long clubId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @RequestBody @Valid ClubRequestDTO.ClubUpdateRequestDTO request) {
-        Club club = clubService.updateClub(clubId, request);
+        Club club = clubService.updateClub(signInmember, request);
         return ApiResponse.onSuccess(ClubConverter.toClubUpdateResponseDTO(club));
     }
 
     @Operation(summary = "모임 삭제 API", description = "독서 모임 삭제 API")
     @DeleteMapping("")
-    public void clubDeleteAPI(@RequestBody @Valid ClubRequestDTO.ClubDeleteRequestDTO request) {
-        clubService.deleteClub(request.getClubId(), request.getMemberId());
+    public void clubDeleteAPI(
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestBody @Valid ClubRequestDTO.ClubDeleteRequestDTO request) {
+        clubService.deleteClub(signInmember, request);
     }
 
     @Operation(summary = "모임 추천 API", description = "추천 독서 모임의 리스트 조회 API")

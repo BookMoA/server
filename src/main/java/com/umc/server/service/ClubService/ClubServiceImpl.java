@@ -33,13 +33,8 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public Club createClub(ClubRequestDTO.ClubCreateRequestDTO request) {
+    public Club createClub(Member member, ClubRequestDTO.ClubCreateRequestDTO request) {
         // 1. 모임장 상태 유효 판별 (존재 & 모임 가입 여부)
-        Member member =
-                memberRepository
-                        .findById(request.getMemberId())
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         clubMemberRepository
                 .findByMemberId(member.getId())
                 .ifPresent(
@@ -69,12 +64,9 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public Optional<Club> readMyClub(Long memberId) {
-        memberRepository
-                .findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    public Optional<Club> readMyClub(Member member) {
         return clubMemberRepository
-                .findByMemberId(memberId)
+                .findByMemberId(member.getId())
                 .flatMap(clubMember -> clubRepository.findById(clubMember.getClub().getId()));
     }
 
@@ -87,20 +79,14 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public Club updateClub(Long clubId, ClubRequestDTO.ClubUpdateRequestDTO request) {
+    public Club updateClub(Member member, ClubRequestDTO.ClubUpdateRequestDTO request) {
         // 1. 모임 존재 판별
         Club club =
                 clubRepository
-                        .findById(clubId)
+                        .findById(request.getClubId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_FOUND));
 
         // 2. 멤버 상태 판별 (존재, 모임 가입 여부 + 모임 동일 여부 + 모임장 여부)
-        // 2-1. 멤버 존재 여부
-        Member member =
-                memberRepository
-                        .findById(request.getMemberId())
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         // 2-2. 모임 가입 여부
         ClubMember clubMember =
                 clubMemberRepository
@@ -124,30 +110,20 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public void deleteClub(Long clubId, Long memberId) {
+    public void deleteClub(Member member, ClubRequestDTO.ClubDeleteRequestDTO request) {
         System.out.println("deleteClub");
-        if (memberId == null) {
-            System.out.println("memberId == null");
-            memberId = Long.valueOf("");
-        }
-        if (clubId == null) {
+        if (request.getClubId() == null) {
             System.out.println("clubId == null");
-            clubId = Long.valueOf("");
+            request.setClubId(Long.valueOf(""));
         }
 
         // 1. 모임 존재 판별
         Club club =
                 clubRepository
-                        .findById(clubId)
+                        .findById(request.getClubId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_FOUND));
 
         // 2. 멤버 상태 판별 (존재, 모임 가입 + 모임장)
-        // 2-1. 멤버 존재 여부
-        Member member =
-                memberRepository
-                        .findById(memberId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         // 2-2. 모임 가입 여부
         ClubMember clubMember =
                 clubMemberRepository
