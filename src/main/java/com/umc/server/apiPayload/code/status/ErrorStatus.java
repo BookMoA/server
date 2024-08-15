@@ -28,12 +28,13 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL500", false, "인증 코드 전송에 실패하였습니다."),
 
     // 책리스트 관련 에러
-    BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST4001", false, "책리스트가 없습니다."),
-    BOOKLIST_INVALID_STATUS(HttpStatus.BAD_REQUEST, "BOOKLIST4002", false, "유효하지 않은 STATUS형식입니다."),
-    BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.CONFLICT, "BOOKLIST4003", false, "이미 추가된 책입니다."),
-    BOOKLIST_BOOK_NO_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4004", false, "리스트에 없는 책입니다."),
-    BOOKLIST_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST4005", false, "이미 추가된 리스트입니다."),
-    BOOKLIST_CANNOT_ADD_OWN(HttpStatus.NOT_FOUND, "BOOKLIST4006", false, "내 리스트는 추가할 수 없습니다."),
+    BOOKLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKLIST401", false, "책리스트가 없습니다."),
+    BOOKLIST_INVALID_STATUS(HttpStatus.BAD_REQUEST, "BOOKLIST402", false, "유효하지 않은 STATUS형식입니다."),
+    BOOKLIST_BOOK_ALREADY_EXISTS(HttpStatus.CONFLICT, "BOOKLIST403", false, "이미 추가된 책입니다."),
+    BOOKLIST_BOOK_NO_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST404", false, "리스트에 없는 책입니다."),
+    BOOKLIST_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "BOOKLIST405", false, "이미 추가된 리스트입니다."),
+    BOOKLIST_CANNOT_ADD_OWN(HttpStatus.NOT_FOUND, "BOOKLIST406", false, "내 리스트는 추가할 수 없습니다."),
+    BOOKLIST_CANNOT_LIKE_OWN(HttpStatus.NOT_FOUND, "BOOKLIST407", false, "내 리스트는 공감할 수 없습니다."),
 
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK4001", false, "없는 책입니다."),
     BOOK_INVALID_CATEGORY(HttpStatus.NOT_FOUND, "BOOK4002", false, "유효하지 않은 보관함 카테고리 형식입니다."),
