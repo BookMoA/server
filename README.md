@@ -1,4 +1,7 @@
 # 책모아 Server Part
+### 참고 - client: [API Documentation 확인하기](https://twisty-hygienic-bea.notion.site/API-c1b59bbf40fe4b22b9d4ec8eb987990f)
+
+<br>
 
 ## 목차
 
@@ -13,6 +16,8 @@
 	2. [gradle build시](#gradle-build시)
 
 4. [배포가 시작되었습니다](#배포가-시작되었습니다) ✨updated✨
+
+<br>
 
 ## 기본 세팅
 ### 1. gradle build 진행하기
