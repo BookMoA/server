@@ -19,7 +19,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", false, "존재하지 않는 회원입니다."),
-    MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER401", false, "이미 존재하는 회원입니다."),
+    MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER409", false, "이미 존재하는 회원입니다."),
     KAKAO_SIGN_IN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER500", false, "카카오 로그인 에러 입니다."),
     EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "TOKEN401", false, "엑세스 토큰이 만료되었습니다. 재발급해주세요."),
     INVALID_TOKEN_ERROR(HttpStatus.FORBIDDEN, "TOKEN403", false, "리프레시 토큰이 만료되었습니다. 다시 로그인해주세요."),
@@ -47,6 +47,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 책 관련 에러
     MEMBER_BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BOOK4001", false, "멤버 책이 아닙니다."),
+    INVALID_READ_PAGE(
+            HttpStatus.BAD_REQUEST, "MEMBER_BOOK4002", false, "이전 읽은 페이지 수보다 작은 수를 입력할 수 없습니다."),
+
+    // 하루 독서량 관련 에러
+    DAILY_READING_NOT_FOUND(HttpStatus.NOT_FOUND, "DAILY_READING4001", false, "하루 독서량이 없습니다."),
 
     // 독서 메모 관련 에러
     BOOK_MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_MEMO4001", false, "해당하는 독서 메모가 없습니다."),
@@ -74,7 +79,15 @@ public enum ErrorStatus implements BaseErrorCode {
             HttpStatus.BAD_REQUEST,
             "CLUBMEMBER4004",
             false,
-            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다.");
+            "권한이 불충분합니다. 독서 모임 멤버의 권한이 필요한 동작입니다."),
+
+    // 독서 모임 게시글
+    CLUB_POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLUBPOST4001", false, "게시글을 찾을 수 없습니다."),
+    CLUB_POST_WRITER_REQUIRED(HttpStatus.BAD_REQUEST, "CLUBPOST4002", false, "게시글 글쓴이의 권한이 필요합니다."),
+    CLUB_POST_COMMENT_NOT_FOUND(
+            HttpStatus.BAD_REQUEST, "CLUBPOSTCOMMENT4001", false, "댓글을 찾을 수 없습니다."),
+    CLUB_POST_COMMENT_WRITER_REQUIRED(
+            HttpStatus.BAD_REQUEST, "CLUBPOSTCOMMENT4002", false, "댓글 글쓴이의 권한이 필요합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
