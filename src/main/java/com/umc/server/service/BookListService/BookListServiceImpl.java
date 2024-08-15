@@ -307,6 +307,10 @@ public class BookListServiceImpl implements BookListService {
             throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
         }
 
+        if (bookList.getMember().getId() == memberId) { // 책리스트가 내꺼면 좋아요 처리 못함
+            throw new BookListHandler(ErrorStatus.BOOKLIST_CANNOT_LIKE_OWN);
+        }
+
         MemberBookList memberBookList =
                 memberBookListRepository
                         .findByBookListIdAndMemberId(bookListId, memberId)
