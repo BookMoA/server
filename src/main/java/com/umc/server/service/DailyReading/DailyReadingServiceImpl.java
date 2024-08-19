@@ -10,9 +10,9 @@ import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.repository.DailyReadingRepository;
 import com.umc.server.repository.MemberBookRepository;
-import com.umc.server.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +26,6 @@ public class DailyReadingServiceImpl implements DailyReadingService {
 
     private final MemberBookRepository memberBookRepository;
 
-    private final MemberRepository memberRepository;
-
     @Override
     public DailyReading createDailyReading(Long memberBookId) {
         MemberBook memberBook =
@@ -38,17 +36,20 @@ public class DailyReadingServiceImpl implements DailyReadingService {
                                     throw new MemberBookHandler(ErrorStatus.MEMBER_BOOK_NOT_FOUND);
                                 });
 
+        // 이전에 읽은 하루 독서량이 있는지 확인
+        Optional<DailyReading> latestDailyReadingOpt =
+                dailyReadingRepository.findLatestByMemberBook(memberBook);
+
         DailyReading dailyReading;
-        DailyReading latestDailyReading;
 
         // 처음 읽은 책 하루 독서량 생성 시
-        if (dailyReadingRepository.findByMemberBook(memberBook) == null)
+        if (latestDailyReadingOpt.isEmpty()) {
             dailyReading = DailyReadingConverter.toDailyReading(memberBook);
+        }
 
         // 이전에 읽은 책 하루 독서량 생성 시
         else {
-            latestDailyReading =
-                    dailyReadingRepository.findLatestByMemberBook(memberBook).orElseThrow();
+            DailyReading latestDailyReading = latestDailyReadingOpt.get();
             dailyReading =
                     DailyReadingConverter.toDailyReadingAgain(memberBook, latestDailyReading);
         }
