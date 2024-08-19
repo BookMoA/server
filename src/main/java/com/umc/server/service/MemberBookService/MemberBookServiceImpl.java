@@ -94,6 +94,7 @@ public class MemberBookServiceImpl implements MemberBookService {
         memberBook.setMemberBookStatus(updateMemberBookDTO.getMemberBookStatus());
         memberBook.setEndedAt(updateMemberBookDTO.getEndedAt());
         memberBook.setScore(updateMemberBookDTO.getScore());
+
         return memberBook;
     }
 
