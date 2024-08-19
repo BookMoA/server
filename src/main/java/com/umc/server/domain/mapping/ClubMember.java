@@ -21,16 +21,18 @@ public class ClubMember extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    @Setter
     private Boolean reader;
 
     @Column(length = 100)
+    @Setter
     private String statusMessage;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "club_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
-    @OneToOne()
-    @JoinColumn(name = "member_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 }

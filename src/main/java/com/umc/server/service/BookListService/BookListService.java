@@ -1,17 +1,24 @@
 package com.umc.server.service.BookListService;
 
+import com.umc.server.domain.Book;
 import com.umc.server.domain.BookList;
 import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface BookListService {
 
-    BookList addBookList(BookListRequestDTO.AddBookListDTO request, Member member);
+    BookList addBookList(
+            BookListRequestDTO.AddBookListDTO request, Member member, MultipartFile img)
+            throws IOException;
 
-    BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request);
+    BookList updateBookList(
+            Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
+            throws IOException;
 
     Optional<BookList> getBookList(Long id);
 
@@ -25,7 +32,7 @@ public interface BookListService {
 
     String toggleLike(Long bookListId, Member member);
 
-    BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member);
+    List<BookList> getTopBookList(Integer page, Member member);
 
     BookListResponseDTO.AddaAnotherBookListResultDTO anotherToLibrary(
             Long bookListId, Member member);
@@ -36,4 +43,6 @@ public interface BookListService {
 
     BookListResponseDTO.LibraryBookDTO getLibraryBooks(
             String category, String sortBy, Integer page, Member member);
+
+    Book getDbBook(String isbn);
 }

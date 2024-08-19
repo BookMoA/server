@@ -23,28 +23,32 @@ public class ClubPost extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, length = 100)
+    @Setter
     private String title;
 
     @Column(nullable = false, length = 500)
+    @Setter
     private String context;
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
     @Builder.Default
     private List<ClubPostComment> clubPostCommentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
     @Builder.Default
     private List<ClubPostLike> clubPostLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clubPost", cascade = CascadeType.ALL)
     @Builder.Default
     private List<ClubPostPhoto> clubPostPhotoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false)
+    @Setter
     private Club club;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @Setter
     private Member member;
 }

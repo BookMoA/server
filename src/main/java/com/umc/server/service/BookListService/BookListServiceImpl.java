@@ -13,9 +13,11 @@ import com.umc.server.domain.enums.MemberBookStatus;
 import com.umc.server.domain.mapping.BookListEntry;
 import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.repository.*;
+import com.umc.server.service.S3Service.S3Service;
 import com.umc.server.web.dto.request.BookListRequestDTO;
 import com.umc.server.web.dto.response.BookListResponseDTO;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -37,20 +40,27 @@ public class BookListServiceImpl implements BookListService {
     private final BookListEntryRepository bookListEntryRepository;
     private final MemberBookListRepository memberBookListRepository;
     private final MemberBookRepository memberBookRepository;
+    private final S3Service s3Service;
     private List<BookListResponseDTO.RecommendBookDTO> cachedRecommendations = new ArrayList<>();
     private LocalDateTime lastUpdate = LocalDateTime.MIN;
 
     // 책리스트 추가
     @Override
     @Transactional
-    public BookList addBookList(BookListRequestDTO.AddBookListDTO request, Member member) {
+    public BookList addBookList(
+            BookListRequestDTO.AddBookListDTO request, Member member, MultipartFile img)
+            throws IOException {
         // 현재 인증된 멤버를 가져오는 부분
         if (member == null) {
             throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
         }
+        String newUrl = null;
+        if (img != null && !img.isEmpty()) {
+            newUrl = s3Service.uploadFile(img);
+        }
 
         // DTO를 엔티티로 변환
-        BookList bookList = BookListConverter.toBookList(request, member);
+        BookList bookList = BookListConverter.toBookList(request, member, newUrl);
 
         // BookList 엔티티 저장
         return bookListRepository.save(bookList);
@@ -58,12 +68,26 @@ public class BookListServiceImpl implements BookListService {
 
     // 책리스트 수정
     @Override
-    public BookList updateBookList(Long bookListId, BookListRequestDTO.UpdateBookListDTO request) {
-        // 1. 책 리스트 조회
+    public BookList updateBookList(
+            Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
+            throws IOException {
+        // 1.1 책 리스트 조회
         BookList bookList =
                 bookListRepository
                         .findById(bookListId)
                         .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
+
+        // 1.2 이미지 불러오기 -> <기존에 이미지 있는데 NULL -> 기존 이미지 / 새 이미지 들어옴 -> 이미지 수정>
+        String oldImageUrl = bookList.getImg(); // 기존 이미지 URL
+
+        String newUrl = null;
+        if (img != null && !img.isEmpty()) {
+            // 새로운 이미지 업로드
+            newUrl = s3Service.uploadFile(img);
+        } else {
+            // 새로운 이미지가 없을 경우 기존 이미지 URL 유지
+            newUrl = oldImageUrl;
+        }
 
         // 2. 상태 값 변환
         ListStatus listStatus;
@@ -74,7 +98,7 @@ public class BookListServiceImpl implements BookListService {
         }
 
         // 3. 책 리스트 정보 업데이트
-        bookList.update(request.getTitle(), request.getSpec(), request.getImg(), listStatus);
+        bookList.update(request.getTitle(), request.getSpec(), newUrl, listStatus);
         // ------------------------------------------------------------------------------------------------------
         // 4. 기존 BookListEntry 삭제
         List<BookListEntry> existingEntries = bookList.getBookListEntry();
@@ -283,6 +307,10 @@ public class BookListServiceImpl implements BookListService {
             throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
         }
 
+        if (bookList.getMember().getId() == memberId) { // 책리스트가 내꺼면 좋아요 처리 못함
+            throw new BookListHandler(ErrorStatus.BOOKLIST_CANNOT_LIKE_OWN);
+        }
+
         MemberBookList memberBookList =
                 memberBookListRepository
                         .findByBookListIdAndMemberId(bookListId, memberId)
@@ -319,25 +347,17 @@ public class BookListServiceImpl implements BookListService {
 
     // 인기책리스트 조회
     @Override
-    public BookListResponseDTO.TopBookListAndTimeDTO getTopBookList(Integer page, Member member) {
+    public List<BookList> getTopBookList(Integer page, Member member) {
+        // 페이지와 정렬 기준 설정
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "likeCnt"));
+
+        // 책 리스트를 페이지 요청으로 조회
         List<BookList> bookLists = bookListRepository.findAll(pageable).getContent();
 
-        LocalDateTime currentDate = LocalDateTime.now();
-
-        Long memberId = member.getId();
-
-        List<BookListResponseDTO.TopBookListDTO> topBookListDTOs =
-                bookLists.stream()
-                        .map(
-                                bookList ->
-                                        BookListConverter.topBookListAndTimeDTO(bookList, memberId))
-                        .collect(Collectors.toList());
-
-        return BookListResponseDTO.TopBookListAndTimeDTO.builder()
-                .updatedAt(currentDate)
-                .bookLists(topBookListDTOs)
-                .build();
+        // ListStatus가 PUBLIC인 책 리스트만 필터링
+        return bookLists.stream()
+                .filter(bookList -> bookList.getListStatus() == ListStatus.PUBLIC)
+                .collect(Collectors.toList());
     }
 
     // 타사용자 책리스트 보관함에 추가
@@ -353,6 +373,10 @@ public class BookListServiceImpl implements BookListService {
 
         if (member == null) {
             throw new BookListHandler(ErrorStatus.MEMBER_NOT_FOUND); // 적절한 예외 처리 필요
+        }
+
+        if (bookList.getMember().getId().equals(memberId)) {
+            throw new BookListHandler(ErrorStatus.BOOKLIST_CANNOT_ADD_OWN); // 자신의 리스트는 추가할 수 없음
         }
 
         MemberBookList memberBookList =
@@ -510,5 +534,14 @@ public class BookListServiceImpl implements BookListService {
                 .bookStatus(category)
                 .books(books)
                 .build();
+    }
+
+    // db에 있는 책인지?
+    public Book getDbBook(String isbn) {
+        // 책을 ISBN으로 조회
+        Optional<Book> bookOptional = bookRepository.findByIsbn(isbn);
+
+        // 책이 존재하면 Book 객체를 반환, 없으면 null 반환
+        return bookOptional.orElseThrow(() -> new BookListHandler(ErrorStatus.BOOK_NOT_FOUND));
     }
 }
