@@ -32,7 +32,7 @@ public class BookRestController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<BookResponseDTO.CreateBookResultDTO> createBook(
             @RequestBody @Valid BookRequestDTO.CreateBookDTO createBookDTO) {
         Book book = bookService.createBook(createBookDTO);
