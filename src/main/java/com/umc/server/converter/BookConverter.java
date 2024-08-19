@@ -7,14 +7,14 @@ import com.umc.server.web.dto.response.BookResponseDTO;
 
 public class BookConverter {
 
-    public static Book toBook(BookRequestDTO.CreateBookDTO createBookDTO) {
+    public static Book toBook(BookRequestDTO.CreateBookDTO createBookDTO, String imgUrl) {
         return Book.builder()
                 .title(createBookDTO.getTitle())
                 .writer(createBookDTO.getWriter())
                 .publisher(createBookDTO.getPublisher())
                 .isbn(createBookDTO.getIsbn())
                 .page(createBookDTO.getPage())
-                .coverImage(createBookDTO.getCoverImage())
+                .coverImage(imgUrl)
                 .build();
     }
 
