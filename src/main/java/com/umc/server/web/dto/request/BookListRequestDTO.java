@@ -45,7 +45,7 @@ public class BookListRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AddBookInBookListDTO {
-        @NotBlank private List<Long> booksId;
+        @NotEmpty private List<Long> booksId;
     }
 
     @Getter
@@ -53,7 +53,7 @@ public class BookListRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DeleteBookInBookListDTO {
-        @NotBlank private List<Long> booksId;
+        @NotEmpty private List<Long> booksId;
     }
 
     @Getter
