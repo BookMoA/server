@@ -29,6 +29,8 @@ public class MemberBookConverter {
     public static MemberBookResponseDTO.MemberBookPreviewDTO toMemberBookPreviewDTO(
             MemberBook memberBook) {
         return MemberBookResponseDTO.MemberBookPreviewDTO.builder()
+                .title(memberBook.getBook().getTitle())
+                .writer(memberBook.getBook().getWriter())
                 .memberBookId(memberBook.getId())
                 .memberBookStatus(memberBook.getMemberBookStatus())
                 .readPage(memberBook.getReadPage())
@@ -37,6 +39,7 @@ public class MemberBookConverter {
                 .score(memberBook.getScore())
                 .memberId(memberBook.getMember().getId())
                 .bookId(memberBook.getBook().getId())
+                .image(memberBook.getBook().getCoverImage())
                 .build();
     }
 
