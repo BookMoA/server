@@ -14,6 +14,7 @@ import com.umc.server.web.dto.request.MemberRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
@@ -93,7 +94,6 @@ public class MemberRestController {
 
         String accessToken = kakaoService.getAccessToken(code);
         KakaoRequestDTO.SignUpRequestDTO kakaoSignUp = kakaoService.getMemberInfo(accessToken);
-
         return ApiResponse.onSuccess(kakaoService.signUp(kakaoSignUp, accessToken));
     }
 
@@ -160,15 +160,19 @@ public class MemberRestController {
 
     // TODO: 회원정보(email, nickname, profileImg) 변경하기
     @Operation(
-            summary = "회원 정보 변경 api",
+            summary = "일반 로그인 회원 정보 변경 api, 소셜 로그인 회원은 불가능",
             description =
-                    "email 또는 nickname을 변경할 때 사용하는 api입니다. 반드시 header의 content-type을 \"multipart/form-data\"로 묶어서 보내주세요.")
+                    "일반회원의 경우 email 또는 nickname, 프로필 이미지를 변경할 때 사용하는 api입니다. 반드시 header의 content-type을 \"multipart/form-data\"로 묶어서 보내주세요.")
     @PutMapping("/profileInfo")
     public ApiResponse<MemberResponseDTO.EditProfileInfo> editProfileInfo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "nickname", required = false) String nickname,
-            @RequestParam(value = "profileImg", required = false) MultipartFile profileImg)
+            @RequestParam(value = "profileImg", required = false)
+                    @Parameter(
+                            description = "Profile Image",
+                            content = @Content(mediaType = "multipart/form-data"))
+                    MultipartFile profileImg)
             throws IOException {
 
         return ApiResponse.onSuccess(
