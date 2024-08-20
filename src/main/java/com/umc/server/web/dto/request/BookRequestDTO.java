@@ -17,7 +17,7 @@ public class BookRequestDTO {
 
         @NotNull private Long page;
 
-        private String coverImage;
+        // private String coverImage;
     }
 
     @Getter

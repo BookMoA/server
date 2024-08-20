@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class BookListRestController {
     private final BookListService bookListService;
 
+    // 책리스트 추가
     @Operation(
             summary = "책리스트 추가 API",
             description = "책리스트를 추가하는 API입니다. status값에는 PUBLIC이나 PRIVATE로 입력해주세요.")

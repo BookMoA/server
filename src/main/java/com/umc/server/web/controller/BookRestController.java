@@ -37,7 +37,7 @@ public class BookRestController {
     })
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ApiResponse<BookResponseDTO.CreateBookResultDTO> createBook(
-            @RequestBody @Valid BookRequestDTO.CreateBookDTO createBookDTO,
+            @RequestPart @Valid BookRequestDTO.CreateBookDTO createBookDTO,
             @RequestPart(value = "imgUrl", required = false) MultipartFile imgUrl)
             throws IOException {
         Book book = bookService.createBook(createBookDTO, imgUrl);
