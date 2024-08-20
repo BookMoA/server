@@ -1,6 +1,5 @@
 package com.umc.server.repository;
 
-import com.umc.server.domain.Book;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.mapping.MemberBook;
 import java.util.List;
@@ -22,6 +21,4 @@ public interface MemberBookRepository extends JpaRepository<MemberBook, Long> {
     //    Boolean existsByMember(Member member);
 
     Optional<List<MemberBook>> findAllByMember(Member member);
-
-    List<MemberBook> findAllByBookAndMember(Book book, Member member);
 }
