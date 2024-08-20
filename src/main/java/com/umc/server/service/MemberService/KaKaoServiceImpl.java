@@ -178,8 +178,8 @@ public class KaKaoServiceImpl implements KakaoService {
         MemberResponseDTO.SignInResponseDTO signInMemberDTO =
                 MemberConverter.toSignInResponseDTO(signInMember);
         signInMemberDTO.setAccessToken(accessToken);
-        signInMemberDTO.setAccessExpiredDate(accessExpired);
-        signInMemberDTO.setRefreshExpiredDate(refreshExpired);
+        signInMemberDTO.setAccessExpiredDateTime(accessExpired);
+        signInMemberDTO.setRefreshExpiredDateTime(refreshExpired);
 
         return signInMemberDTO;
     }
@@ -194,6 +194,7 @@ public class KaKaoServiceImpl implements KakaoService {
                     authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
             return jwtTokenUtil.generateToken(authentication, nickname);
+
         } catch (AuthenticationException e) {
             throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
         }

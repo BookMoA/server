@@ -48,6 +48,8 @@ public class JwtTokenUtil {
                         .collect(Collectors.joining(","));
 
         final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime accessExpiredDateTime = now.plusHours(4);
+        final LocalDateTime refreshExpiredDateTime = now.plusDays(2);
 
         final String accessToken =
                 Jwts.builder()
@@ -56,7 +58,7 @@ public class JwtTokenUtil {
                         .claim("nickname", nickname)
                         .setExpiration(
                                 Date.from(
-                                        now.plusHours(2)
+                                        accessExpiredDateTime
                                                 .atZone(ZoneId.systemDefault())
                                                 .toInstant()))
                         .signWith(key, SignatureAlgorithm.HS256)
@@ -66,11 +68,14 @@ public class JwtTokenUtil {
                 Jwts.builder()
                         .setExpiration(
                                 Date.from(
-                                        now.plusDays(3).atZone(ZoneId.systemDefault()).toInstant()))
+                                        refreshExpiredDateTime
+                                                .atZone(ZoneId.systemDefault())
+                                                .toInstant()))
                         .signWith(key, SignatureAlgorithm.HS256)
                         .compact();
 
-        return MemberResponseDTO.TokenInfo.of(accessToken, refreshToken);
+        return MemberResponseDTO.TokenInfo.of(
+                accessToken, refreshToken, accessExpiredDateTime, refreshExpiredDateTime);
     }
 
     // TODO: 토큰 유효 검증

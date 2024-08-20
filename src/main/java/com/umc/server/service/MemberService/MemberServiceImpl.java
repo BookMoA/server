@@ -149,8 +149,8 @@ public class MemberServiceImpl implements MemberService {
             MemberResponseDTO.SignInResponseDTO signInMemberDTO =
                     MemberConverter.toSignInResponseDTO(signInMember);
             signInMemberDTO.setAccessToken(accessToken);
-            signInMemberDTO.setAccessExpiredDate(accessExpired);
-            signInMemberDTO.setRefreshExpiredDate(refreshExpired);
+            signInMemberDTO.setAccessExpiredDateTime(accessExpired);
+            signInMemberDTO.setRefreshExpiredDateTime(refreshExpired);
 
             return signInMemberDTO;
         } catch (AuthenticationException e) {
