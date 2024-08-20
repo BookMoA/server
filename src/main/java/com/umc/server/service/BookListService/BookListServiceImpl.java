@@ -66,7 +66,7 @@ public class BookListServiceImpl implements BookListService {
         return bookListRepository.save(bookList);
     }
 
-    // 책리스트 수정
+    // 책리스트 수정a
     @Override
     public BookList updateBookList(
             Long bookListId, BookListRequestDTO.UpdateBookListDTO request, MultipartFile img)
