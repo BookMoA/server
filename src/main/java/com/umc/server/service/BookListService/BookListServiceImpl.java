@@ -216,6 +216,7 @@ public class BookListServiceImpl implements BookListService {
                 .collect(Collectors.toList());
     }
 
+    // 책리스트안에 책 추가
     @Override
     public List<Long> addBookInBookList(
             Long bookListId, BookListRequestDTO.AddBookInBookListDTO request) {
