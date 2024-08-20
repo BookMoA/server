@@ -1,6 +1,7 @@
 package com.umc.server.service.BookListService;
 
 import com.umc.server.apiPayload.code.status.ErrorStatus;
+import com.umc.server.apiPayload.exception.handler.BookHandler;
 import com.umc.server.apiPayload.exception.handler.BookListHandler;
 import com.umc.server.converter.BookConverter;
 import com.umc.server.converter.BookListConverter;
@@ -11,6 +12,7 @@ import com.umc.server.domain.Member;
 import com.umc.server.domain.enums.ListStatus;
 import com.umc.server.domain.enums.MemberBookStatus;
 import com.umc.server.domain.mapping.BookListEntry;
+import com.umc.server.domain.mapping.MemberBook;
 import com.umc.server.domain.mapping.MemberBookList;
 import com.umc.server.repository.*;
 import com.umc.server.service.S3Service.S3Service;
@@ -99,9 +101,53 @@ public class BookListServiceImpl implements BookListService {
 
         // 3. 책 리스트 정보 업데이트
         bookList.update(request.getTitle(), request.getSpec(), newUrl, listStatus);
+
         // ------------------------------------------------------------------------------------------------------
-        // 4. 기존 BookListEntry 삭제
+        // 4. 기존 BookListEntry 삭제 및 처리
         List<BookListEntry> existingEntries = bookList.getBookListEntry();
+        List<Long> existingBookIds =
+                existingEntries.stream()
+                        .map(entry -> entry.getBook().getId())
+                        .collect(Collectors.toList());
+
+        // 4.1. 새로 추가된 BookListEntry 정보 업데이트
+        List<Long> newBookIds =
+                request.getBooks().stream()
+                        .map(BookListRequestDTO.BookListEntryDTO::getBookId)
+                        .collect(Collectors.toList());
+
+        // 새롭게 추가된 책들에 대해 MemberBook 생성
+        for (Long newBookId : newBookIds) {
+            if (!existingBookIds.contains(newBookId)) {
+                Book book =
+                        bookRepository
+                                .findById(newBookId)
+                                .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOK_NOT_FOUND));
+
+                MemberBook newMemberBook =
+                        MemberBook.builder()
+                                .book(book)
+                                .member(bookList.getMember())
+                                .memberBookStatus(MemberBookStatus.WISH)
+                                .build();
+
+                memberBookRepository.save(newMemberBook);
+            }
+        }
+
+        // 기존에 존재하던 책들이 삭제된 경우 MemberBook 삭제
+        for (BookListEntry existingEntry : existingEntries) {
+            if (!newBookIds.contains(existingEntry.getBook().getId())) {
+                List<MemberBook> memberBook =
+                        memberBookRepository.findAllByBookAndMember(
+                                existingEntry.getBook(), bookList.getMember());
+                if (memberBook != null) {
+                    memberBookRepository.deleteAll(memberBook);
+                }
+            }
+        }
+
+        // 4.2 기존 BookListEntry 삭제
         bookListEntryRepository.deleteAll(existingEntries); // 현재 리스트의 모든 BookListEntry 삭제
         bookList.getBookListEntry().clear(); // 현재 리스트에서 모든 BookListEntry 제거
 
@@ -182,6 +228,24 @@ public class BookListServiceImpl implements BookListService {
         // 책 추가
         addBooksToBookList(bookList, request.getBooksId());
 
+        // MemberBook 엔티티 생성 및 상태 설정
+        for (Long bookId : request.getBooksId()) {
+            Book book =
+                    bookRepository
+                            .findById(bookId)
+                            .orElseThrow(() -> new BookHandler(ErrorStatus.BOOK_NOT_FOUND));
+
+            MemberBook memberBook =
+                    MemberBook.builder()
+                            .book(book)
+                            .member(bookList.getMember()) // Assuming the book list is associated
+                            // with a member
+                            .memberBookStatus(MemberBookStatus.WISH)
+                            .build();
+
+            memberBookRepository.save(memberBook);
+        }
+
         return request.getBooksId();
     }
 
@@ -224,6 +288,16 @@ public class BookListServiceImpl implements BookListService {
                 bookList.getBookListEntry().stream()
                         .filter(entry -> duplicateBookIds.contains(entry.getBook().getId()))
                         .collect(Collectors.toList());
+
+        // 삭제할 책에 해당하는 MemberBook 엔티티 제거
+        for (BookListEntry entry : entriesToRemove) {
+            List<MemberBook> memberBook =
+                    memberBookRepository.findAllByBookAndMember(
+                            entry.getBook(), bookList.getMember());
+            if (memberBook != null) {
+                memberBookRepository.deleteAll(memberBook);
+            }
+        }
 
         // BookListEntry 삭제
         bookList.getBookListEntry().removeAll(entriesToRemove);
