@@ -45,21 +45,6 @@ public class BookListConverter {
                 .build();
     }
 
-    //    public static BookList toBookList(String title, String spec, String status, Member member,
-    // String url) {
-    //        ListStatus listStatus = convertToListStatus(status);
-    //
-    //        return BookList.builder()
-    //                .title(title)
-    //                .spec(spec)
-    //                .img(url)
-    //                .listStatus(listStatus)
-    //                .likeCnt(0)
-    //                .bookCnt(0)
-    //                .member(member)
-    //                .build();
-    //    }
-
     // 책리스트 ENUM
     private static ListStatus convertToListStatus(String status) {
         switch (status.toUpperCase()) {
@@ -88,7 +73,7 @@ public class BookListConverter {
     public static BookListResponseDTO.BookListPreviewDTO toBookListPreviewDTO(
             Optional<BookList> optionalBookList, Long memberId) {
         if (optionalBookList.isEmpty()) {
-            // Optional이 비어있는 경우에 대한 처리를 여기에 작성합니다.
+            // Optional이 비어있는 경우에 대한 처리를 여기에 작성
             throw new GeneralException(ErrorStatus.BOOKLIST_NOT_FOUND);
         }
 
@@ -134,13 +119,13 @@ public class BookListConverter {
 
     public static BookListResponseDTO.UpdateBookListResultDTO toUpdateBookListDTO2(
             BookList bookList) {
-        // 기존 책 리스트에서 이미지 URL을 가져옵니다.
+        // 기존 책 리스트의 이미지 URL
         String img = bookList.getImg();
 
-        // BookListEntry 리스트를 가져옵니다.
+        // BookListEntry 리스트를 가져옴
         List<BookListEntry> entries = bookList.getBookListEntry();
 
-        // BookListEntry 리스트를 UpdateBookDTO 리스트로 변환합니다.
+        // BookListEntry 리스트를 UpdateBookDTO 리스트로 변환
         List<BookListResponseDTO.UpdateBookDTO> books =
                 entries.stream()
                         .map(
@@ -151,7 +136,7 @@ public class BookListConverter {
                                                 .build())
                         .collect(Collectors.toList());
 
-        // 현재 시간을 가져옵니다. (업데이트 시간으로 설정)
+        // 현재 시간
         LocalDateTime updatedAt = LocalDateTime.now();
 
         return BookListResponseDTO.UpdateBookListResultDTO.builder()
