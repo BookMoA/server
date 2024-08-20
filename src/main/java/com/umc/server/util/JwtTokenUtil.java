@@ -86,8 +86,8 @@ public class JwtTokenUtil {
         }
     }
 
-    // TODO: 토큰 복호화
-    public Claims parseClaims(String accessToken) {
+    // TODO: access 토큰 복호화
+    public Claims parseAccessClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -99,9 +99,22 @@ public class JwtTokenUtil {
         }
     }
 
+    // TODO: refresh 토큰 복호화
+    public Claims parseRefreshClaims(String refreshToken) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(refreshToken)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
     // TODO: 로그인 유저 확인
     public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+        Claims claims = parseAccessClaims(accessToken);
         if (claims.get("auth") == null) {
             throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
         }

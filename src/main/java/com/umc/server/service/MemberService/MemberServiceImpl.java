@@ -23,6 +23,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -130,6 +131,17 @@ public class MemberServiceImpl implements MemberService {
 
             final String accessToken = tokenInfo.getAccessToken();
             final String refreshToken = tokenInfo.getRefreshToken();
+            final LocalDateTime accessExpired =
+                    LocalDateTime.ofInstant(
+                            jwtTokenUtil.parseAccessClaims(accessToken).getExpiration().toInstant(),
+                            ZoneId.systemDefault());
+            final LocalDateTime refreshExpired =
+                    LocalDateTime.ofInstant(
+                            jwtTokenUtil
+                                    .parseRefreshClaims(refreshToken)
+                                    .getExpiration()
+                                    .toInstant(),
+                            ZoneId.systemDefault());
 
             signInMember.setRefreshToken(refreshToken);
             signInMember = memberRepository.save(signInMember);
@@ -137,6 +149,8 @@ public class MemberServiceImpl implements MemberService {
             MemberResponseDTO.SignInResponseDTO signInMemberDTO =
                     MemberConverter.toSignInResponseDTO(signInMember);
             signInMemberDTO.setAccessToken(accessToken);
+            signInMemberDTO.setAccessExpiredDate(accessExpired);
+            signInMemberDTO.setRefreshExpiredDate(refreshExpired);
 
             return signInMemberDTO;
         } catch (AuthenticationException e) {
@@ -150,7 +164,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (jwtTokenUtil.validateToken(refreshToken) == TokenStatus.valueOf("ACCESS")) {
 
-            final Claims claims = jwtTokenUtil.parseClaims(accessToken);
+            final Claims claims = jwtTokenUtil.parseAccessClaims(accessToken);
             final String nickname = claims.get("nickname", String.class);
             final Member member =
                     memberRepository

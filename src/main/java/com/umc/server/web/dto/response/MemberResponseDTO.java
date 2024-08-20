@@ -21,6 +21,8 @@ public class MemberResponseDTO {
         private SignUpType signUpType;
         @Setter private String accessToken;
         @Setter private String refreshToken;
+        @Setter private LocalDateTime accessExpiredDate;
+        @Setter private LocalDateTime refreshExpiredDate;
         private String profileURL;
         private MemberResponseDTO.PushNotification pushNotification;
     }
