@@ -17,6 +17,21 @@ public class BookRequestDTO {
 
         @NotNull private Long page;
 
+        // private String coverImage;
+    }
+
+    @Getter
+    public static class CreateAladinBookDTO {
+        @NotNull private String title;
+
+        @NotNull private String writer;
+
+        @NotNull private String publisher;
+
+        @NotNull private String isbn;
+
+        @NotNull private Long page;
+
         private String coverImage;
     }
 

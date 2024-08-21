@@ -23,6 +23,10 @@ public class MemberBookResponseDTO {
     @RequiredArgsConstructor
     @AllArgsConstructor
     public static class MemberBookPreviewDTO {
+        private String title;
+
+        private String writer;
+
         private Long memberBookId;
 
         private MemberBookStatus memberBookStatus;
@@ -38,6 +42,8 @@ public class MemberBookResponseDTO {
         private Long memberId;
 
         private Long bookId;
+
+        private String image;
     }
 
     @Getter

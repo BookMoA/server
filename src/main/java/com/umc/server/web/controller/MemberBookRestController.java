@@ -144,7 +144,7 @@ public class MemberBookRestController {
                 description = "잘못된 요청입니다.",
                 content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @Parameter(name = "page", description = "페이지 번호(메모 15개씩 한 페이지)입니다.")
+    @Parameter(name = "page", description = "페이지 번호(15개씩 한 페이지)입니다.")
     @GetMapping("bookMemos")
     public ApiResponse<MemberBookResponseDTO.MemberBookPreviewListDTO> readMemberBookListByBookMemo(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
