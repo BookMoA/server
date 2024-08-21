@@ -18,6 +18,17 @@ public class BookConverter {
                 .build();
     }
 
+    public static Book toAladinBook(BookRequestDTO.CreateAladinBookDTO createAladinBookDTO) {
+        return Book.builder()
+                .title(createAladinBookDTO.getTitle())
+                .writer(createAladinBookDTO.getWriter())
+                .publisher(createAladinBookDTO.getPublisher())
+                .isbn(createAladinBookDTO.getIsbn())
+                .page(createAladinBookDTO.getPage())
+                .coverImage(createAladinBookDTO.getCoverImage())
+                .build();
+    }
+
     public static BookResponseDTO.CreateBookResultDTO toCreateBookResultDTO(Book book) {
         return BookResponseDTO.CreateBookResultDTO.builder().bookId(book.getId()).build();
     }
