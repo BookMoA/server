@@ -56,9 +56,9 @@ public class SearchServiceImpl implements SearchService {
                 bookListRepository.findByTitleContaining(title, pageRequest).getContent();
 
         // 검색한 책이 없을 때
-        if (bookLists.isEmpty()) {
-            throw new SearchHandler(ErrorStatus.SEARCH_BOOKLIST_NOT_FOUND);
-        }
+        //        if (bookLists.isEmpty()) {
+        //            throw new SearchHandler(ErrorStatus.SEARCH_BOOKLIST_NOT_FOUND);
+        //        }
 
         return bookLists.stream()
                 .map(bookList -> SearchConverter.searchBookListResponseDTO(bookList, memberId))
@@ -96,9 +96,10 @@ public class SearchServiceImpl implements SearchService {
                 bookMemoRepository.findByKeywordAndMemberId(keyword, memberId, pageRequest);
 
         // 검색 결과가 없을 때 예외 처리
-        if (bookMemoPage.isEmpty()) {
-            throw new SearchHandler(ErrorStatus.SEARCH_BOOKMEMO_NOT_FOUND); // 적절한 예외 처리 필요
-        }
+        //        if (bookMemoPage.isEmpty()) {
+        //            throw new SearchHandler(ErrorStatus.SEARCH_BOOKMEMO_NOT_FOUND); // 적절한 예외 처리
+        // 필요
+        //        }
 
         return bookMemoPage.stream()
                 .map(SearchConverter::toSearchMemoResponseDTO)

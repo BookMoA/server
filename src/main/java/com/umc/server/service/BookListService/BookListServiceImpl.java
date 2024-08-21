@@ -519,9 +519,9 @@ public class BookListServiceImpl implements BookListService {
 
         Page<Book> booksPage = bookRepository.findBooks(memberId, status, sortBy, pageRequest);
 
-        if (booksPage.isEmpty()) {
-            throw new BookListHandler(ErrorStatus.BOOK_NOT_FOUND);
-        }
+        //        if (booksPage.isEmpty()) {
+        //            throw new BookListHandler(ErrorStatus.BOOK_NOT_FOUND);
+        //        }
 
         List<Book> sortedBooks = booksPage.getContent();
 
