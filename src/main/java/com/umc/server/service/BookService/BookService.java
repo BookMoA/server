@@ -9,6 +9,8 @@ public interface BookService {
     Book createBook(BookRequestDTO.CreateBookDTO createBookDTO, MultipartFile imgUrl)
             throws IOException;
 
+    Book createAladinBook(BookRequestDTO.CreateAladinBookDTO createAladinBookDTO);
+
     Book readBook(Long bookId);
 
     Book updateBook(Long bookId, BookRequestDTO.UpdateBookDTO updateBookDTO, MultipartFile imgUrl)

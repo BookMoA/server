@@ -38,6 +38,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book createAladinBook(BookRequestDTO.CreateAladinBookDTO createAladinBookDTO) {
+        Book book = BookConverter.toAladinBook(createAladinBookDTO);
+        return bookRepository.save(book);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Book readBook(Long bookId) {
         return bookRepository
