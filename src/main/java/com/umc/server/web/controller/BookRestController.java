@@ -44,6 +44,23 @@ public class BookRestController {
         return ApiResponse.onSuccess(BookConverter.toCreateBookResultDTO(book));
     }
 
+    @Operation(summary = "알라딘 책 저장 API", description = "알라딘 API 책을 저장하는 API입니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON200",
+                description = "OK, 책 저장 성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "COMMON400",
+                description = "잘못된 요청입니다.",
+                content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @PostMapping("/aladin")
+    public ApiResponse<BookResponseDTO.CreateBookResultDTO> createAladinBook(
+            @RequestBody @Valid BookRequestDTO.CreateAladinBookDTO createAladinBookDTO) {
+        Book book = bookService.createAladinBook(createAladinBookDTO);
+        return ApiResponse.onSuccess(BookConverter.toCreateBookResultDTO(book));
+    }
+
     @Operation(summary = "특정 책 조회 API", description = "특정 책을 조회하는 API입니다.")
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(

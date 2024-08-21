@@ -3,15 +3,18 @@ package com.umc.server.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.server.apiPayload.code.status.ErrorStatus;
+import com.umc.server.apiPayload.exception.handler.MemberHandler;
 import com.umc.server.converter.MemberConverter;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.PushNotification;
 import com.umc.server.repository.MemberRepository;
-import com.umc.server.repository.PushNotificationRepository;
 import com.umc.server.util.JwtTokenUtil;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -46,7 +50,6 @@ public class KaKaoServiceImpl implements KakaoService {
     private final MemberRepository memberRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final PushNotificationRepository pushNotificationRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
 
@@ -158,6 +161,14 @@ public class KaKaoServiceImpl implements KakaoService {
                 getTokenInfo(signUpRequestDTO.getNickname(), kakaoId.toString());
         final String accessToken = tokenInfo.getAccessToken();
         final String refreshToken = tokenInfo.getRefreshToken();
+        final LocalDateTime accessExpired =
+                LocalDateTime.ofInstant(
+                        jwtTokenUtil.parseAccessClaims(accessToken).getExpiration().toInstant(),
+                        ZoneId.systemDefault());
+        final LocalDateTime refreshExpired =
+                LocalDateTime.ofInstant(
+                        jwtTokenUtil.parseRefreshClaims(refreshToken).getExpiration().toInstant(),
+                        ZoneId.systemDefault());
 
         signInMember.setRefreshToken(refreshToken);
         signInMember.setKakaoAccessToken(kakaoAccessToken);
@@ -167,18 +178,25 @@ public class KaKaoServiceImpl implements KakaoService {
         MemberResponseDTO.SignInResponseDTO signInMemberDTO =
                 MemberConverter.toSignInResponseDTO(signInMember);
         signInMemberDTO.setAccessToken(accessToken);
+        signInMemberDTO.setAccessExpiredDateTime(accessExpired);
+        signInMemberDTO.setRefreshExpiredDateTime(refreshExpired);
 
         return signInMemberDTO;
     }
 
     private MemberResponseDTO.TokenInfo getTokenInfo(String nickname, String password) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(nickname, password);
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(nickname, password);
 
-        Authentication authentication =
-                authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            Authentication authentication =
+                    authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return jwtTokenUtil.generateToken(authentication, nickname);
+            return jwtTokenUtil.generateToken(authentication, nickname);
+
+        } catch (AuthenticationException e) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
     }
 }

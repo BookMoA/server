@@ -21,6 +21,8 @@ public class MemberResponseDTO {
         private SignUpType signUpType;
         @Setter private String accessToken;
         @Setter private String refreshToken;
+        @Setter private LocalDateTime accessExpiredDateTime;
+        @Setter private LocalDateTime refreshExpiredDateTime;
         private String profileURL;
         private MemberResponseDTO.PushNotification pushNotification;
     }
@@ -30,9 +32,16 @@ public class MemberResponseDTO {
     public static class TokenInfo {
         private String accessToken;
         private String refreshToken;
+        private LocalDateTime accessExpiredDateTime;
+        private LocalDateTime refreshExpiredDateTime;
 
-        public static TokenInfo of(String accessToken, String refreshToken) {
-            return new TokenInfo(accessToken, refreshToken);
+        public static TokenInfo of(
+                String accessToken,
+                String refreshToken,
+                LocalDateTime accessExpiredDateTime,
+                LocalDateTime refreshExpiredDateTime) {
+            return new TokenInfo(
+                    accessToken, refreshToken, accessExpiredDateTime, refreshExpiredDateTime);
         }
     }
 
