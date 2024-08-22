@@ -26,6 +26,8 @@ public class BookListRequestDTO {
         private String spec;
 
         @NotBlank private String status;
+
+        private List<Long> booksId;
     }
 
     @Getter
