@@ -28,7 +28,11 @@ public class ClubPostResponseDTO {
 
         String title;
 
+        String nickname;
+
         String context;
+
+        Integer likeCount;
 
         LocalDateTime createAt;
 
