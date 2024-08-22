@@ -61,7 +61,7 @@ public class BookListServiceImpl implements BookListService {
 
         // DTO를 엔티티로 변환
         BookList bookList = BookListConverter.toBookList(request, member, newUrl);
-
+        addBooksToBookList(bookList, request.getBooksId());
         // BookList 엔티티 저장
         return bookListRepository.save(bookList);
     }
