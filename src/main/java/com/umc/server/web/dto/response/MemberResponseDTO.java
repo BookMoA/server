@@ -25,6 +25,7 @@ public class MemberResponseDTO {
         @Setter private LocalDateTime refreshExpiredDateTime;
         private String profileURL;
         private MemberResponseDTO.PushNotification pushNotification;
+        private ClubResponseDTO.MyClubResponseDTO myClub;
     }
 
     @Getter
