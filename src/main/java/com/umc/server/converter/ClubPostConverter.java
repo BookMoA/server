@@ -42,6 +42,7 @@ public class ClubPostConverter {
                     .title(post.getTitle())
                     .nickname(post.getMember().getNickname())
                     .context(post.getContext())
+                    .commentCount(post.getClubPostCommentList().size())
                     .likeCount(post.getClubPostLikeList().size())
                     .createAt(post.getCreatedAt())
                     .updateAt(post.getUpdatedAt())
