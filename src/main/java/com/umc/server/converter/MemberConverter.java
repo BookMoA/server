@@ -1,12 +1,15 @@
 package com.umc.server.converter;
 
 import com.umc.server.domain.CancelAccount;
+import com.umc.server.domain.Club;
 import com.umc.server.domain.Member;
 import com.umc.server.domain.PushNotification;
 import com.umc.server.domain.enums.Role;
 import com.umc.server.domain.enums.SignUpType;
+import com.umc.server.domain.mapping.ClubMember;
 import com.umc.server.web.dto.request.KakaoRequestDTO;
 import com.umc.server.web.dto.request.MemberRequestDTO;
+import com.umc.server.web.dto.response.ClubResponseDTO;
 import com.umc.server.web.dto.response.MemberResponseDTO;
 
 public class MemberConverter {
@@ -35,6 +38,19 @@ public class MemberConverter {
                             pushNotification.getNightPushEnabled());
         }
 
+        ClubResponseDTO.MyClubResponseDTO myClubResponseDTO = null;
+        ClubMember clubMember = member.getClubMember();
+
+        if (clubMember != null) {
+            Club myClub = clubMember.getClub();
+            myClubResponseDTO =
+                    ClubResponseDTO.MyClubResponseDTO.builder()
+                            .clubId(myClub.getId())
+                            .name(myClub.getName())
+                            .intro(myClub.getIntro())
+                            .build();
+        }
+
         return MemberResponseDTO.SignInResponseDTO.builder()
                 .id(member.getId())
                 .email(member.getEmail())
@@ -46,6 +62,7 @@ public class MemberConverter {
                 .profileURL(member.getProfileURL())
                 .refreshToken(member.getRefreshToken())
                 .pushNotification(pushNotificationDTO)
+                .myClub(myClubResponseDTO)
                 .build();
     }
 
