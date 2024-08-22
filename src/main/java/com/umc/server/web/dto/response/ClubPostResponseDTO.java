@@ -32,6 +32,8 @@ public class ClubPostResponseDTO {
 
         String context;
 
+        Integer commentCount;
+
         Integer likeCount;
 
         LocalDateTime createAt;
