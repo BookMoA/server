@@ -1,7 +1,6 @@
 package com.umc.server.web.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ public class ClubPostRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ClubPostCreateRequestDTO {
-        @Positive(message = "clubId cannot be Blank!!")
+        @NotNull(message = "clubId cannot be Null!!")
         Long clubId;
 
         @NotNull(message = "title cannot be Null!!")
@@ -31,7 +30,7 @@ public class ClubPostRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ClubPostUpdateRequestDTO {
-        @Positive(message = "postId cannot be Blank!!")
+        @NotNull(message = "postId cannot be Null!!")
         Long postId;
 
         @NotNull(message = "title cannot be Null!!")
@@ -48,7 +47,7 @@ public class ClubPostRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ClubPostDeleteRequestDTO {
-        @Positive(message = "postId cannot be Blank!!")
+        @NotNull(message = "postId cannot be Null!!")
         Long postId;
     }
 }
