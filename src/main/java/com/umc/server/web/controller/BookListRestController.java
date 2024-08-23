@@ -79,6 +79,7 @@ public class BookListRestController {
         return ApiResponse.onSuccess("삭제에 성공하였습니다!");
     }
 
+    //
     @Operation(
             summary = "보관함 책리스트 조회 API",
             description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")
