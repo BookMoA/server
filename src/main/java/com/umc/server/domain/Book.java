@@ -23,17 +23,17 @@ public class Book extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String writer;
 
     @Lob
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false, length = 13)
