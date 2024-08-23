@@ -164,6 +164,24 @@ public class BookListServiceImpl implements BookListService {
                 bookListRepository.findStoredBooksByMemberId(
                         memberId, PageRequest.of(page - 1, 10));
 
+        // bookLists가 null이거나 비어있을 경우 새로운 책리스트 추가
+        if (bookLists == null || bookLists.isEmpty()) {
+            BookListRequestDTO.AddBookListDTO newBookListRequest =
+                    BookListRequestDTO.AddBookListDTO.builder()
+                            .title("내 리스트")
+                            .spec("")
+                            .status("PRIVATE")
+                            .build();
+
+            BookList newBookList = BookListConverter.toBookList(newBookListRequest, member, null);
+            bookListRepository.save(newBookList);
+
+            // 다시 책리스트를 가져옴
+            bookLists =
+                    bookListRepository.findStoredBooksByMemberId(
+                            memberId, PageRequest.of(page - 1, 10));
+        }
+
         // Page<BookList>에서 content만 추출하여 변환
         return bookLists.getContent().stream()
                 .map(bookList -> BookListConverter.toLibraryBookListDTO(bookList, memberId))
