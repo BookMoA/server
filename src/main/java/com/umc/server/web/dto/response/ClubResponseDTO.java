@@ -23,11 +23,15 @@ public class ClubResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MyClubResponseDTO {
+        Long memeberId;
+
         Long clubId;
 
         String name;
 
         String intro;
+
+        Boolean reader;
     }
 
     @Builder

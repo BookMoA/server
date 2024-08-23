@@ -50,7 +50,7 @@ public class ClubPostServiceImpl implements ClubPostService {
 
         Optional<ClubPost> clubPost = clubPostRepository.findById(postId);
         if (clubPost.isPresent()) {
-            if (!clubPost.get().getClub().equals(clubMember.getClub())) {
+            if (!clubPost.get().getClub().getId().equals(clubMember.getClub().getId())) {
                 throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
             }
         }
@@ -75,26 +75,31 @@ public class ClubPostServiceImpl implements ClubPostService {
 
     @Override
     public Page<ClubPost> searchClubPost(
-            Member member, String category, String word, Integer page) {
+            Member member, Long clubId, String category, String word, Integer page) {
         ClubMember clubMember =
                 clubMemberRepository
                         .findByMemberId(member.getId())
                         .orElseThrow(() -> new GeneralException(ErrorStatus.CLUB_NOT_JOINED));
-        //        if (!clubId.equals(clubMember.getClub().getId())){
-        //            throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
-        //        }
-        // 특정 clubId에서만 겁색
+        if (!clubId.equals(clubMember.getClub().getId())) {
+            throw new GeneralException(ErrorStatus.CLUB_MEMBER_REQUIRED);
+        }
+
         Page<ClubPost> postList;
         String keyword = word.replace(" ", ".*");
         PageRequest pageRequest =
                 PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
 
         if (category.equals("context")) {
-            postList = clubPostRepository.findByContextContaining(keyword, pageRequest);
+            postList =
+                    clubPostRepository.findByClubIdAndContextContaining(
+                            clubId, keyword, pageRequest);
         } else if (category.equals("title")) {
-            postList = clubPostRepository.findByTitleContaining(keyword, pageRequest);
+            postList =
+                    clubPostRepository.findByClubIdAndTitleContaining(clubId, keyword, pageRequest);
         } else if (category.equals("writer")) {
-            postList = clubPostRepository.findByNicknameContaining(keyword, pageRequest);
+            postList =
+                    clubPostRepository.findByClubIdAndMemberNicknameContaining(
+                            clubId, keyword, pageRequest);
         } else {
             throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
         }

@@ -67,14 +67,10 @@ public class ClubPostConverter {
     }
 
     public static ClubPostResponseDTO.ClubPostSearchResponseDTO toClubPostSearchResponseDTO(
-            String category, String word, Integer page, Page<ClubPost> postPage) {
+            Long clubId, String category, String word, Integer page, Page<ClubPost> postPage) {
         List<ClubPostResponseDTO.ClubPostDetailResponseDTO> postList = new ArrayList<>();
         for (ClubPost post : postPage.getContent()) {
             postList.add(toClubPostDetailResponseDTO(Optional.ofNullable(post)));
-        }
-        Long clubId = null;
-        if (!postPage.getContent().isEmpty()) {
-            clubId = postPage.getContent().get(0).getClub().getId();
         }
         return ClubPostResponseDTO.ClubPostSearchResponseDTO.builder()
                 .clubId(clubId)
