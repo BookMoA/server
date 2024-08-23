@@ -147,16 +147,41 @@ public class BookListServiceImpl implements BookListService {
 
     // 책리스트 삭제
     @Override
-    public void deleteBookList(BookListRequestDTO.DeleteBookListDTO request) {
+    public void deleteBookList(BookListRequestDTO.DeleteBookListDTO request, Member member) {
         List<Long> bookListIds = request.getBookListId();
+        Long memberId = member.getId();
 
-        List<BookList> bookLists = bookListRepository.findAllById(bookListIds);
+        for (Long bookListId : bookListIds) {
+            // 책 리스트를 조회
+            BookList bookList =
+                    bookListRepository
+                            .findById(bookListId)
+                            .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
 
-        if (bookLists.size() != bookListIds.size()) {
-            throw new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND);
+            // 해당 책 리스트가 본인의 것인지 확인
+            if (bookList.getMember().getId().equals(memberId)) {
+                // 본인의 책 리스트일 경우 삭제
+                bookListRepository.delete(bookList);
+            } else {
+                // 타 사용자의 책 리스트일 경우 보관함에서 삭제
+                MemberBookList memberBookList =
+                        memberBookListRepository
+                                .findByBookListIdAndMemberId(bookListId, memberId)
+                                .orElse(null);
+
+                if (memberBookList == null) {
+                    throw new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND);
+                }
+
+                if (memberBookList.getIsLiked().equals(Boolean.FALSE)) {
+                    memberBookListRepository.delete(memberBookList);
+                } else {
+                    // 좋아요 표시가 되어 있으면 보관함에서만 비활성화
+                    memberBookList.setIsStored(false);
+                    memberBookListRepository.save(memberBookList);
+                }
+            }
         }
-
-        bookListRepository.deleteAll(bookLists);
     }
 
     @Override

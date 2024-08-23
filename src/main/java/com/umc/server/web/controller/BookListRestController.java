@@ -72,13 +72,17 @@ public class BookListRestController {
     }
 
     @Operation(summary = "책리스트 삭제 API", description = "책리스트를 삭제하는 API입니다.")
-    @DeleteMapping("list/{bookListId}")
+    @DeleteMapping("list")
     public ApiResponse<?> deleteBookList(
-            @RequestBody @Valid BookListRequestDTO.DeleteBookListDTO request) {
-        bookListService.deleteBookList(request);
+            @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember,
+            @RequestParam List<Long> bookListIds) {
+        BookListRequestDTO.DeleteBookListDTO request =
+                BookListRequestDTO.DeleteBookListDTO.builder().bookListId(bookListIds).build();
+        bookListService.deleteBookList(request, signInmember);
         return ApiResponse.onSuccess("삭제에 성공하였습니다!");
     }
 
+    //
     @Operation(
             summary = "보관함 책리스트 조회 API",
             description = "보관함 책리스트를 조회하는 API입니다. (내가 작성한 리스트 + 타 유저가 만든 리스트 저장한것 모두 출력)")

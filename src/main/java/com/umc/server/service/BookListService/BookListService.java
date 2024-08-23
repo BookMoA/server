@@ -22,7 +22,7 @@ public interface BookListService {
 
     Optional<BookList> getBookList(Long id);
 
-    void deleteBookList(BookListRequestDTO.DeleteBookListDTO request);
+    void deleteBookList(BookListRequestDTO.DeleteBookListDTO request, Member member);
 
     List<BookListResponseDTO.LibraryBookListDTO> getLibraryBookList(Integer page, Member member);
 
