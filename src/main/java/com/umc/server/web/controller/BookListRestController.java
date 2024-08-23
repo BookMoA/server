@@ -72,7 +72,7 @@ public class BookListRestController {
     }
 
     @Operation(summary = "책리스트 삭제 API", description = "책리스트를 삭제하는 API입니다.")
-    @DeleteMapping("list/{bookListId}")
+    @DeleteMapping("list")
     public ApiResponse<?> deleteBookList(
             @RequestBody @Valid BookListRequestDTO.DeleteBookListDTO request) {
         bookListService.deleteBookList(request);
