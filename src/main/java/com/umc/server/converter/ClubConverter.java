@@ -38,7 +38,7 @@ public class ClubConverter {
                     .reader(member.getClubMember().getReader())
                     .build();
         } else {
-            return new ClubResponseDTO.MyClubResponseDTO();
+            return ClubResponseDTO.MyClubResponseDTO.builder().memeberId(member.getId()).build();
         }
     }
 

@@ -14,7 +14,8 @@ public interface ClubPostService {
 
     Slice<ClubPost> readClubPostList(Member member, Long clubId, Integer page);
 
-    Page<ClubPost> searchClubPost(Member member, String category, String word, Integer page);
+    Page<ClubPost> searchClubPost(
+            Member member, Long clubId, String category, String word, Integer page);
 
     ClubPost updateClubPost(Member member, ClubPostRequestDTO.ClubPostUpdateRequestDTO request);
 
