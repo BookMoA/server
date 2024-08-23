@@ -53,7 +53,7 @@ public class ClubServiceImpl implements ClubService {
         // 3. 모임 생성 (+ 난수 코드)
         String code;
         do {
-            code = generateCode(request.getName());
+            code = generateCode();
         } while (clubRepository.findByCode(code).isPresent());
         Club club = clubRepository.save(ClubConverter.toClub(request, code));
 
@@ -185,7 +185,7 @@ public class ClubServiceImpl implements ClubService {
         return clubList;
     }
 
-    private String generateCode(String name) {
+    private String generateCode() {
 
         String LETTERS = "ABCDEFGHIJKLMNPQRSTUVWXYZ";
         SecureRandom random = new SecureRandom();
@@ -203,7 +203,7 @@ public class ClubServiceImpl implements ClubService {
                         Integer.parseInt(DateTimeFormatter.ofPattern("SSS").format(Instant.now())));
         for (char c : timestampPart.toCharArray()) {
             if (c == '0') {
-                characters.add((char) random.nextInt(10));
+                characters.add((char) ('1' + random.nextInt(10)));
             } else characters.add(c);
         }
 
