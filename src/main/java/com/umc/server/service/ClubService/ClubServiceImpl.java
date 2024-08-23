@@ -203,7 +203,7 @@ public class ClubServiceImpl implements ClubService {
                         Integer.parseInt(DateTimeFormatter.ofPattern("SSS").format(Instant.now())));
         for (char c : timestampPart.toCharArray()) {
             if (c == '0') {
-                characters.add((char) ('1' + random.nextInt(10)));
+                characters.add((char) ('1' + random.nextInt(9)));
             } else characters.add(c);
         }
 
