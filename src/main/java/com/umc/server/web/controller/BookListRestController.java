@@ -73,9 +73,9 @@ public class BookListRestController {
 
     @Operation(summary = "책리스트 삭제 API", description = "책리스트를 삭제하는 API입니다.")
     @DeleteMapping("list/{bookListId}")
-    @Parameter(name = "bookListId", description = "책리스트의 아이디, path variable 입니다!")
-    public ApiResponse<?> deleteBookList(@PathVariable(name = "bookListId") Long bookListId) {
-        bookListService.deleteBookList(bookListId);
+    public ApiResponse<?> deleteBookList(
+            @RequestBody @Valid BookListRequestDTO.DeleteBookListDTO request) {
+        bookListService.deleteBookList(request);
         return ApiResponse.onSuccess("삭제에 성공하였습니다!");
     }
 
