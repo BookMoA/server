@@ -38,7 +38,7 @@ public class ClubRestController {
     public ApiResponse<ClubResponseDTO.MyClubResponseDTO> myClubAPI(
             @Parameter(hidden = true) @AuthenticationPrincipal Member signInmember) {
         Optional<Club> club = clubService.readMyClub(signInmember);
-        return ApiResponse.onSuccess(ClubConverter.toMyClubResponseDTO(club));
+        return ApiResponse.onSuccess(ClubConverter.toMyClubResponseDTO(signInmember, club));
     }
 
     @Operation(summary = "모임 상세 조회 API", description = "특정 독서 모임의 상세 정보 조회 API")

@@ -1,6 +1,7 @@
 package com.umc.server.converter;
 
 import com.umc.server.domain.Club;
+import com.umc.server.domain.Member;
 import com.umc.server.web.dto.request.ClubRequestDTO;
 import com.umc.server.web.dto.response.ClubResponseDTO;
 import java.util.ArrayList;
@@ -26,12 +27,15 @@ public class ClubConverter {
         return ClubResponseDTO.ClubCreateResponseDTO.builder().clubId(club.getId()).build();
     }
 
-    public static ClubResponseDTO.MyClubResponseDTO toMyClubResponseDTO(Optional<Club> club) {
+    public static ClubResponseDTO.MyClubResponseDTO toMyClubResponseDTO(
+            Member member, Optional<Club> club) {
         if (club.isPresent()) {
             return ClubResponseDTO.MyClubResponseDTO.builder()
+                    .memeberId(member.getId())
                     .clubId(club.get().getId())
                     .name(club.get().getName())
                     .intro(club.get().getIntro())
+                    .reader(member.getClubMember().getReader())
                     .build();
         } else {
             return new ClubResponseDTO.MyClubResponseDTO();
