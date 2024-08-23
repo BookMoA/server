@@ -11,6 +11,8 @@ public class BookRequestDTO {
 
         @NotNull private String writer;
 
+        private String description;
+
         @NotNull private String publisher;
 
         @NotNull private String isbn;
@@ -25,6 +27,8 @@ public class BookRequestDTO {
         @NotNull private String title;
 
         @NotNull private String writer;
+
+        private String description;
 
         @NotNull private String publisher;
 
