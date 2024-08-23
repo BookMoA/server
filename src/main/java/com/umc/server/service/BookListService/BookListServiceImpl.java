@@ -147,12 +147,16 @@ public class BookListServiceImpl implements BookListService {
 
     // 책리스트 삭제
     @Override
-    public void deleteBookList(Long bookListId) {
-        BookList bookList =
-                bookListRepository
-                        .findById(bookListId)
-                        .orElseThrow(() -> new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND));
-        bookListRepository.delete(bookList);
+    public void deleteBookList(BookListRequestDTO.DeleteBookListDTO request) {
+        List<Long> bookListIds = request.getBookListId();
+
+        List<BookList> bookLists = bookListRepository.findAllById(bookListIds);
+
+        if (bookLists.size() != bookListIds.size()) {
+            throw new BookListHandler(ErrorStatus.BOOKLIST_NOT_FOUND);
+        }
+
+        bookListRepository.deleteAll(bookLists);
     }
 
     @Override
