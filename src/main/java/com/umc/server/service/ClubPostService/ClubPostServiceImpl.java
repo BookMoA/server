@@ -70,7 +70,7 @@ public class ClubPostServiceImpl implements ClubPostService {
         PageRequest pageRequest =
                 PageRequest.of((int) (page - 1), 10, Sort.by("createdAt").descending());
 
-        return clubPostRepository.findAll(pageRequest);
+        return clubPostRepository.findByClubId(clubId, pageRequest);
     }
 
     @Override
