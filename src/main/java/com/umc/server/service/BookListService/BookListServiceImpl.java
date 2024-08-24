@@ -482,7 +482,7 @@ public class BookListServiceImpl implements BookListService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정에 실행
+    @Scheduled(cron = "60000") // 매주 월요일 자정에 실행
     public void updateRecommendations() {
         Pageable topBooksPageable = PageRequest.of(0, 3);
         List<Long> topBookIds = memberBookRepository.findTopBooksByAverageScore(topBooksPageable);
